@@ -1,0 +1,544 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization;
+@using Microsoft.Extensions.Localization;
+@using System.Globalization
+@inject IViewLocalizer Localizer;
+@model IEnumerable<ibillcraft.Models.ConfigurationModel>
+@{
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = " Configuration";
+    ViewBag.Header = "Configuration";
+
+}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var selectedTab = '@ViewBag.SelectedTab'; // Get the selected tab from ViewBag
+        var Terms = document.getElementById('Terms-Conditions');
+        var Note = document.getElementById('Note');
+        var Series = document.getElementById('Series');
+        if (selectedTab) {
+            var tab = new bootstrap.Tab(document.getElementById(selectedTab));
+            tab.show();
+            if (selectedTab === 'Terms-tab') {
+                Terms.classList.add('show', 'active');
+                Note.classList.remove('show', 'active');
+                Series.classList.remove('show', 'active');
+                document.title = "Terms-Add Configuration";
+            } else if (selectedTab === 'Note-tab') {
+                Terms.classList.remove('show', 'active');
+                Note.classList.add('show', 'active');
+                Series.classList.remove('show', 'active');
+                document.title = "Note-Add Configuration";
+            }
+            else if (selectedTab === 'Series-tab') {
+                Terms.classList.remove('show', 'active');
+                Note.classList.remove('show', 'active');
+                Series.classList.add('show', 'active');
+                document.title = "Series-Add Configuration";
+            }
+        }
+    });
+</script>
+
+<head>
+    <link href="~/css/dashboard.css" rel="stylesheet" />
+    <script src="~/jsfiles/configuration/configuration.js"></script>
+</head>
+
+    <!-- Account page navigation-->
+    <div class="card shadow mb-4">
+    
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="Terms-Conditions-tab" data-bs-toggle="tab" data-bs-target="#Terms-Conditions" onclick="OnTerms()" type="button" role="tab" aria-controls="Terms_Conditions" aria-selected="false">@Localizer["Terms & Conditions"]</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="Note-tab" data-bs-toggle="tab" data-bs-target="#Note" type="button" role="tab" onclick="OnNote()" aria-controls="Note" aria-selected="false">@Localizer["Note"]</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="Series-tab" data-bs-toggle="tab" data-bs-target="#Series" type="button" onclick="OnSeries()" role="tab" aria-controls="Series" aria-selected="false">@Localizer["Series"]</button>
+            </li>
+
+        </ul>
+
+    
+    
+    
+        
+            <!-- Account details card-->
+           <div class="card-body">
+            <div class="tab-content" id="myTabContent">
+
+                <div class="tab-pane fade show active" id="Terms-Conditions" role="tabpanel" aria-labelledby="Terms-Conditions-tab">
+                    <div class="card border  profile-card">
+                        
+                            <div class="card-header py-3">
+                                <div class="row align-items-center">
+
+                                    <div class="col">
+                                        <h4 class="m-0 font-weight-bold text-primary">@Localizer["Terms & Conditions"]</h4>
+                                    </div>
+                                    <div class="col-md-2 justify-content-lg-end justify-content-md-end justify-content-center mt-lg-0 mt-md-0 mt-3">
+                                        <input type="text" id="custom-search" class="form-control" placeholder="Search" />
+                                    </div>
+                                    </div>
+                            </div>
+                      
+                    </div>
+                  <div class="card  mb-4">
+                    <div class="card-body">
+                         <div class="table-responsive">
+                             <table class="table table-bordered" id="dataTable1" width="100%" cellspacing="0">
+                                 <thead>
+                                     <tr>
+                                     <th width="6%"> @Localizer["Sr.No"]</th>
+                                     <th style="display:none">ID#</th>
+                                     <th>@Localizer["Invoice Name"]</th>
+                                     <th>@Localizer["Terms"]</th>
+                                     <th width="7%" class="no-filter">@Localizer["Action"]</th>
+                                     </tr>
+                                 </thead>
+                                 <tbody>
+                                     @{
+                                         int itemNumber = 1;
+                                     }
+                                     @foreach (var item in Model)
+                                     {
+                                         <tr>
+                                             <td>@itemNumber </td>
+                                             <td style="display:none"> @Html.DisplayFor(modelItem => item.tc_id)</td>
+                                             <td> @Html.DisplayFor(modelItem => item.tc_invoicename)</td>
+                                             <td>@Html.DisplayFor(modelItem => item.tc_terms)</td>
+                                             <td>
+                                                 <div class="d-inline-flex">
+                                 
+                                                     <a class='editicon text-primary' title="Edit" onclick="editTermsClick('@item.tc_id','@item.tc_invoicename','@item.tc_terms')"> <span class='fas fa-edit'></span></a>
+                                                     @* <a href="@Url.Action("Delete", new { e_id = @item.e_id, e_type="Expense"})" onclick="return confirm('Are you sure you want to delete?')" class='deleteicon text-danger' title="Delete"> <span class='fa fa-trash ml-2'></span></a>*@
+                                                 </div>
+                                             </td>
+                                         </tr>
+                                         itemNumber++;
+                                     }
+                                 </tbody>
+                             </table>
+                         </div>
+                                        <!-- End Griddata-->
+                         <!-- start Pagination-->
+                         <div class="row mt-3">
+                             <div class="col-lg-5 col-md-5 col-12 ">
+                                 <div class="row ">
+                                     <div class="col-lg-3 col-md-3 col-12 d-flex justify-content-lg-start justify-content-md-start justify-content-center ">
+                                         <h6 class="mt-2"> @Localizer["Show"]</h6>&nbsp;&nbsp;
+                                         <select name="table_id_length" id="table_length_select" aria-controls="table_id" class="form-select w-auto">
+                                             <option value="10">10</option>
+                                             <option value="25">25</option>
+                                             <option value="50">50</option>
+                                             <option value="100">100</option>
+                                         </select>
+                                         &nbsp;&nbsp;
+                                         <h6 class="mt-2"> @Localizer["entries"]</h6>
+                                     </div>
+                                 </div>
+                             </div>
+                             <div class="col-lg-2 col-md-2"></div>
+                             <div class="col-lg-5 col-md-5 col-12 mt-lg-0 mt-md-0 mt-3">
+                                 <nav aria-label="Page navigation example">
+                                     <div id="table_id_length">
+
+                                         <div id="custom-pagination" class=" d-flex text-center text-lg-end justify-content-end  text-end float-end">
+                                             <ul class="pagination justify-content-lg-end justify-content-md-end justify-content-center">
+                                                 <li class="page-item disabled">
+                                                     <button class="page-link" href="#" aria-label="Previous" data-page="0"> <span aria-hidden="true">&laquo;</span></button>
+                                                 </li>
+                                                 <li class="page-item active"><button class="page-link" href="#" data-page="1">1</button></li>
+
+                                                 <li class="page-item "><button class="page-link" href="#" data-page="2" aria-label="Next">  <span aria-hidden="true">&raquo;</span></button></li>
+
+                                             </ul>
+                                         </div>
+                                     </div>
+                                 </nav>
+                             </div>
+                         </div>
+                                        <!-- end Pagination-->
+
+                    </div>
+
+                  </div>
+
+
+                </div>
+                <div class="tab-pane fade" id="Note" role="tabpanel" aria-labelledby="Note-tab">
+                    <div class="card border  profile-card">
+                        
+                            <div class="card-header py-3">
+                                <div class="row align-items-center">
+                                    <div class="col">
+                                        <h4 class="m-0 font-weight-bold text-primary">@Localizer["Note"]</h4>
+                                    </div>
+                                    <div class="col-md-2 justify-content-lg-end justify-content-md-end justify-content-center mt-lg-0 mt-md-0 mt-3">
+                                        <input type="text" id="custom-search2" class="form-control" placeholder="Search" />
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                                  <div class="card  mb-4">
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered" id="dataTable2" width="100%" cellspacing="0">
+                                                <thead>
+                                                    <tr>
+                                                        <th width="6%"> @Localizer["Sr.No"]</th>
+                                                        <th style="display:none">ID#</th>
+                                                        <th>@Localizer["Invoice Name"]</th>
+                                                        <th>@Localizer["Invoice Note"]</th>
+                                                        <th width="7%" class="no-filter">@Localizer["Action"]</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @{
+                                                        int itemNumbero = 1;
+                                                    }
+                                                    @foreach (var item in Model)
+                                                    {
+                                                        <tr>
+                                                            <td>@itemNumbero </td>
+                                                            <td style="display:none"> @Html.DisplayFor(modelItem => item.in_id)</td>
+                                                            <td> @Html.DisplayFor(modelItem => item.in_invoicename)</td>
+                                                            <td>@Html.DisplayFor(modelItem => item.in_note)</td>
+                                                            <td>
+                                                                <div class="d-inline-flex">
+
+                                                                    <a class='editicon text-primary' title="Edit" onclick="editNoteClick('@item.in_id','@item.in_invoicename','@item.in_note')"> <span class='fas fa-edit'></span></a>
+                                                                    @*<a href="@Url.Action("Delete", new { e_id = @item.e_id, e_type="Expense"})" onclick="return confirm('Are you sure you want to delete?')" class='deleteicon text-danger' title="Delete"> <span class='fa fa-trash ml-2'></span></a>*@
+
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        itemNumbero++;
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <!-- End Griddata-->
+                                        <!-- start Pagination-->
+                                        <div class="row mt-3">
+                                            <div class="col-lg-5 col-md-5 col-12 ">
+                                                <div class="row ">
+                                                    <div class="col-lg-3 col-md-3 col-12 d-flex justify-content-lg-start justify-content-md-start justify-content-center ">
+                                                        <h6 class="mt-2"> @Localizer["Show"]</h6>&nbsp;&nbsp;
+                                                        <select name="table_id_length" id="table_length_select2" aria-controls="table_id" class="form-select w-auto">
+                                                            <option value="10">10</option>
+                                                            <option value="25">25</option>
+                                                            <option value="50">50</option>
+                                                            <option value="100">100</option>
+                                                        </select>
+                                                        &nbsp;&nbsp;
+                                                        <h6 class="mt-2"> @Localizer["entries"]</h6>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-2 col-md-2"></div>
+                                            <div class="col-lg-5 col-md-5 col-12 mt-lg-0 mt-md-0 mt-3">
+                                                <nav aria-label="Page navigation example">
+                                                    <div id="table_id_length">
+
+                                                        <div id="dataTable2-custom-pagination" class=" d-flex text-center text-lg-end justify-content-end  text-end float-end">
+                                                            <ul class="pagination justify-content-lg-end justify-content-md-end justify-content-center">
+                                                                <li class="page-item disabled">
+                                                                    <button class="page-link" href="#" aria-label="Previous" data-page="0"> <span aria-hidden="true">&laquo;</span></button>
+                                                                </li>
+                                                                <li class="page-item active"><button class="page-link" href="#" data-page="1">1</button></li>
+
+                                                                <li class="page-item "><button class="page-link" href="#" data-page="2" aria-label="Next">  <span aria-hidden="true">&raquo;</span></button></li>
+
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </nav>
+                                            </div>
+                                        </div>
+                                        <!-- end Pagination-->
+
+                                    </div>
+                                   </div>
+                                
+                            
+                       
+                    
+                </div>
+                <div class="tab-pane fade" id="Series" role="tabpanel" aria-labelledby="Series-tab">
+                    <div class="card border  profile-card">
+                        
+                            <div class="card-header py-3">
+                                <div class="row align-items-center">
+                                    <div class="col">
+                                        <h4 class="m-0 font-weight-bold text-primary">@Localizer["Series"]</h4>
+                                    </div>
+                                    <div class="col-md-2 justify-content-lg-end justify-content-md-end justify-content-center mt-lg-0 mt-md-0 mt-3">
+                                        <input type="text" id="custom-search3" class="form-control" placeholder="Search" />
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                  <div class="card  mb-4">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable3" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th width="6%"> @Localizer["Sr.No"]</th>
+                                        <th style="display:none">ID#</th>
+                                        <th>@Localizer["Screen Name"]</th>
+                                        <th>@Localizer["Series"]</th>
+                                        <th width="7%" class="no-filter">@Localizer["Action"]</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        int itemNumbert = 1;
+                                    }
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@itemNumbert </td>
+                                            <td style="display:none"> @Html.DisplayFor(modelItem => item.s_id)</td>
+                                            <td> @Html.DisplayFor(modelItem => item.s_invoicename)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.s_series)</td>
+                                            <td>
+                                                <div class="d-inline-flex">
+
+                                                    <a class='editicon text-primary' title="Edit" onclick="editSeriesClick('@item.s_id','@item.s_invoicename','@item.s_series')"> <span class='fas fa-edit'></span></a>
+                                                    @*<a href="@Url.Action("Delete", new { e_id = @item.e_id, e_type="Expense"})" onclick="return confirm('Are you sure you want to delete?')" class='deleteicon text-danger' title="Delete"> <span class='fa fa-trash ml-2'></span></a>*@
+
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        itemNumbert++;
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- End Griddata-->
+                        <!-- start Pagination-->
+                        <div class="row mt-3">
+                            <div class="col-lg-5 col-md-5 col-12 ">
+                                <div class="row ">
+                                    <div class="col-lg-3 col-md-3 col-12 d-flex justify-content-lg-start justify-content-md-start justify-content-center ">
+                                        <h6 class="mt-2"> @Localizer["Show"]</h6>&nbsp;&nbsp;
+                                        <select name="table_id_length" id="table_length_select3" aria-controls="table_id" class="form-select w-auto">
+                                            <option value="10">10</option>
+                                            <option value="25">25</option>
+                                            <option value="50">50</option>
+                                            <option value="100">100</option>
+                                        </select>
+                                        &nbsp;&nbsp;
+                                        <h6 class="mt-2"> @Localizer["entries"]</h6>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 col-md-2"></div>
+                            <div class="col-lg-5 col-md-5 col-12 mt-lg-0 mt-md-0 mt-3">
+                                <nav aria-label="Page navigation example">
+                                    <div id="table_id_length">
+
+                                        <div id="dataTable3-custom-pagination" class=" d-flex text-center text-lg-end justify-content-end  text-end float-end">
+                                            <ul class="pagination justify-content-lg-end justify-content-md-end justify-content-center">
+                                                <li class="page-item disabled">
+                                                    <button class="page-link" href="#" aria-label="Previous" data-page="0"> <span aria-hidden="true">&laquo;</span></button>
+                                                </li>
+                                                <li class="page-item active"><button class="page-link" href="#" data-page="1">1</button></li>
+
+                                                <li class="page-item "><button class="page-link" href="#" data-page="2" aria-label="Next">  <span aria-hidden="true">&raquo;</span></button></li>
+
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </nav>
+                            </div>
+                        </div>
+                        <!-- end Pagination-->
+                        
+                    </div>
+                                
+                            
+                  </div> 
+                    
+                </div>
+            </div>
+            <!-- start Modal-->
+            <div class="modal fade" id="termsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title text-dark" id="exampleModalLabel">@Localizer["Edit Terms & Conditions"]</h5>
+
+                            <button type="button" class="btn-close bg-danger text-white" data-bs-dismiss="modal" aria-label="Close" onclick="CancelData()"></button>
+                        </div>
+                        <div class="modal-body text-dark">
+                            <div class="form-group" style="display:none">
+                                <label class="control-label">Id</label>
+                                <input id="tc_id" class="form-control" />
+                                <span class="text-danger"></span>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
+                                    <div class="form-group form-group-sm">
+                                        <label class="control-label fw-bold">
+                                            @Localizer["Invoice Name"] 
+                                        </label>
+                                        <input type="text" id="tc_invoicename" class="form-control"  readonly/>
+                                        <span id="message"></span>
+
+                                    </div>
+                                </div>
+
+                                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-12 ">
+                                    <div class="form-group form-group-sm">
+                                        <label class="control-label fw-bold">
+                                            @Localizer["Terms & Conditions"] <span class="text-danger">*</span>
+                                        </label>
+                                        <textarea id="tc_terms" class="form-control capital-input" placeholder="Enter Terms & Conditions" maxlength="100" ></textarea>
+                                        <span id="message"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button title="Save" type="submit" id="btnsubmit" value="Create" class="btn btn-primary" onclick="submitTerms()"> @Localizer["Submit"]</button>
+                            <button type="button" title="Clear" class="btn btn-secondary" data-dismiss="modal" onclick="cancalTerms()"> @Localizer["Clear"]</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- end Modal-->
+            <!-- start Modal-->
+            <div class="modal fade" id="noteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title text-dark" id="exampleModalLabel">@Localizer["Edit Note"]</h5>
+
+                            <button type="button" class="btn-close bg-danger text-white" data-bs-dismiss="modal" aria-label="Close" onclick="CancelData()"></button>
+                        </div>
+                        <div class="modal-body text-dark">
+                            <div class="form-group" style="display:none">
+                                <label class="control-label">Id</label>
+                                <input id="in_id" class="form-control" />
+                                <span class="text-danger"></span>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
+                                    <div class="form-group form-group-sm">
+                                        <label class="control-label fw-bold">
+                                            @Localizer["Invoice Name"]
+                                        </label>
+                                        <input type="text" id="in_invoicename" class="form-control" readonly />
+                                        <span id="message"></span>
+
+                                    </div>
+                                </div>
+
+                                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-12 ">
+                                    <div class="form-group form-group-sm">
+                                        <label class="control-label fw-bold">
+                                            @Localizer["Invoice Note"] <span class="text-danger">*</span>
+                                        </label>
+                                        <textarea id="in_note" class="form-control capital-input" placeholder="Enter Note" maxlength="100" ></textarea>
+                                        <span id="message"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button title="Save" type="submit" id="btnsubmit" value="Create" class="btn btn-primary" onclick="submitNote()"> @Localizer["Submit"]</button>
+                            <button type="button" title="Clear" class="btn btn-secondary" data-dismiss="modal" onclick="cancalNote()"> @Localizer["Clear"]</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- end Modal-->
+            <!-- start Modal-->
+            <div class="modal fade" id="seriesModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title text-dark" id="exampleModalLabel">@Localizer["Edit Series"]</h5>
+
+                            <button type="button" class="btn-close bg-danger text-white" data-bs-dismiss="modal" aria-label="Close" onclick="CancelData()"></button>
+                        </div>
+                        <div class="modal-body text-dark">
+                            <div class="form-group" style="display:none">
+                                <label class="control-label">Id</label>
+                                <input id="s_id" class="form-control" />
+                                <span class="text-danger"></span>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
+                                    <div class="form-group form-group-sm">
+                                        <label class="control-label fw-bold">
+                                            @Localizer["Invoice Name"]
+                                        </label>
+                                        <input type="text" id="s_invoicename" class="form-control" readonly />
+                                        <span id="message"></span>
+
+                                    </div>
+                                </div>
+
+                                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
+                                    <div class="form-group form-group-sm">
+                                        <label class="control-label fw-bold">
+                                            @Localizer["Series"] <span class="text-danger">*</span>
+                                        </label>
+                                        <input id="s_series" class="form-control capital-input" placeholder="Enter Series" maxlength="100" />
+                                        <span id="message"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button title="Save" type="submit" id="btnsubmit" value="Create" class="btn btn-primary" onclick="submitSeries()"> @Localizer["Submit"]</button>
+                            <button type="button" title="Clear" class="btn btn-secondary" data-dismiss="modal" onclick="cancalSeries()"> @Localizer["Clear"]</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+          </div>
+            <!-- end Modal-->
+        
+    
+   </div>
+<script src="~/vendor/tinymce/tinymce.min.js"></script>
+<script>
+    $(document).ready(function () {
+        //$('#dataTable').DataTable();
+    });
+
+    myFunction();
+    $('#table_length_select').change();
+
+    initializeDataTable('#dataTable2', 'dataTable2-custom-pagination');
+    $('#table_length_select2').change();
+
+    // Initialize DataTable for #dataTable3
+    initializeDataTable('#dataTable3', 'dataTable3-custom-pagination');
+    $('#table_length_select3').change();
+    tinymce.init({
+        selector: 'textarea',
+        plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate ai mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown',
+        toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+        tinycomments_mode: 'embedded',
+        tinycomments_author: 'Author name',
+        mergetags_list: [
+            { value: 'First.Name', title: 'First Name' },
+            { value: 'Email', title: 'Email' },
+        ],
+        ai_request: (request, respondWith) => respondWith.string(() => Promise.reject("See docs to implement AI Assistant")),
+    });
+</script>

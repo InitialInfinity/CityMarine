@@ -1,0 +1,216 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization;
+@using Microsoft.Extensions.Localization
+@inject IViewLocalizer Localizer;
+@model IEnumerable<ibillcraft.Models.SubscriptionModel>
+@{
+    // Layout = null;
+    Layout = "~/Views/Shared/_layout_common.cshtml";
+}
+
+<head>
+    <script src="~/jsfiles/companyregistration/companyregistration.js"></script>
+    @*<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />*@
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" />
+    <link href='https://fonts.googleapis.com/css?family=Cairo' rel='stylesheet'>
+    <link href="~/css/custom.css" rel="stylesheet" />
+    <link href="~/css/Subscription.css" rel="stylesheet" />
+
+@*     <form action="Subscription/Payment" method="post" name="razorpayForm">
+        <input id="razorpay_payment_id" type="hidden" name="razorpay_payment_id" />
+        <input id="razorpay_order_id" type="hidden" name="razorpay_order_id" />
+        <input id="razorpay_signature" type="hidden" name="razorpay_signature" /> 
+        <input id="sm_id" type="hidden" name="sm_id" />
+        <input id="package_name" type="hidden" name="package_name" />
+        <input id="sm_service" type="hidden" name="sm_service" />
+        <input id="subAmount" type="hidden" name="subAmount" />
+        <input id="subDiscount" type="hidden" name="subDiscount" />
+        <input id="final_Amount" type="hidden" name="final_Amount" />
+        <input id="Invoice" type="hidden" name="Invoice" />
+        <input id="Quotation" type="hidden" name="Quotation" />
+        <input id="Expence" type="hidden" name="Expence" />
+        <input id="cash_order" type="hidden" name="cash_order" />
+        <input id="sub_duration" type="hidden" name="sub_duration" />
+
+        const urlParams = new URLSearchParams(window.location.search);
+
+        console.log(com_id);
+        const comId = getUrlParameter('com_id'); 
+        const comCompanyName = getUrlParameter('com_company_name');
+
+        <input id="com_company_name" type="hidden" name="comCompanyName" />
+        <input id="com_id" type="hidden" name="comId" />
+    </form>
+ *@
+
+    <form action="Subscription/Payment" method="post" name="razorpayForm">
+        <input id="sm_id" type="hidden" name="sm_id" />
+        <input id="package_name" type="hidden" name="package_name" />
+        <input id="sm_service" type="hidden" name="sm_service" />
+        <input id="subAmount" type="hidden" name="subAmount" />
+        <input id="subDiscount" type="hidden" name="subDiscount" />
+        <input id="final_Amount" type="hidden" name="final_Amount" />
+        <input id="Invoice" type="hidden" name="Invoice" />
+        <input id="Quotation" type="hidden" name="Quotation" />
+        <input id="Expence" type="hidden" name="Expence" />
+        <input id="cash_order" type="hidden" name="cash_order" />
+        <input id="sub_duration" type="hidden" name="sub_duration" />
+        <input id="com_id" type="hidden" name="com_id" />
+        <input id="com_company_name" type="hidden" name="com_company_name" />
+        <input id="contact" type="hidden" name="contact" />
+        <input id="com_email" type="hidden" name="com_email" />
+
+    </form>
+
+</head>
+
+<body style="background-color:#f9f9f9">
+
+    <div class="logo container-fluid" style="padding: 30px 12px 0px;">
+
+        <img src="~/images/logo.png" style="width: 15%;padding: 10px 0px 20px; " />
+    </div>
+    <header>
+        <h1>@Localizer["Our Pricing"]</h1>
+        <div class="toggle">
+            @* <label>Annually </label>
+            <div class="toggle-btn">
+            <input type="checkbox" class="checkbox" id="checkbox" />
+            <label class="sub" id="sub" for="checkbox">
+            <div class="circle"></div>
+            </label>
+            </div> *@
+            @* <label> Monthly</label> *@
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="cards">
+            @foreach (var plan in Model)
+            {
+                <div class="card active">
+                    <div class="form-group" style="display:none">
+                        <label class="control-label"></label>
+                        <input id="com_id" class="form-control" value="@ViewBag.ComId"  @plan.com_id/>
+                    </div>
+                    <div class="form-group" style="display:none">
+                        <label class="control-label"></label>
+                        <input id="com_company_name" class="form-control" value="@ViewBag.com_company_name"  @plan.com_company_name/>
+
+                    </div>
+                    <div class="form-group" style="display:none">
+                        <label class="control-label"></label>
+                        <input id="com_email" class="form-control" value="@ViewBag.com_email" />
+                        <input id="country" class="form-control" value="@ViewBag.country" />
+                        <input id="contact" class="form-control" value="@ViewBag.contact"/>
+
+                    </div>
+                    <h3 id="sm_id" class="title" style="display:none">@plan.sm_id</h3>
+
+
+                    <ul>
+                        <li class="packhead" id="package_name">@plan.package_name</li>
+
+                        <li class="dispack" id="subAmountDiscount">
+                            <strike><span id="subAmount">₹@plan.subAmount</span></strike> <span id="subDiscount"> &nbsp;&nbsp;&nbsp;@plan.subDiscount % off</span>
+                        </li>
+                        <li id="fAmountDiscount">
+                            <span class="price" id="final_Amount">₹@plan.final_Amount</span> <span id="sub_duration"> &nbsp;&nbsp;&nbsp;/@plan.sub_duration month</span>
+                        </li>
+
+                        <li class="pack bottom-bar" id="sm_service">@plan.sm_service</li>
+
+                        <li class="bottom-bar" id="Invoice">No of Invoices: @plan.Invoice</li>
+                        <li class="bottom-bar" id="Quotation">No of Quotation: @plan.Quotation</li>
+                        <li class="bottom-bar" id="Expence">No of Expence: @plan.Expence</li>
+                        <li class="bottom-bar" id="cash_order">No of Cash Order: @plan.cash_order</li>
+                        @* <li><button class="btn active-btn" id="rzp-button1" onclick="return submitsub('@plan.sm_id', '@plan.package_name', '@plan.sm_service', '@plan.subAmount', '@plan.subDiscount', '@plan.final_Amount', '@plan.Invoice', '@plan.Quotation', '@plan.Expence', '@plan.cash_order', '@plan.sub_duration')">@Localizer["Subscribe"]</button></li> *@
+                        <li><button class="btn active-btn" onclick="return pay('@ViewBag.ComId','@ViewBag.com_company_name','@plan.sm_id', '@plan.package_name', '@plan.sm_service', '@plan.subAmount', '@plan.subDiscount', '@plan.final_Amount', '@plan.Invoice', '@plan.Quotation', '@plan.Expence', '@plan.cash_order', '@plan.sub_duration','@ViewBag.contact','@ViewBag.com_email')">@Localizer["Subscribe"]</button></li>
+                    </ul>
+                </div>
+            }
+        </div>
+
+    </div>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <script>
+        function pay(com_id, com_company_name, sm_id, package_name, sm_service, subAmount, subDiscount, final_Amount, Invoice, Quotation, Expence, cash_order, sub_duration, contact, com_email) {
+
+            var orderId = "@ViewBag.orderid"
+            var options = {
+                "key": "rzp_test_dwM1QoEpJEQIXn", // Enter the Key ID generated from the Dashboard
+                "amount": final_Amount * 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+                "currency": "INR",
+                "name": "@ViewBag.com_company_name",
+                "order_id": orderId,
+                "image": "https://example.com/your_logo",
+                "prefill": {
+                    "name": "@ViewBag.com_company_name",
+                    "email": "@ViewBag.com_email",
+                    "contact": "@ViewBag.contact",
+                },
+                "notes": {
+                    "address": "Hello World"
+                },
+                "theme": {
+                    "color": "#3399cc"
+                }
+            }
+            // Boolean whether to show image inside a white frame. (default: true)
+            options.theme.image_padding = false;
+            options.handler = function (response) {
+                console.log(response);
+                // document.getElementById('razorpay_payment_id').value = response.razorpay_payment_id;
+                // document.getElementById('razorpay_order_id').value = orderId;
+                // document.getElementById('razorpay_signature').value = response.razorpay_signature;
+                document.getElementById('sm_id').value = sm_id;
+                document.getElementById('package_name').value = package_name;
+                document.getElementById('sm_service').value = sm_service;
+                document.getElementById('subAmount').value = subAmount;
+                document.getElementById('subDiscount').value = subDiscount;
+                document.getElementById('final_Amount').value = final_Amount;
+                document.getElementById('Invoice').value = Invoice;
+                document.getElementById('Quotation').value = Quotation;
+                document.getElementById('Expence').value = Expence;
+                document.getElementById('cash_order').value = cash_order;
+                document.getElementById('sub_duration').value = sub_duration;
+                document.getElementById('com_id').value = com_id;
+                document.getElementById('com_company_name').value = com_company_name;
+                document.getElementById('contact').value = contact;
+                document.getElementById('com_email').value = com_email;
+
+                document.razorpayForm.submit();
+            };
+            options.modal = {
+                ondismiss: function () {
+                    console.log("This code runs when the popup is closed");
+                },
+                // Boolean indicating whether pressing escape key
+                // should close the checkout form. (default: true)
+                escape: true,
+                // Boolean indicating whether clicking translucent blank
+                // space outside checkout form should close the form. (default: false)
+                backdropclose: false
+            };
+            var rzp = new Razorpay(options);
+            // document.getElementById('rzp-button1').onclick = function (e) {
+            //     rzp.open();
+            //     e.preventDefault();
+            // }
+            // document.querySelector('.btn.active-btn').onclick = function (e) {
+            //     rzp.open();
+            //     e.preventDefault();
+            // };
+
+
+            rzp.open();
+           
+        }
+
+    
+    </script>
+
+</body>
+
+

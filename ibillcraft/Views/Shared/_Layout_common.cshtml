@@ -1,0 +1,49 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewData["Title"] - ibillcraft</title>
+
+@*     <link href="~/assets/css/style.bundle.css" rel="stylesheet" id="styleSheetLink" />
+ *@    	<link href="~/css/LoginRegistration.css" rel="stylesheet" />
+
+</head>
+<body >
+    <div class="wrapper d-flex flex-column flex-row-fluid">
+        <div class="">
+            <main role="main" class="pb-3">
+                @*@{
+                    var errorMessage = TempData["errorMessage"]?.ToString();
+                    var successMessage = TempData["successMessage"]?.ToString();
+
+                }
+                @if (!string.IsNullOrWhiteSpace(successMessage))
+                {
+                    <div class="alert alert-success">
+                        <b>Success :</b>@successMessage
+                        <button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+                else @if (!string.IsNullOrWhiteSpace(errorMessage))
+                {
+                    <div class="alert alert-danger">
+                        <b>Error :</b>@errorMessage
+                        <button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }*@
+                @RenderBody()
+            </main>
+        </div>
+
+        <!--begin::Footer-->
+       
+        <!--end::Footer-->
+
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/jsfiles/commonjs/commonjs.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="~/js/custom.js"></script>
+</body>
+</html>

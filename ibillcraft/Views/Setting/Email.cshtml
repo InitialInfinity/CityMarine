@@ -1,0 +1,322 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = " Setting";
+    ViewBag.Header = "Setting";
+
+}
+
+<div class="card mb-4 border  profile-card">
+    <h2 class="m-0 font-weight-bold text-primary">Email</h2>
+    <div class="card-body">
+        <form>
+             <div class="row py-2">
+                                    <div class="col-lg-4">
+                                        <label for="name" class="form-label fw-bold">Subject<span class="text-danger">*</span></label>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <input type="text" class="form-control" id="name" placeholder="Enter Subject" required />
+                                    </div>
+                                </div>
+            <div class="row py-2">
+                <div class="col-lg-4">
+                    <label for="message" class="form-label fw-bold">Message<span class="text-danger">*</span></label>
+                </div>
+                <div class="col-lg-8">
+                    <textarea rows="4" cols="50" class="form-control" id="name" placeholder="Enter Message" required></textarea>
+                </div>
+            </div>         
+            <div class="row py-2">
+                <div class="card-footer d-flex justify-content-end">
+                    <button type="button" class="btn btn-success mx-3">Send</button>
+                    <button type="button" class="btn btn-primary mx-3">Cancel </button>                
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+                    @*datatable*@
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <div class="row align-items-center">
+            <div class="col">
+                <h4 class="m-0 font-weight-bold text-primary">Customer List</h4>
+            </div>
+            <div class="col-md-2 justify-content-lg-end justify-content-md-end justify-content-center mt-lg-0 mt-md-0 mt-3">
+
+                <input type="text"
+                       id="custom-search"
+                       class="form-control "
+                       placeholder="Search" />
+            </div>
+            @* <div class="col-auto d-flex flex-wrap toggle">
+            <div class="form-check form-switch mt-lg-1 mt-md-1 mt-3 ml-2 active-toggle">
+            <input class="form-check-input" type="checkbox" id="toggleSwitch">
+            <label class="form-check-label" for="toggleSwitch" data-on="On" data-off="Off"></label>
+            </div>
+            <button class="btn btn-md text-light bg-primary mt-3 mt-lg-0 mt-md-0 ml-2"
+            type="button"
+            data-bs-toggle="modal"
+            data-bs-target="#addSubscription">
+            <i class="fa fa-plus"></i>
+            </button>
+            <button class="btn btn-md text-light bg-success mt-3 mt-lg-0 mt-md-0 ml-2"
+            type="button"
+            data-bs-toggle="modal"
+            data-bs-target="#addSubscription">
+            <i class="fas fa-file-excel"></i>
+            </button>
+            <button class="btn btn-md text-light bg-danger mt-3 mt-lg-0 mt-md-0 ml-2"
+            type="button"
+            data-bs-toggle="modal"
+            data-bs-target="#addSubscription">
+            <i class="fas fa-file-pdf"></i>
+            </button>
+            </div>
+            *@
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th width="6%">Sr.No</th>
+                        <th>Select</th>
+                        <th>Customer</th>
+                        <th>Contact Number</th>
+                    
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td> <input type="checkbox" id="" name="" value=""></td>
+                        <td>jane industries</td>
+                        <td>5211324342424</td>                      
+                    </tr>
+                     <tr>
+                        <td>1</td>
+                        <td> <input type="checkbox" id="" name="" value=""></td>
+                        <td>jane industries</td>
+                        <td>5211324342424</td>                      
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td> <input type="checkbox" id="" name="" value=""></td>
+                        <td>jane industries</td>
+                        <td>5211324342424</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td> <input type="checkbox" id="" name="" value=""></td>
+                        <td>jane industries</td>
+                        <td>5211324342424</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td> <input type="checkbox" id="" name="" value=""></td>
+                        <td>jane industries</td>
+                        <td>5211324342424</td>
+                    </tr>
+                         <tr>
+                        <td>1</td>
+                        <td> <input type="checkbox" id="" name="" value=""></td>
+                        <td>jane industries</td>
+                        <td>5211324342424</td>
+                    </tr>
+                         <tr>
+                        <td>1</td>
+                        <td> <input type="checkbox" id="" name="" value=""></td>
+                        <td>jane industries</td>
+                        <td>5211324342424</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td> <input type="checkbox" id="" name="" value=""></td>
+                        <td>jane industries</td>
+                        <td>5211324342424</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td> <input type="checkbox" id="" name="" value=""></td>
+                        <td>jane industries</td>
+                        <td>5211324342424</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td> <input type="checkbox" id="" name="" value=""></td>
+                        <td>jane industries</td>
+                        <td>5211324342424</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="row mt-3">
+            <div class="col-lg-5 col-md-5 col-12 ">
+                <div class="row ">
+                    <div class="col-lg-3 col-md-3 col-12 d-flex justify-content-lg-start justify-content-md-start justify-content-center ">
+                        <h6 class="mt-2">Show</h6>&nbsp;&nbsp;
+                        <select class="form-select w-auto"
+                                aria-label="Default select example">
+                            <option selected>10</option>
+                            <option value="1">10</option>
+                            <option value="2">50</option>
+                            <option value="3">100</option>
+                        </select>
+                        &nbsp;&nbsp;
+                        <h6 class="mt-2">entries</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-2"></div>
+            <div class="col-lg-5 col-md-5 col-12 mt-lg-0 mt-md-0 mt-3">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-lg-end justify-content-md-end justify-content-center">
+                        <li class="page-item">
+                            <button class="page-link"
+                                    aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </button>
+                        </li>
+                        <li class="page-item active">
+                            <button class="page-link">
+                                1
+                            </button>
+                        </li>
+                        <li class="page-item">
+                            <button class="page-link">
+                                2
+                            </button>
+                        </li>
+                        <li class="page-item">
+                            <button class="page-link">
+                                3
+                            </button>
+                        </li>
+                        <li class="page-item">
+                            <button class="page-link"
+                                    aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </button>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+        @*  <div class="popup_box">
+        <i class="fas fa-exclamation"></i>
+        <h1>Your account will be deleted permanently!</h1>
+        <label>Are you sure to proceed?</label>
+        <div class="btns">
+        <a href="#" class="btn1">Cancel</a>
+        <a href="#" class="btn2">Delete</a>
+        </div>
+        </div>*@
+        <div class="modal fade" id="addSubscription" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title text-dark fw-bold" id="exampleModalLabel">Add Country Master</h5>
+                        <button type="button"
+                                class="btn-close modal-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-dark">
+                        <div class="row">
+                            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
+                                <div class="form-group form-group-sm">
+                                    <label class="control-label fw-bold">
+                                        Country Name <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text"
+                                           id="countryName"
+                                           name="countryName"
+                                           class="form-control mt-2"
+                                           autoComplete="off"
+                                           placeholder="Enter Country Name"
+                                           required />
+                                </div>
+                            </div>
+
+                            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
+                                <div class="form-group form-group-sm">
+                                    <label class="control-label fw-bold">
+                                        Country Code <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text"
+                                           id="countryCode"
+                                           name="countryCode"
+                                           autoComplete="off"
+                                           class="form-control mt-2"
+                                           placeholder="Enter Country Code"
+                                           required />
+                                    <span id="message"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
+                                <div class="form-group form-group-sm">
+                                    <label class="control-label fw-bold">
+                                        Currency Name<span class="text-danger">*</span>
+                                    </label>
+                                    <select class="form-select mt-2">
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                        <option>4</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
+                                <div class="form-group form-group-sm">
+                                    <label class="control-label fw-bold">
+                                        Timezone<span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text"
+                                           id="discount"
+                                           name="discount"
+                                           autoComplete="off"
+                                           class="form-control mt-2"
+                                           placeholder="Enter Timezone"
+                                           required />
+                                    <span id="message"></span>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row mt-2">
+
+                            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
+                                @*                            <label class="control-label fw-bold">
+
+                                </label>*@
+                                <div class="form-check ">
+                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+                                    <label class="form-check-label " for="flexCheckChecked">
+                                        Is Active
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                        <a class="btn btn-primary" href="login.html">Submit</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/js1/buttonanimation.js"></script>
+<a class="dribbble" href="https://dribbble.com/shots/7299868-Download-Buttons" target="_blank"><img src="https://cdn.dribbble.com/assets/dribbble-ball-mark-2bd45f09c2fb58dbbfb44766d5d1d07c5a12972d602ef8b32204d28fa3dda554.svg" alt=""></a>
+<!-- partial -->
+<script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/gsap-latest-beta.min.js'></script>

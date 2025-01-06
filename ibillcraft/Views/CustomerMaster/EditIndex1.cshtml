@@ -1,0 +1,251 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization;
+@using Microsoft.Extensions.Localization
+@inject IViewLocalizer Localizer;
+
+@model Tuple<ibillcraft.Models.CustomerMasterModel, IEnumerable<ibillcraft.Models.CustomerAttachment>>
+@{
+    ViewData["Title"] = "Add Customer";
+    ViewBag.Header = "Client Master";
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<head>
+    <script src="~/jsfiles/customermaster/customermaster.js"></script>
+
+</head>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+
+            <div class="card-header py-3">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h2 class="m-0 font-weight-bold text-primary">@Localizer["Add Client"]</h2>
+                    </div>
+
+                    <div class="col-lg-6">
+
+                        <a class="btn btn-md text-light float-end bg-success mt-3 mt-lg-0 mt-md-0 ml-2" asp-action="Index" asp-controller="CustomerMaster"
+                           title="Back" type="button">
+                            <i class="fa fa-angle-left" style="font-size:24px"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="card-body">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="display:none">
+                    <div class="form-group form-group-sm">
+                        <input id="c_id" name="c_id" class="form-control" asp-for="@Model.Item1.c_id" />
+                    </div>
+                </div>
+
+
+                <div class="form-group row ">
+                    <label class="col-form-label col-md-2">@Localizer["Client Name"] <span class="text-danger">*</span> </label>
+                    <div class="col-md-3 py-2">
+                        <input id="c_name" class="form-control" name="c_name" placeholder="@Localizer["Enter Name"]" onkeydown="return letterOnly(event)" maxlength="100" asp-for="@Model.Item1.c_name" autocomplete="off" />
+                    </div>
+
+                    <label class="col-form-label col-md-2 text-end">@Localizer["Code"] <span class="text-danger">*</span> </label>
+                    <div class="col-md-3 py-2">
+                        <input id="c_ccode" class="form-control" name="c_ccode" placeholder="@Localizer["Enter Code"]" maxlength="100" asp-for="@Model.Item1.c_ccode" autocomplete="off" />
+                    </div>
+                </div>
+                <div class="form-group row ">
+                    <label class="col-form-label col-md-2">@Localizer["Address"] <span class="text-danger">*</span> </label>
+                    <div class="col-md-8 py-2">
+                        <input id="c_address" class="form-control" placeholder="@Localizer["Enter Address"]" maxlength="100" asp-for="@Model.Item1.c_address" autocomplete="off" />
+                    </div>
+                </div>
+                <div class="form-group row ">
+                    <label class="col-form-label col-md-2">@Localizer["Contact No"] <span class="text-danger">*</span> </label>
+                    <div class="col-md-3 py-2 d-flex">
+
+                        <input class="form-control" id="co_country_code" style="width:60px;text-align:center" type="text" value="@ViewBag.co_country_code" asp-for="@Model.Item1.co_country_code" name="name" maxlength="4" readonly>
+                        <input id="c_contact" class="form-control" placeholder="@Localizer["Enter Contact No"]" maxlength="10" textmode="number" asp-for="@Model.Item1.c_contact" onkeydown="return isNumber(event)" onblur="isNumber(this)" autocomplete="off" />
+                    </div>
+                    <label class="col-form-label col-md-2 text-end"> @Localizer["Alternative Contact No"]</label>
+                    <div class="col-md-3 py-2">
+                        <input id="c_contact2" style="text-align:start" class=" form-control" placeholder="@Localizer["Enter Alternative Contact No"]" textmode="number" onkeydown="return isNumber(event)" asp-for="@Model.Item1.c_contact2" autocomplete="off" />
+                    </div>
+                </div>
+                <div class="form-group row ">
+                    <label class="col-form-label col-md-2">@Localizer["Email Id"] <span class="text-danger">*</span> </label>
+                    <div class="col-md-8 py-2">
+                        <input id="c_email" class="form-control" placeholder="@Localizer["Enter Email"]" maxlength="250" onblur="checkemail(this)" asp-for="@Model.Item1.c_email" autocomplete="off" />
+                    </div>
+                </div>
+
+                <div class="form-group row ">
+                    <label class="col-form-label col-md-2">@Localizer["DOB"]  </label>
+                    <div class="col-md-3 py-2">
+                        <input id="c_dob" class="form-control" type="date" asp-for="@Model.Item1.c_dob" onblur="validateBirthdate(this.value)" />
+                    </div>
+                    <label class="col-form-label col-md-2 text-end" style="text-align:center">@Localizer["Anniversary Date"]  </label>
+                    <div class="col-md-3 py-2">
+                        <input id="c_anidate" class="form-control" type="date" asp-for="@Model.Item1.c_anidate" />
+                    </div>
+                </div>
+
+                <div class="form-group row ">
+                    <label class="col-form-label col-md-2">@Localizer["Note"] </label>
+                    <div class="col-md-8 ">
+                        <textarea id="c_note" class="form-control" placeholder="@Localizer["Enter Note"]" asp-for="@Model.Item1.c_note" maxlength="500"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-form-label col-md-2"></div>
+                    <div class="col-md-6 ">
+                        @{
+                            if (Model != null && Model.Item1.c_id != null)
+                            {
+                                if (Model.Item1.c_isactive == "Active")
+                                {
+                                    <input type="checkbox" id="c_isactive" checked />
+                                    <label class="control-label"> @Localizer["Is Active"]</label>
+                                }
+                                else
+                                {
+                                    <input type="checkbox" id="c_isactive" />
+                                    <label class="control-label"> @Localizer["Is Active"]</label>
+                                }
+                            }
+                            else
+                            {
+                                <input type="checkbox" id="c_isactive" name="ChkIsActive" checked />
+                                <label class="control-label"> @Localizer["Is Active"]</label>
+                            }
+                        }
+                    </div>
+                    <div class="col-md-4" style="padding-left:95%">
+
+                        <button class="btn btn-md text-light bg-primary mt-3 mt-lg-0 mt-md-0 ml-2" title="Add " type="button" data-bs-toggle="modal" data-bs-target="#addSubscription" onclick="return AddParameter()"> <i class="fa fa-plus"></i>  </button>
+                    </div>
+                </div>
+
+                <!-- Table for Attachments -->
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                @* <th>Sr.No</th>  *@
+                                <th style="display:none">Type</th>
+                                <th>Name</th>
+                                <th>Type</th>
+
+                                <th>Attachment</th>
+                                <th>Date</th>
+                                <th>Issue Date</th>
+                                <th>Valid Date </th>
+                                <th>Action </th>
+                            </tr>
+                        </thead>
+                        <tbody id="attachmentTable">
+
+
+                            @{
+                                if (Model != null)
+                                {
+                                    {
+                                        @foreach (var item in Model.Item2)
+                                        {
+                                            <tr>
+                                                <td style="display:none"> @Html.DisplayFor(modelItem => item.c_type_id)</td>
+
+                                                <td> @Html.DisplayFor(modelItem => item.name) </td>
+                                                <td>@Html.DisplayFor(modelItem => item.c_type) </td>
+
+                                                <td>
+                                                    <a href="javascript:void(0);" class="download-link" data-file="@item.attachment">
+                                                        <i class="fa-solid fa-download text-primary" style="cursor: pointer;" title="Download"></i>
+                                                    </a>
+                                                </td>
+                                                <td> @Html.DisplayFor(modelItem => item.mdate) </td>
+                                                <td> @Html.DisplayFor(modelItem => item.idate) </td>
+                                                <td> @Html.DisplayFor(modelItem => item.vdate) </td>
+
+                                                <td> <div class='d-flex'>  <i class='fas fa-edit click-edit'></i><i class='fa fa-trash text-danger click'></i> </div> </td>
+
+                                            </tr>
+
+
+
+
+                                        }
+                                    }
+                                }
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+
+
+            </div>
+
+            <div class="col-md-10 text-center m-5">
+                <button title="Save" type="submit" id="btnsubmit" value="Create" class="btn btn-primary" onclick="submitCustomer()">@Localizer["Submit"]</button>
+                <button type="button" title="Clear" class="btn btn-danger" data-dismiss="modal" onclick="CancelData()">@Localizer["Clear"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-dark" id="exampleModalLabel">@Localizer["Add Attachment"]</h5>
+                <button type="button" class="btn-close bg-primary text-white" data-bs-dismiss="modal" aria-label="Close" onclick="CloseData()"></button>
+            </div>
+            <div class="modal-body text-dark">
+
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="type" class="form-label">Type<span class="text-danger">*</span></label>
+
+                    <select class="form-select" id="c_type" asp-items="@(new SelectList(ViewBag.c_type,"Id","Value", ViewBag.SelectedCat))" placeholder="Select Designation" required>
+                        <option value="">-- Select --</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="name" class="form-label">Issue Date <span class="text-danger">*</span></label>
+                    <input type="date" class="form-control" id="idate" required>
+                </div>
+                <div class="mb-3">
+                    <label for="name" class="form-label">Valid Date<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="vdate" required>
+                </div>
+                <div class="mb-3">
+                    <label for="attachment" class="form-label">Attachment<span class="text-danger">*</span></label>
+                    <input type="file" class="form-control" id="attachment" required>
+                </div>
+
+
+            </div>
+            <div class="modal-footer">
+                <button title="Save" type="submit" id="btnsubmit" value="Create" class="btn btn-primary" onclick="submit()">@Localizer["Submit"]</button>
+                <button type="button" title="Close" class="btn btn-danger" data-dismiss="modal" onclick="CancelModelData()">@Localizer["Cancel"]</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+   
+
+
+
+       
+</script>
+
+

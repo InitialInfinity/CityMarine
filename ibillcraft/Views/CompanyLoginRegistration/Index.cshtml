@@ -1,0 +1,206 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization;
+@using Microsoft.Extensions.Localization
+@inject IViewLocalizer Localizer;
+@model ibillcraft.Models.LoginDetailsModel
+@{
+	Layout = "~/Views/Shared/_layout_common.cshtml";
+	//Layout = null;
+	ViewBag.Title = "Login";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta name="viewport" content="width=device-width" />
+	<script src="~/jsfiles/companyregistration/companyregistration.js"></script>
+	@* <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" /> *@
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" />
+	<link href='https://fonts.googleapis.com/css?family=Cairo' rel='stylesheet'>
+	@* <link href="~/css/custom.css" rel="stylesheet" /> *@
+	<link href="~/css/LoginRegistration.css" rel="stylesheet" />
+
+</head>
+<body class="">
+
+	<div class="container form-container mt-5">
+		<div class="signin-signup">
+			<form action="" class="sign-in-form">
+				<h6 class="text-center">Log in to get in the moments updates on the things <br /> that interested you.</h6>
+				<h1 class="fw-bold mt-3">@Localizer["Login"]</h1>
+				<div class="input-field" style="display:none">
+					<i class="fas fa-building"></i>
+					<input type="Text" name="" id="com_code" asp-for="com_code" placeholder="@Localizer["Company Code"]" class="" onkeydown="validateNumchar1(event)" />
+				</div>
+				<div class="input-field">
+					<i @* class="fa fa-phone" *@ class="fas fa-user" aria-hidden="true"></i>
+					<input type="text" name="" id="Contact_no" asp-for="Contact_no" placeholder="@Localizer["Username"]" onkeyup="validateMobile1(this)" onkeydown=" validateMobile2(event)" class="" />
+				</div>
+				<div class="input-field">
+					<i class="fas fa-lock"></i>
+					<input type="password" name="" id="com_password" asp-for="com_password" placeholder="@Localizer["Password"]" class="" onkeydown="checkEnter(event)" />
+				</div>
+				<button type="button" id="loginButton" class="btn" onclick="ValidateDetails()" style="background-color:#000080">@Localizer["Login"]</button>
+				@* <button type="button" class="btn" onclick="ValidateDetails()">@Localizer["Login"]</button> *@
+				<div style="display:flex;">
+					 <div class="form-check mt-lg-3 mt-md-3" style="display:none">
+						<input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
+						<label class="form-check-label " for="flexCheckChecked"> @Localizer["Stay Sign In"] </label>
+					</div> 
+					<div class=" mt-lg-3 mt-md-3">
+						<button type="button" class="btn" onclick="return forget()" style="width: 227px;background-color: darkgray;">
+							@Localizer["Forgot Password"]
+						</button>
+					</div>
+				</div>
+				<div class="mt-2">
+                    <h5>Powered By <img src="~/images/trigun_log.png" style="height:25px;"/></h5>
+					<h6>Trigun Infotech Pvt Ltd.</h6>
+					@* <a asp-controller="CompanyLoginRegistration" asp-action="language" asp-route-culture="en-US" class="text-dark">ENGLISH</a>
+					<a asp-controller="CompanyLoginRegistration" asp-action="language" asp-route-culture="de-DE" class="text-dark">GERMANY</a>
+					<a asp-controller="CompanyLoginRegistration" asp-action="language" asp-route-culture="hi-IN" class="text-dark">HINDI</a>
+					<a asp-controller="CompanyLoginRegistration" asp-action="language" asp-route-culture="ar-SA" class="text-dark">ARABIC</a> *@
+				</div>
+				<p class="account-text">Don't have an account? <a href="#" id="sign-up-btn2">Sign up</a></p>
+			</form>
+			<form action="" class="sign-up-form">
+				<h1 class="fw-bold">@Localizer["Create Account"]</h1>
+				<div class="input-field">
+					<i class="fas fa-user"></i>
+					<input id="com_company_name" type="text" oninput="validateInput(this)" name="" placeholder="@Localizer["Company Name"]" class="" />
+				</div>
+				<div class="input-field">
+					<select class="form-select border-0 justify-content-center" style="outline:none; width:90%; background:#f0f0f0; margin-left: 10px;" id="CountryId" asp-items="@(new SelectList(ViewBag.CountryId,"Id","Value"))" placeholder="Select Country" required style="padding:0px;">
+						<option value="">-- Select --</option>
+					</select>
+					
+				</div>
+				<div class="input-field">
+					<i class="fa fa-envelope" aria-hidden="true"></i>
+					<input id="com_email" type="email" onblur="checkemail(this)" name="" placeholder="@Localizer["Email Address"]" class="" />
+				</div>
+				<div class="input-field">
+					<i class="fa fa-phone" aria-hidden="true"></i>
+					<input id="com_contact" type="number" onblur="validateMobile(this)" name="" placeholder="@Localizer["Contact No"]" class="" />
+				</div>
+				<div class="input-field">
+					<i class="fas fa-user"></i>
+					<input id="com_staff_no" type="number" onkeydown="return isNumber(event)" name="" placeholder="@Localizer["No. of Staff"]" class="" />
+				</div>
+				<button class="btn" type="button" onclick="submitcompany(event)" style="display:none">@Localizer["Register"] </button>
+				<p class="account-text" style="display:none">@Localizer["Already have an account"]? <a href="#" id="sign-in-btn2" style="display:none">@Localizer["Sign in"]</a></p>
+			</form>
+		</div>
+		<div class="panels-container">
+			<div class="panel left-panel">
+				<div class="content">
+					<h1>@Localizer["Welcome"]!</h1>
+					@* <img src="~/images/logo2.png" style="width: 70%;padding: 10px 0px 20px;" style="display:none" /> *@
+					<h3>@Localizer["City Marine Email Management"]</h3>
+					<p>@Localizer["please login with your company info"] <br /> @Localizer["Click below"]</p>
+					<button class="btn register-btn" id="sign-in-btn">@Localizer["Login"]</button>
+				</div>
+@* 				<img src="signin.svg" alt="" class="image">
+ *@			</div>
+			<div class="panel right-panel">
+				<div class="content">
+                    <h1 class="fw-bold">Welcome To</h1>
+					<img src="~/images/citylogin.png" style="width: 60%;padding: 10px 0px 20px;" />
+					<h3>@Localizer["AI-Powered Email Management System"]</h3>
+					@* <p>@Localizer["New to ibillcraft"]?<br> @Localizer["Register your company details and start journey with us"]</p> *@
+					<button class="btn register-btn" id="sign-up-btn" style="display:none">@Localizer["Register"]</button>
+
+					@* <div>
+
+						<a style="color: white;" class="px-1" asp-controller="About" asp-action="Index">About</a>
+
+
+						<a style="color: white;" class="px-1" color: white; asp-controller="Privacy" asp-action="Index">Privacy</a>
+
+						
+					</div>
+					<div>
+						<a style="color: white;" class="px-1" asp-controller="Terms" asp-action="Index">Terms And Conditions</a>
+
+						<a style="color: white;" class="px-1" asp-controller="Refund" asp-action="Index">Refund and Returns Policy</a>
+
+						<a style="color: white;" class="px-1" asp-controller="Contactus" asp-action="Index">Contact Us</a>
+					</div> *@
+					
+				</div>
+@* 				<img src="signup.svg" alt="" class="image">
+ *@			</div>
+		</div>
+	</div>
+	<script>
+		const sign_in_btn = document.querySelector("#sign-in-btn");
+		const sign_up_btn = document.querySelector("#sign-up-btn");
+		const container = document.querySelector(".form-container");
+		const sign_in_btn2 = document.querySelector("#sign-in-btn2");
+		const sign_up_btn2 = document.querySelector("#sign-up-btn2");
+		sign_up_btn.addEventListener("click", () => {
+			container.classList.add("sign-up-mode");
+		});
+		sign_in_btn.addEventListener("click", () => {
+			container.classList.remove("sign-up-mode");
+		});
+		sign_up_btn2.addEventListener("click", () => {
+			container.classList.add("sign-up-mode2");
+		});
+		sign_in_btn2.addEventListener("click", () => {
+			container.classList.remove("sign-up-mode2");
+		});
+	</script>
+
+</body>
+<link href="~/css/LoginRegistration.css" rel="stylesheet" />
+
+</html>
+<!-- start Modal-->
+<div class="modal fade" id="createmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+	 aria-hidden="true">
+	<div class="modal-dialog modal-md" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title text-dark" id="exampleModalLabel">@Localizer["Forgot Password"]</h5>
+				<button type="button" class="btn-close bg-primary text-white" data-bs-dismiss="modal" aria-label="Close" onclick="CancelData()"></button>
+			</div>
+			<div class="modal-body text-dark">
+				<div class="row">
+					<div class="col-xs-6 col-sm-6 col-md-12 ">
+						<div class="input-field">
+							@* <label class="control-label fw-bold">@Localizer["Company Code"] <span class="text-danger">*</span></label> *@
+							<input id="code" type="text" class="form-control" placeholder="     Enter Company Code" onkeydown="validateNumchar(event)" />
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-6 col-sm-6 col-md-12 ">
+						<div class="input-field">
+							@* <label class="control-label fw-bold">@Localizer["Username"] <span class="text-danger">*</span></label> *@
+							<input id="username" type="text" placeholder="     Enter Username"  class="form-control" />
+							<span class="text-danger"></span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" title="Save" type="submit" id="btnsubmit" value="Create" style="background-color:#7239ea" onclick="forgot()">@Localizer["Submit"]</button>
+				<button type="button" title="Close" class="btn btn-secondary" data-dismiss="modal" style="margin:5px" onclick="CancelData()">@Localizer["Cancel"]</button>
+			</div>
+		</div>
+	</div>
+
+</div>
+<!-- end Modal-->
+<script>
+	function forget()
+	{
+		$("#createmodal").modal("show");
+	}
+	function checkEnter(event) {
+		if (event.key === 'Enter') {
+			event.preventDefault(); // Prevent default behavior
+			document.getElementById('loginButton').click(); // Trigger button click event
+		}
+	}
+</script>

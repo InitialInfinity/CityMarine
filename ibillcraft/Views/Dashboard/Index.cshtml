@@ -1,0 +1,804 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization;
+@using Microsoft.Extensions.Localization
+@inject IViewLocalizer Localizer;
+@using System.Globalization
+@model ibillcraft.Models.DashboardC
+@{
+
+    CultureInfo usCulture = new CultureInfo(ViewBag.Format);
+    			ViewBag.Header = "Dashboard";
+
+     
+}
+<link href="~/css/style.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+	$(window).on('unload', function() {
+    setTimeout(function() {
+        $(window).scrollTop(0);
+    }, 100);
+});
+	</script>
+    <style>
+		#kt_footer {
+			position: fixed;
+			bottom: 0;
+			width: 100%;
+			background-color: transparent;  
+			z-index: 0; 
+		}
+        .info-box {
+  border: 3px solid #ddd;
+  border-radius: 32px;
+  padding: 20px;
+  background-color: #fff;
+  transition: all 0.3s ease-in-out;
+}
+
+.info-box:hover {
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.info-box-icon {
+  float: left;
+  margin-right: 10px;
+  font-size: 33px;
+  color: #fff;
+}
+
+.info-box-content {
+  overflow: hidden;
+}
+
+.info-box-text {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+
+.info-box-number {
+  font-size: 24px;
+  color: #333;
+}
+
+.info-box-link {
+  display: block;
+  font-size: 20px;
+  margin-top: 10px;
+  text-align: right;
+  color: #333;
+}
+
+.info-box-link:hover {
+  color: #007bff;
+}
+
+	</style>
+@functions {
+    public string FormatNumberWithSuffix(decimal? value, CultureInfo culture)
+    {
+        //CultureInfo usCulture = culture; // Use the passed-in culture1
+
+        //string[] suffixes = { "", "K", "M", "B", "T" };
+
+        //int magnitude = (int)Math.Log10(Math.Abs((double)value));
+
+        //if (magnitude >= 3)
+        //{
+        //    int suffixIndex = (magnitude - 1) / 3;
+        //    decimal scaledValue = value / (decimal)Math.Pow(10, suffixIndex * 3);
+        //    return $"{scaledValue:N} {suffixes[suffixIndex]}";
+        //}
+        //else
+        //{
+        //    return value.ToString("C", usCulture) ?? "-";
+        //}
+
+
+        // Format the AUD amount2
+        //string formattedAudAmount = value.ToString("C", culture);
+        //return formattedAudAmount;
+
+        //string[] suffixes = { "", "K", "M", "B", "T" }; // Add more suffixes as needed3
+
+        //int index = 0;
+        //while (Math.Abs(value) >= 1000 && index < suffixes.Length - 1)
+        //{
+        //    value /= 1000;
+        //    index++;
+        //}
+
+        //// Format the number using the specified CultureInfo
+        //string formattedValue = value.ToString("N2", culture);
+
+        //// Append the suffix
+        //formattedValue += " " + suffixes[index];
+
+        //return formattedValue;
+         string[] suffixes = { "", "K", "M", "B", "T" }; // Add more suffixes as needed
+
+        int index = 0;
+        decimal absoluteValue = Math.Abs(value.Value);
+
+        while (absoluteValue >= 1000 && index < suffixes.Length - 1)
+        {
+            absoluteValue /= 1000;
+            index++;
+        }
+
+        // Get the currency symbol from the specified CultureInfo
+        //string currencySymbol = culture.NumberFormat.CurrencySymbol;
+
+        //// Format the number using the specified CultureInfo
+        //string formattedValue = absoluteValue.ToString("N2", culture);
+
+        //// Append the currency symbol and suffix
+        //formattedValue += " " + currencySymbol + suffixes[index];
+
+        //return formattedValue;
+        string currencySymbol = culture.NumberFormat.CurrencySymbol;
+
+        // Format the number using the specified CultureInfo
+        string formattedValue = absoluteValue.ToString("N2", culture);
+
+        // Construct the result with the currency symbol, formatted value, and suffix
+        string result = currencySymbol + " " + formattedValue + " " + suffixes[index];
+
+        return result;
+    }
+}
+
+
+    <!--begin::Container-->
+    
+    <!--end::Container-->
+
+    <section class="content container-fluid">
+     
+      
+      <div class="row">
+            <div class="col-lg-3">
+    <div class="info-box bg-pink" style="background-color:#F31559">
+      <span class="info-box-icon"><i class="fas fa-chart-line"></i></span>
+      <div class="info-box-content" >
+        <span class="info-box-text" style="color:white;">Total Emails</span>
+        <span class="info-box-number" style="color:white;">@*  @{                                 
+                            var formattedsp_sale = @Model.data.monthlysale != null ? FormatNumberWithSuffix(Convert.ToDecimal(@Model.data.monthlysale), usCulture) : FormatNumberWithSuffix(0, usCulture);
+                            
+                            }
+
+                            @formattedsp_sale *@ 
+                            0
+                        </span>
+      </div>
+     @*  <a href="@Url.Action("Index", "SaleReport")" class="info-box-link"><i class="fas fa-arrow-right"></i></a> *@
+    </div>
+  </div>
+   <div class="col-lg-3">
+    <div class="info-box bg-pink" style="background-color:#FF52A2">
+      <span class="info-box-icon"><i class="bi bi-graph-down-arrow"></i></span>
+      <div class="info-box-content" >
+        <span class="info-box-text" style="color:white;">Total Claims</span>
+        <span class="info-box-number" style="color:white;">@*  @{
+                                    //string formattedsp_roll = Convert.ToDecimal(@Model.data.monthlyrollpurchase).ToString("C", usCulture) ?? "-";
+                                     var formattedsp_roll = @Model.data.monthlyrollpurchase != null ? FormatNumberWithSuffix(Convert.ToDecimal(@Model.data.monthlyrollpurchase), usCulture) : FormatNumberWithSuffix(0, usCulture);
+                        }
+
+                                @formattedsp_roll *@
+                            0
+                        </span>
+      </div>
+     @*  <a href="@Url.Action("Index", "PurchaseReport")" class="info-box-link"><i class="fas fa-arrow-right"></i></a> *@
+    </div>
+  </div>
+   <div class="col-lg-3">
+    <div class="info-box bg-pink" style="background-color:#d16d30">
+      <span class="info-box-icon"><i class="bi bi-graph-down"></i></span>
+      <div class="info-box-content" >
+        <span class="info-box-text" style="color:white;">Total Enquiries</span>
+        <span class="info-box-number" style="color:white;">  @*  @{
+                               // string formattedsp_expense= Convert.ToDecimal(@Model.data.monthlyexpense).ToString("C", usCulture) ?? "-";
+
+                                 var formattedsp_expense = @Model.data.monthlyexpense != null ? FormatNumberWithSuffix(Convert.ToDecimal(@Model.data.monthlyexpense), usCulture) : FormatNumberWithSuffix(0, usCulture);
+                            }
+
+                            @formattedsp_expense *@
+                        0
+                        </span>
+      </div>
+    @*   <a href="@Url.Action("Index", "Expense")" class="info-box-link"><i class="fas fa-arrow-right"></i></a> *@
+    </div>  
+  </div>
+   <div class="col-lg-3">
+    <div class="info-box bg-pink" style="background-color:#228085">
+      <span class="info-box-icon"><i class="bi bi-graph-up-arrow"></i></span>
+      <div class="info-box-content" >
+        <span class="info-box-text" style="color:white;">Total Clients</span>
+        <span class="info-box-number" style="color:white;">  @*  @{
+                               // string formattedsp_profit= Convert.ToDecimal(@Model.data.monthlyprofit).ToString("C", usCulture) ?? "-";
+                                  var formattedsp_profit = @Model.data.monthlyprofit != null ? FormatNumberWithSuffix(Convert.ToDecimal(@Model.data.monthlyprofit), usCulture) : FormatNumberWithSuffix(0, usCulture);
+                            }
+
+                            @formattedsp_profit *@
+                            0
+                        </span>
+      </div>
+     @*  <a href="#combinedChart" class="info-box-link"><i class="fas fa-arrow-right"></i></a> *@
+     </div>
+  </div>
+       @*  <div class="col-lg-3">
+          <div class="tile-progress tile-pink">
+            <div class="tile-header">
+              
+              <h3> <label id="monthlysale">
+
+                            @{
+                                //string formattedsp_sale= Convert.ToDecimal(@Model.data.monthlysale ).ToString("C", usCulture) ?? "-";
+
+                                 
+                            var formattedsp_sale = @Model.data.monthlysale != null ? FormatNumberWithSuffix(Convert.ToDecimal(@Model.data.monthlysale), usCulture) : FormatNumberWithSuffix(0, usCulture);
+                            
+                            }
+
+                            @formattedsp_sale
+
+                        
+                            </Label></h3>
+            </div>
+            <div class="tile-progressbar"> <span data-fill="65.5%" style="width: 65.5%;"></span> </div>
+            <div class="tile-footer">
+              <a href="@Url.Action("Index", "SaleReport")"><h6 style="color:white;">Monthly Sales</h6></a>
+            </div>
+          </div>
+        </div>
+       
+         *@
+      </div>
+      <!-- /.row -->
+
+@* <div class="row justify-content-between" style="margin-bottom: 15px;">
+    <div class="col-lg-2 col-md-2 col-sm-12">
+        <asp:LinkButton ID="LinkButton1" runat="server" href="@Url.Action("Index", "Product")" class="btn btn-lg btn1" style="display: inline-block; width: 100%; height: 100%;">New Product</asp:LinkButton>
+    </div>
+    <div class="col-lg-2 col-md-2 col-sm-12">
+        <asp:LinkButton ID="LinkButton2" runat="server" href="@Url.Action("Index", "CustomerMaster")" class="btn btn-lg btn2" style="display: inline-block; width: 100%; height: 100%;">New Customers</asp:LinkButton>
+    </div>
+    <div class="col-lg-2 col-md-2 col-sm-12">
+        <asp:LinkButton ID="LinkButton3" runat="server" href="@Url.Action("Index", "Expense")" class="btn btn-lg btn3" style="display: inline-block; width: 100%; height: 100%;">New Expense</asp:LinkButton>
+    </div>
+    <div class="col-lg-2 col-md-2 col-sm-12">
+        <asp:LinkButton ID="LinkButton5" runat="server" href="@Url.Action("Index", "SaleOrder")" class="btn btn-lg btn4" style="display: inline-block; width: 100%; height: 100%;">Create Invoice</asp:LinkButton>
+    </div>
+    <div class="col-lg-2 col-md-2 col-sm-12">
+        <asp:LinkButton ID="LinkButton6" runat="server" href="@Url.Action("Index", "")" class="btn btn-lg btn5" style="display: inline-block; width: 100%; height: 100%;">Create Estimate</asp:LinkButton>
+    </div>
+</div> *@
+
+
+
+
+
+      
+     
+      <!-- /.row -->
+
+
+         <div class="row">
+        <div class="col-lg-3">
+                <div class="info-box bg-pink" style="background-color:#074173">
+      <span class="info-box-icon"><i class="fas fa-chart-line"></i></span>
+      <div class="info-box-content" >
+        <span class="info-box-text" style="color:white;">Daily Emails</span>
+        <span class="info-box-number" style="color:white;">@*  @{
+                                
+                                //string formattedsp_dailysale= Convert.ToDecimal(@Model.data.dailysale).ToString("C", usCulture) ?? "-";
+
+                                var formattedsp_dailysale = @Model.data.dailysale != null ? FormatNumberWithSuffix(Convert.ToDecimal(@Model.data.dailysale), usCulture) : FormatNumberWithSuffix(0, usCulture);
+                            }
+
+                            @formattedsp_dailysale *@
+                        0
+                        </span>
+      </div>
+    </div>
+
+@*           <div class="tile-progress tile-light-green">
+            <div class="tile-header">
+              
+              <h3>₹ <Label id="dailysale">
+                            
+                            
+
+                                 @{
+                                //string formattedsp_dailysale= Convert.ToDecimal(@Model.data.dailysale).ToString("C", usCulture) ?? "-";
+
+                                var formattedsp_dailysale = @Model.data.dailysale != null ? FormatNumberWithSuffix(Convert.ToDecimal(@Model.data.dailysale), usCulture) : FormatNumberWithSuffix(0, usCulture);
+                            }
+
+                            @formattedsp_dailysale
+                          </Label></h3>
+            </div>
+            <div class="tile-progressbar"> <span data-fill="65.5%" style="width: 65.5%;"></span> </div>
+            <div class="tile-footer"><h6 style="color:white;">Daily Sales</h6>
+            </div>
+          </div>
+ *@        </div>
+        <div class="col-lg-3">
+                                               <div class="info-box bg-pink" style="background-color:#1679AB">
+      <span class="info-box-icon"><i class="bi bi-graph-down"></i></span>
+      <div class="info-box-content" >
+        <span class="info-box-text" style="color:white;">Daily Claims</span>
+        <span class="info-box-number" style="color:white;">  @* @{
+                                //string formattedsp_dailysale= Convert.ToDecimal(@Model.data.dailysale).ToString("C", usCulture) ?? "-";
+
+                               var formattedsp_dailyadv = @Model.data.dailyadvance != null ? FormatNumberWithSuffix(Convert.ToDecimal(@Model.data.dailyadvance), usCulture) : FormatNumberWithSuffix(0, usCulture);
+                            }
+
+                            @formattedsp_dailyadv *@
+                            0
+                        </span>
+      </div>
+    </div>  
+
+        </div>
+             <div class="col-lg-3">
+                     <div class="info-box bg-pink" style="background-color:#49cfbc">
+      <span class="info-box-icon"><i class="bi bi-graph-down"></i></span>
+      <div class="info-box-content" >
+        <span class="info-box-text" style="color:white;">Daily Enquires</span>
+        <span class="info-box-number" style="color:white;"> @* @{
+                                //string formattedsp_dailysale= Convert.ToDecimal(@Model.data.dailysale).ToString("C", usCulture) ?? "-";
+
+                                var formattedsp_dailyexp = @Model.data.dailyexpense != null ? FormatNumberWithSuffix(Convert.ToDecimal(@Model.data.dailyexpense), usCulture) : FormatNumberWithSuffix(0, usCulture);
+                            }
+
+                            @formattedsp_dailyexp *@
+                            0
+                        </span>
+      </div>
+    </div>  
+
+        </div>
+          <div class="col-lg-3">
+                                   <div class="info-box bg-pink" style="background-color:#4e9514">
+      <span class="info-box-icon"><i class="bi bi-graph-down"></i></span>
+      <div class="info-box-content" >
+        <span class="info-box-text" style="color:white;">Daily Clients</span>
+        <span class="info-box-number" style="color:white;"> @* @{
+                                //string formattedsp_dailysale= Convert.ToDecimal(@Model.data.dailysale).ToString("C", usCulture) ?? "-";
+
+                                var formattedsp_dailybal = @Model.data.dailybalance != null ? FormatNumberWithSuffix(Convert.ToDecimal(@Model.data.dailybalance), usCulture) : FormatNumberWithSuffix(0, usCulture);
+                            }
+
+                            @formattedsp_dailybal *@
+                            0
+                        </span>
+      </div>
+    </div>  
+
+        </div>        
+      </div>
+      <!-- /.row -->
+
+      
+    @*     <div class="card m-b-3">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-lg-2 col-sm-6 col-xs-12">
+                <div> 
+                  <div class="info-box-content">
+                    <h4 class="text-blue text-center">Vendors</h4>
+                    <h1 class="f-25 text-black text-center">
+            <asp:Label ID="lbl_total_vendor" runat="server" Text=""></asp:Label></h1> <hr/> </div>
+                   
+                  <div class="text-center"><a href="@Url.Action("EditIndex1", "VendorMaster")"><i class="fa fa-plus text-blue" ></i> Add Vendor</a></div>
+                </div>
+                <!-- /.info-box --> 
+              </div>
+                            <div class="col-lg-2 col-sm-6 col-xs-12">
+                <div> 
+                  <div class="info-box-content">
+                    <h4 class="text-purple text-center">Customers</h4>
+                    <h1 class="f-25 text-black text-center">
+            <asp:Label ID="lbl_total_vendor" runat="server" Text=""></asp:Label></h1> <hr/> </div>
+                   
+                  <div class="text-center"><a href="@Url.Action("EditIndex1", "CustomerMaster")"><i class="fa fa-plus text-purple" ></i> Add Customer</a></div>
+                </div>
+                <!-- /.info-box --> 
+              </div>
+
+              <div class="col-lg-2 col-sm-6 col-xs-12">
+                <div> 
+                  <div class="info-box-content">
+                      <h4 class="text-danger text-center">Products</h4>
+                    <h1 class="f-25 text-black text-center"><asp:Label ID="lbl_total_products" runat="server" Text=""></asp:Label></h1><hr/>
+                     </div>
+                  
+                     <div class="text-center"><a href="@Url.Action("EditIndex", "Product")"><i class="fa fa-plus text-danger" ></i> Add Product</a></div>
+                  </div >
+                
+                <!-- /.info-box --> 
+              </div>
+              <div class="col-lg-2 col-sm-6 col-xs-12">
+                <div> 
+                  <div class="info-box-content">
+                      <h4 class="text-info text-center">Invoices</h4>
+                    <h1 class="f-25 text-black text-center"><asp:Label ID="lbl_total_invoice" runat="server" Text=""></asp:Label></h1> <hr/></div>
+                   
+                    <div class="text-center"><a href="@Url.Action("Index", "SaleOrder")"><i class="fa fa-plus text-info" ></i> Add Sale</a></div>
+                    <div class="text-center"><a href="@Url.Action("Index", "")"><i class="fa fa-plus text-info" ></i> Add Estimate</a></div>
+                  </div>
+               
+                <!-- /.info-box --> 
+              </div>
+              <div class="col-lg-2 col-sm-6 col-xs-12">
+                <div> 
+                  <div class="info-box-content">
+                      <h4 class="text-green text-center">Quotations</h4>
+                    <h1 class="f-25 text-black text-center"><asp:Label ID="lbl_total_quotation" runat="server" Text=""></asp:Label></h1>  <hr/></div>
+                   
+                    <div class="text-center"><a href="@Url.Action("Index", "Quotation")"><i class="fa fa-plus text-green" ></i> Add Quotation</a></div>
+                  </div>
+               
+                <!-- /.info-box --> 
+              </div>
+                            <div class="col-lg-2 col-sm-6 col-xs-12">
+                <div> 
+                  <div class="info-box-content">
+                      <h4 class="text-maroon text-center">Expense</h4>
+                    <h1 class="f-25 text-black text-center"><asp:Label ID="lbl_total_quotation" runat="server" Text=""></asp:Label></h1>  <hr/></div>
+                   
+                    <div class="text-center"><a href="@Url.Action("Index", "Expense")"><i class="fa fa-plus text-maroon" ></i> Add Expense</a></div>
+                  </div>
+               
+                <!-- /.info-box --> 
+              </div>
+
+            </div>
+          </div>
+      </div> *@
+        <div class="row info-box d-flex">
+             <div class="col-lg-12">
+                        <canvas id="combinedChart" width="1300" height="400"></canvas>
+
+  @*     @{
+    // Convert custom data to JavaScript arrays
+    var list1Data = Model.list1.Select(item => new { label = item.Month, value = item.AllTotal }).ToList();
+    var list2Data = Model.list2.Select(item => new { label = item.Month, value = item.AllTotal }).ToList();
+    var list3Data = Model.list3.Select(item => new { label = item.Month, value = item.AllTotal }).ToList();
+   // var list4Data = Model.list4.Select(item => new { label = item.Month, value = item.AllTotal }).ToList();
+} *@
+            @{
+                // Example: Generating straight line data
+                var months = new[] { "Jan", "Feb", "Mar", "Apr", "May","Jun","Jul","Aug","Sep","Oct","Nov","Dec" };
+
+                // Define constant values for each list to create a straight line
+                int list1ConstantValue = 0;
+                int list2ConstantValue = 0;
+                int list3ConstantValue =0;
+
+                // Generate list1Data with a constant value
+                var list1Data = months.Select(month => new { label = month, value = list1ConstantValue }).ToList();
+
+                // Generate list2Data with a constant value
+                var list2Data = months.Select(month => new { label = month, value = list2ConstantValue }).ToList();
+
+                // Generate list3Data with a constant value
+                var list3Data = months.Select(month => new { label = month, value = list3ConstantValue }).ToList();
+            }
+<script>
+    // Prepare data for the combined chart
+var labels = [@Html.Raw(string.Join(",", list1Data.Select(item => "\"" + item.label + "\"")))];
+
+    var combinedChartData = {
+        labels: labels,
+        datasets: [{
+            label: 'Enquiry',
+            data: [@string.Join(",", list1Data.Select(item => item.value))],
+            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+            type: 'bar'
+        }, {
+            label: 'Claim',
+            data: [@string.Join(",", list2Data.Select(item => item.value))],
+            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+            type: 'bar'
+        }, {
+            label: 'Client',
+            data: [@string.Join(",", list3Data.Select(item => item.value))],
+            borderColor: 'rgba(255, 99, 132, 1)',
+            fill: false,
+            type: 'line'
+        }//, {
+            // label: 'Profit To Be Expected',
+            // data: [string.Join(",", list4Data.Select(item => item.value))],
+            // borderColor: 'rgba(54, 162, 235, 1)',
+            // fill: false,
+            // type: 'line'
+       // }
+        ]
+    };
+    // Create combined chart
+    var combinedChart = new Chart(document.getElementById('combinedChart').getContext('2d'), {
+        type: 'bar', // Default type is bar
+        data: combinedChartData,
+         options: {
+        responsive: false, // Disable responsiveness
+        maintainAspectRatio: false,
+        scales: {
+            yAxes: [{
+                ticks: {
+                    min: 0,
+                    stepSize: 1000000
+                }
+            }]
+        },
+        height: 400,
+        width: 1300
+    }
+    });
+</script>
+      
+              </div>
+    @*       <div class="col-lg-4 ">
+             
+         <div class=" tile-progress " style="background-color:#1679AB">
+            <div class="tile-header">
+             
+              <h5>Turnover</h5>
+              <h5>Total Amount : <label id="totalamount">
+                            @{     
+                            var formatted1 = @Model.data.totalamount != null ? FormatNumberWithSuffix(Convert.ToDecimal(@Model.data.totalamount), usCulture) : FormatNumberWithSuffix(0, usCulture);                        
+                            }
+                           @formatted1 </Label> | 
+                           Total Advance : <label id="totaladvance">
+                            @{     
+                            var formatted12 = @Model.data.totaladvance != null ? FormatNumberWithSuffix(Convert.ToDecimal(@Model.data.totaladvance), usCulture) : FormatNumberWithSuffix(0, usCulture);                        
+                            }
+                           @formatted12 </Label></h5>
+              <br/>
+              <h5>Expense</h5>
+              <h5>Total Purchase : <label id="totalpurchase">
+                            @{     
+                            var formatted123 = @Model.data.totalpurchase != null ? FormatNumberWithSuffix(Convert.ToDecimal(@Model.data.totalpurchase), usCulture) : FormatNumberWithSuffix(0, usCulture);                        
+                            }
+                           @formatted123 </Label> | 
+                           Total Expense : <label id="totalexpense">
+                            @{     
+                            var formatted1234 = @Model.data.totalexpense != null ? FormatNumberWithSuffix(Convert.ToDecimal(@Model.data.totalexpense), usCulture) : FormatNumberWithSuffix(0, usCulture);                        
+                            }
+                           @formatted1234 </Label></h5>
+              <br/>
+              <h5>Business</h5>
+              <h5>Total Profit : <label id="totalprofit">
+                            @{     
+                            var formatted12345 = @Model.data.totalprofit != null ? FormatNumberWithSuffix(Convert.ToDecimal(@Model.data.totalprofit), usCulture) : FormatNumberWithSuffix(0, usCulture);                        
+                            }
+                           @formatted12345 </Label></h5>
+            </div>
+            
+            <div class="tile-footer">
+              <a href="@Url.Action("Index", "AdvanceReport")"><h5 style="color:white;">Monthly Total Business Details</h5></a>
+            </div>
+          </div>
+         </div> *@
+      </div>
+      <!-- /.row -->
+
+      <div class="row info-box">
+
+          <div class="">
+            <div class="card-header">
+              <h5 class="card-title">Recent Mails <a href="@Url.Action("Index", "Dashboard")" class="btn btn-sm btn-primary pull-right text-white">View all</a></h5>
+            </div>
+            <div class="table-responsive">
+                <div class="card-body pt-2">
+                    <!--begin::Table-->
+                    <table class="table align-middle table-row-dashed fs-6 gy-3 table-responsive" id="dataTable1">
+                        <!--begin::Table head-->
+
+
+                        <thead>
+                            <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
+                                <th width="4%">@Localizer["Sr.No"]</th>
+                                <th>@Localizer["From"]</th>
+                                <th>@Localizer["To"]</th>
+                                <th>@Localizer["Subject"]</th>
+                                <th>@Localizer["Date"]</th>
+                                <th>@Localizer["Attachment"]</th>
+                                <th>@Localizer["View"]</th>
+                            </tr>
+                        </thead>
+                        <!--end::Table head-->
+                        <!--begin::Table body-->
+                        <tbody class="fw-bold text-gray-600">
+                           @*  @{
+                                int itemNumbers = 1;
+                            }
+                            @foreach (var item2 in Model.list6)
+                            {
+                                <tr>
+                                    <td>@itemNumbers </td>
+                                    <td style="display:none"> @Html.DisplayFor(modelItem => item2.sl_id)</td>
+                                    <td>@Html.DisplayFor(modelItem => item2.sl_invoice_no)</td>
+                                    <td>@String.Format("{0:dd/MM/yyyy}", item2.sl_invoice_date)</td>
+                                    <td>@Html.DisplayFor(modelItem => item2.sl_cust_name)</td>
+                                    
+                               
+                                  
+<td>
+    <span class="badge py-3 px-4 fs-7 @(Convert.ToDecimal(item2.sl_balance) > 0 ? (Math.Abs(Convert.ToDouble(item2.sl_balance) - (Convert.ToDouble(item2.sl_total_withgst) - (Convert.ToDouble(item2.sl_discount) + Convert.ToDouble(item2.sl_advance)))) < 0.001 ? "badge-light-danger" : "badge-light-warning") : "badge-light-success")">
+        @(Convert.ToDecimal(item2.sl_balance) > 0 ? (Math.Abs(Convert.ToDouble(item2.sl_balance) - (Convert.ToDouble(item2.sl_total_withgst) - (Convert.ToDouble(item2.sl_discount) + Convert.ToDouble(item2.sl_advance)))) < 0.001 ? "Unpaid" : "Partially") : "Paid")
+    </span>
+</td>
+                                    <td>
+                                    
+                                        @{
+                                            string formattedwithgst = item2.sl_total_withgst?.ToString("C", usCulture) ?? "-";
+                                        }
+                                        @formattedwithgst
+                                    </td>
+                                    <td>
+                                        @{
+                                            string formatteddiscount = item2.sl_discount?.ToString("C", usCulture) ?? "-";
+                                        }
+                                        @formatteddiscount
+                                    </td>
+                                    <td>
+                                        @{
+                                            string formattedadvance = item2.sl_advance?.ToString("C", usCulture) ?? "-";
+                                        }
+                                        @formattedadvance
+                                    </td>
+                                    <td>
+                                        @{
+                                            string formattedBalance = item2.sl_balance?.ToString("C", usCulture) ?? "-";
+                                        }
+                                        @formattedBalance
+                                    </td>
+                                    <td style="display:none"></td>
+
+                                </tr>
+
+                                itemNumbers++;
+                            } *@
+                            <tr>
+                                <td>1</td>
+                                <td>abc@gmail.com</td>
+                                <td>xyz@gmail.com</td>
+                                <td>Enquiry for A</td>
+                                <td>15/02/2024</td>
+                                <td>File1.pdf</td>
+                                <td> <a href="#" title="View PDF"><i class="fas fa-eye" style="font-size: 16px; color: blue;"></i></a></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>pqr@gmail.com</td>
+                                <td>sfr@gmail.com</td>
+                                <td>Enquiry of Claim</td>
+                                <td>12/05/2024</td>
+                                <td>Claim.pdf</td>
+                                <td> <a href="#" title="View PDF"><i class="fas fa-eye" style="font-size: 16px; color: blue;"></i></a></td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>ush@gmail.com</td>
+                                <td>cnd@gmail.com</td>
+                                <td>Enquiry</td>
+                                <td>02/08/2024</td>
+                                <td>Enquiry.zip</td>
+                                <td> <a href="#" title="View PDF"><i class="fas fa-eye" style="font-size: 16px; color: blue;"></i></a></td>
+                            </tr>                          
+                        </tbody>
+                        <!--end::Table body-->
+                    </table>
+                    <!--end::Table-->
+                </div>
+            </div>
+          </div>
+   
+     @*     <div class="col-xl-4 m-b-3">
+          <div class="info-box">
+            <div class="col-12">
+              <div class="d-flex flex-wrap">
+                <div>
+                  <h5 class="m-b-15">Statistics</h5>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-10 m-auto m-top-40 m-bot-10">
+              <div id="donut"></div>
+            </div>
+            <div class="row">
+
+            </div>
+          </div>
+        </div> *@
+      </div>
+      <!-- /.row -->
+
+    </section>
+
+<script>
+
+
+    myFunction();
+    $('#table_length_select').change();
+$(window).on('unload', function() {
+    setTimeout(function() {
+        $(window).scrollTop(0);
+    }, 100);
+});
+</script>
+     <style>
+        hr {
+    margin-top: 0rem !important;
+    margin-bottom: 0rem !important;
+    border: 0;
+    border-top: 1px solid rgba(0,0,0,.1);
+}
+         .btn
+        {
+           
+        }
+
+          .btn1
+          {
+              background-color:#ce8427;
+              padding:25px 35px;
+              font-size:17px;
+              color:#fff;
+          }
+
+          .btn2
+          {
+              background-color:#462066;
+              padding:25px 35px;
+              font-size:17px;
+              color:#fff;
+          }
+          .btn3
+          {
+              background-color:#229081;
+              padding:25px 35px;
+              font-size:17px;
+              color:#fff;
+          }
+          .btn4
+          {
+              background-color:#da5737;
+              padding:25px 35px;
+              font-size:17px;
+              color:#fff;
+          }
+          .btn5
+          {
+              background-color:#ce8427;
+              padding:25px 35px;
+              font-size:17px;
+              color:#fff;
+          }
+    </style>
+          <meta charset="utf-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+
+<!-- Tell the browser to be responsive to screen width -->
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport"/>
+
+<!-- v4.0.0 -->
+<link rel="stylesheet" href="dist/bootstrap/css/bootstrap.min.css"/>
+
+<!-- Favicon -->
+<link rel="icon" type="image/png" sizes="16x16" href="dist/img/favicon-16x16.png"/>
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet"/>
+
+
+<!-- Theme style -->
+<link rel="stylesheet" href="dist/css/style.css"/>
+<link rel="stylesheet" href="dist/css/font-awesome/css/font-awesome.min.css"/>
+<link rel="stylesheet" href="dist/css/et-line-font/et-line-font.css"/>
+<link rel="stylesheet" href="dist/css/themify-icons/themify-icons.css"/>
+<link rel="stylesheet" href="dist/css/simple-lineicon/simple-line-icons.css"/>
+      <link href="dist/plugins/calendar/fullcalendar.min.css" rel="stylesheet" />

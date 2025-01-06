@@ -1,0 +1,152 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization;
+@using Microsoft.Extensions.Localization
+@inject IViewLocalizer Localizer;
+@{
+    Layout = "~/Views/Shared/_layout_common.cshtml";
+    //Layout = null;
+}
+<head>
+    <script src="~/jsfiles/companyregistration/companyregistration.js"></script>
+    @*<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />*@
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" />
+    <link href='https://fonts.googleapis.com/css?family=Cairo' rel='stylesheet'>
+    <link href="~/css/custom.css" rel="stylesheet" />
+</head>
+<div class="container-fluid" style="padding:0px;">
+    <div class="logo" style="padding: 30px 12px 0px;">
+
+        <img src="~/images/review-digest1.png" style="width: 15%;padding: 22px 213px 0px;" />
+    </div>
+</div>
+<section class="container-fluid mt-2">
+    <div class="row">
+        <div class="col-lg-12 col-xl-12 col-md-12 col-sm-12 col-12 payment-sizer">
+            <div class="card shadow  " style="width:900px;">
+                <div class="card-header" style="background-color: white">
+                    <h2 class="mx-2 my-3 fw-bold">@Localizer["Payment Gateway"]</h2>
+                </div>
+                <div class="card-body">
+                    <div class="container-fluid py-2">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <h5 class="fw-bold">@Localizer["BILLING ADDRESS"]</h5>
+                                <div class="row mt-3">
+                                    <div style="display:none">
+                                        <div class="form-group" style="display:none">
+                                            <label class="control-label"></label>
+                                            <input id="com_id" class="form-control" value="@ViewBag.ComId" />
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label"></label>
+                                            <input id="sub_id" class="form-control" value="@ViewBag.sub_id" />
+
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+                                        <div class="form-group form-group-sm">
+                                            <label class="control-label fw-bold">@Localizer["Company Name"]<span class="text-danger">*</span></label>
+                                            <input type="text" id="com_company_name" value="@ViewBag.com_company_name" class="form-control mt-3" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+                                        <div class="form-group form-group-sm mt-3">
+                                            <label class="control-label fw-bold">@Localizer["Email"]<span class="text-danger">*</span></label>
+                                            <input id="com_email" type="email" name="email" class="form-control mt-3" autoComplete="off" placeholder="example@example.com" readonly value="@ViewBag.com_company_email" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+                                        <div class="form-group form-group-sm mt-3">
+                                            <label class="control-label fw-bold">@Localizer["Payment Mode"]<span class="text-danger">*</span></label>
+                                            <input type="text" id="Payment_Mode" name="Payment_Mode" class="form-control mt-3" autoComplete="off" value="Card" placeholder="Enter payment mode" oninput="validateInput(this)" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+                                        <div class="form-group form-group-sm mt-3">
+                                            <label class="control-label fw-bold">@Localizer["Country"]<span class="text-danger">*</span></label>
+                                            @*<select class="form-select" id="CountryId" asp-items="@(new SelectList(ViewBag.CountryId,"Id","Value"))" placeholder="Select Country" required>
+                                                <option value="">-- Select --</option>
+                                            </select>*@
+                                            <input type="text" id="CountryId" class="form-control mt-3" autoComplete="off" value="@ViewBag.country" readonly placeholder="Enter payment mode"  required />
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-6 col-sm-12 col-md-6 col-lg-6 ">
+                                        <div class="form-group form-group-sm mt-3">
+                                            <label class="control-label fw-bold">@Localizer["Amount"]<span class="text-danger">*</span></label>
+                                            <input textmode="number" id="Amount" name="Amount" class="form-control mt-3" autoComplete="off" placeholder="Amount" readonly value="@ViewBag.final_Amt" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-6 col-sm-12 col-md-6 col-lg-6 ">
+                                        <div class="form-group form-group-sm mt-3">
+                                            <label class="control-label fw-bold">@Localizer["Zip Code"]<span class="text-danger">*</span></label>
+                                            <input textmode="number" id="zipCode" name="zipCode" class="form-control mt-3" autoComplete="off" maxlength="6" placeholder="123 456" required />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6">
+                                <h5 class="fw-bold mt-3 mt-lg-0 mt-md-3">@Localizer["PAYMENT"]</h5>
+                                <div class="row mt-3">
+                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+                                        <div class="form-group form-group-sm">
+                                            <label class="control-label fw-bold">@Localizer["Card Accepted"]<span class="text-danger">*</span></label>
+                                            <div class="d-flex payment mt-3">
+                                                <img src="https://m.economictimes.com/thumb/msid-74960608,width-1200,height-900,resizemode-4,imgsize-49172/upi-twitter.jpg">&nbsp;&nbsp;
+                                                <img src="https://p7.hiclipart.com/preview/836/850/514/credit-card-debit-card-mastercard-payment-card-credit-card.jpg">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+                                        <div class="form-group form-group-sm mt-3">
+                                            <label class="control-label fw-bold">@Localizer["Name On Card"]</label>
+                                            <input type="text" id="cardName" name="cardName" class="form-control mt-3" autoComplete="off" placeholder="Mr. John Doe" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+                                        <div class="form-group form-group-sm mt-3">
+                                            <label class="control-label fw-bold">@Localizer["Credit Card Number"]</label>
+                                            <input textmode="number" maxlength="16" id="cardNumber" name="cardNumber" class="form-control mt-3" autoComplete="off" placeholder="1111-2222-3333-4444" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 ">
+                                        <div class="form-group form-group-sm mt-3">
+                                            <label class="control-label fw-bold">@Localizer["Exp Month"]</label>
+                                            <input type="text" id="expMonth" name="expMonth" class="form-control " autoComplete="off" placeholder="January" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-6 col-sm-12 col-md-6 col-lg-6 ">
+                                        <div class="form-group form-group-sm mt-3">
+                                            <label class="control-label fw-bold">@Localizer["Exp Year"]<span class="text-danger">*</span></label>
+                                            <input type="text" id="expYear" name="expYear" class="form-control mt-3" autoComplete="off" placeholder="2022" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-6 col-sm-12 col-md-6 col-lg-6 ">
+                                        <div class="form-group form-group-sm mt-3">
+                                            <label class="control-label fw-bold">@Localizer["CVV"]<span class="text-danger">*</span></label>
+                                            <input type="text" id="cvv" name="cvv" class="form-control mt-3" autoComplete="off" placeholder="1234" required />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-lg-12 col-12  md-0 my-4 text-center">
+                                <button type="submit" onclick="Submit()"
+                                        class="btn btn-lg w-50 checkout-btn">
+                                    @Localizer["Proceed to Checkout"]
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@* <footer>
+    <p class="" style="font-size: 20px;font-weight: 500;text-align:center; margin-top:40px;">@Localizer["printSoft  2023  Copyright"]</p>
+</footer>
+ *@
+

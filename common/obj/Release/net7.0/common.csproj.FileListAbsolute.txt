@@ -1,0 +1,12 @@
+D:\ibillcraft\ibillcraft\common\bin\Release\net7.0\common.deps.json
+D:\ibillcraft\ibillcraft\common\bin\Release\net7.0\common.dll
+D:\ibillcraft\ibillcraft\common\bin\Release\net7.0\common.pdb
+D:\ibillcraft\ibillcraft\common\obj\Release\net7.0\common.csproj.AssemblyReference.cache
+D:\ibillcraft\ibillcraft\common\obj\Release\net7.0\common.GeneratedMSBuildEditorConfig.editorconfig
+D:\ibillcraft\ibillcraft\common\obj\Release\net7.0\common.AssemblyInfoInputs.cache
+D:\ibillcraft\ibillcraft\common\obj\Release\net7.0\common.AssemblyInfo.cs
+D:\ibillcraft\ibillcraft\common\obj\Release\net7.0\common.csproj.CoreCompileInputs.cache
+D:\ibillcraft\ibillcraft\common\obj\Release\net7.0\common.dll
+D:\ibillcraft\ibillcraft\common\obj\Release\net7.0\refint\common.dll
+D:\ibillcraft\ibillcraft\common\obj\Release\net7.0\common.pdb
+D:\ibillcraft\ibillcraft\common\obj\Release\net7.0\ref\common.dll

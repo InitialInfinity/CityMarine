@@ -1,0 +1,266 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization;
+@using Microsoft.Extensions.Localization
+@inject IViewLocalizer Localizer;
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Add User ";
+    ViewBag.Header = "User";
+
+}
+<head>
+    <script src="~/jsfiles/staff/staff.js"></script>
+    <script src="~/jsfiles/commonjs/commonjs.js"></script>
+    <script src="~/jsfiles/commonjs/contact.js"></script>
+</head>
+<script>
+    $(document).ready(function () {
+        var selectedtask = @ViewBag.Edit;
+        if (selectedtask === Edit) {
+            $("#Edit").css("display", "block");
+            $("#Entry").css("display", "none");
+            document.title = "Edit User";
+        }
+        else {
+            $("#Edit").css("display", "none");
+            $("#Entry").css("display", "block");
+        }
+    });
+</script>
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <div class="row">
+            <div class="col-lg-6">
+                <h2 class="m-0 font-weight-bold text-primary" style="display:none" id="Edit">@Localizer["User Edit Form"]</h2>
+                <h2 class="m-0 font-weight-bold text-primary" style="display:none" id="Entry">@Localizer["User Entry Form"]</h2>
+            </div>
+            <div class="col-lg-6">
+                <a class="btn btn-md text-light  float-end bg-success mt-3 mt-lg-0 mt-md-0 ml-2" asp-action="Index" asp-controller="Staff"
+                   title="Back" type="button">
+                    <i class="fa fa-angle-left" style="font-size:24px"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-lg-7" style="display:none">
+                <input type="text" class="form-control" id="st_id" value="@ViewBag.st_id" placeholder="Enter Staff Name" name="name">
+
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-lg-6">
+                    <div class="row mt-3 mt-lg-0 mt-md-3">
+                        <div class="col-lg-5">
+                            <label for="name" class="form-label float-lg-end">@Localizer["Code"]:<span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-lg-7">
+                            <input type="text" class="form-control" placeholder="Enter  Code" value="@ViewBag.st_staff_code" name="name" id="st_staff_code">
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="row mt-3 mt-lg-0 mt-md-3">
+                        <div class="col-lg-5">
+                            <label for="name" class="form-label float-lg-end">@Localizer["Name"]:<span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-lg-7">
+                            <input type="text" class="form-control" maxlength="100" onkeydown="return letterOnly(event)" id="st_staff_name" value="@ViewBag.st_staff_name" placeholder="Enter  Name" name="name">
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-lg-6">
+                    <div class="row mt-3 mt-lg-0 mt-md-3">
+                        <div class="col-lg-5">
+                            <label for="unit" class="form-label float-lg-end">@Localizer["Email"]:<span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-lg-7">
+                            <input class="form-control" maxlength="250" value="@ViewBag.st_email" onblur="checkemail(this)" placeholder="Enter Email" id="st_email" rows="2" />
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="col-lg-6">
+                    <div class="row mt-3 mt-lg-0 mt-md-3">
+                        <div class="col-lg-5">
+                            <label for="unit" class="form-label float-lg-end">@Localizer["Address"]:<span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-lg-7">
+                            <input class="form-control" maxlength="100" value="@ViewBag.st_address" placeholder="Enter Address" id="st_address" rows="2" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-lg-6">
+                    <div class="row mt-3 mt-lg-0 mt-md-3">
+                        <div class="col-lg-5">
+                            <label for="name" class="form-label float-lg-end">@Localizer["Contact No"]:<span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-lg-7 d-flex">
+                            <input class="form-control" id="co_country_code" style="width:60px" type="text" value="@ViewBag.co_country_code" name="name" maxlength="4" readonly>
+                            <input type="text" class="form-control ml-2" onkeydown="return isNumber(event)" onblur="isNumber(this)" maxlength="15" value="@ViewBag.st_contact" id="st_contact" placeholder="Enter Contact No" name="name">
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="col-lg-6">
+                    <div class="row mt-3 mt-lg-0 mt-md-3">
+                        <div class="col-lg-5">
+                            <label for="dob" class="form-label float-lg-end">@Localizer["DOB"]:</label>
+                        </div>
+                        <div class="col-lg-7">
+                            <input type="date" onblur="validateBirthdate(this.value)" class="form-control" value="@ViewBag.st_dob" @* value="@((ViewBag.st_dob as DateTime?)?.ToString("yyyy-MM-dd"))" *@ id="st_dob" name="name">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-lg-6">
+                    <div class="row mt-3 mt-lg-0 mt-md-3">
+                        <div class="col-lg-5">
+                            <label for="name" class="form-label float-lg-end">@Localizer["Gender"]:<span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-lg-7">
+                            <select class="form-select" id="st_gender" asp-items="@(new SelectList(ViewBag.st_gender,"Id","Value", ViewBag.SelectedGender))" placeholder="Select Gender" required>
+                                <option value="">-- Select --</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="col-lg-6">
+                    <div class="row mt-3 mt-lg-0 mt-md-3">
+                        <div class="col-lg-5">
+                            <label for="designation" class="form-label float-lg-end">@Localizer["Designation"]:</label>
+                        </div>
+                        <div class="col-lg-7">
+                            <select class="form-select" id="st_designation_id" asp-items="@(new SelectList(ViewBag.st_designation_id,"Id","Value", ViewBag.SelectedDeg))" placeholder="Select Designation" required>
+                                <option value="">-- Select --</option>
+                            </select>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-lg-6">
+                
+
+                    <div class="row mt-3 mt-lg-0 mt-md-3">
+                        <div class="col-lg-5">
+                            <label for="designation" class="form-label float-lg-end">@Localizer["Department"]:<span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-lg-7">
+                            <select class="form-select" id="st_category" asp-items="@(new SelectList(ViewBag.st_category,"Id","Value", ViewBag.SelectedCat))" placeholder="Select Designation" required>
+                                <option value="">-- Select --</option>
+                            </select>
+                        </div>
+
+                    </div>
+                </div>
+
+          
+                <div class="col-lg-6">
+                    <div class="row mt-3 mt-lg-0 mt-md-3">
+                        <div class="col-lg-5">
+                            <label for="name" class="form-label float-lg-end">@Localizer["Joining Date"]:<span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-lg-7">
+                            <input type="date" class="form-control" @* onblur="validateJoiningDate(this.value)" *@ id="st_joining_date" value="@ViewBag.st_joining_date" placeholder="Joining Date" name="name">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-lg-6">
+                    <div class="row mt-3 mt-lg-0 mt-md-3">
+                        <div class="col-lg-5">
+                            <label for="leftDate" class="form-label float-lg-end">@Localizer["Left Date"]:</label>
+                        </div>
+                        <div class="col-lg-7">
+                            <input type="date" class="form-control" @* onblur="validateLeftDate(this.value)" *@ id="st_left_date" value="@ViewBag.st_left_date" placeholder="Left Date" name="name">
+                        </div>
+                    </div>
+                </div>
+
+           @*  </div>
+            <div class="row mt-4"> *@
+                <div class="col-lg-6">
+                    <div class="row mt-3 mt-lg-0 mt-md-3">
+                        <div class="col-lg-5">
+                            <label for="designation" class="form-label float-lg-end">@Localizer["City"]:<span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-lg-7">
+                            <select class="form-select" id="st_city_id" asp-items="@(new SelectList(ViewBag.st_city_id,"Id","Value", ViewBag.SelectedCi))" placeholder="Select Designation" required>
+                                <option value="">-- Select --</option>
+                            </select>
+                        </div>
+
+                    </div>
+                </div>
+                </div>
+                <div class="row mt-4">
+                <div class="col-lg-6 ">
+                    <div class="row mt-3 mt-lg-0 mt-md-3">
+                        <div class="col-lg-5">
+                            <label for="designation" class="form-label float-lg-end">@Localizer["Role"]:<span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-lg-7">
+                            <select class="form-select" id="st_rolename" asp-items="@(new SelectList(ViewBag.st_rolename,"Id","Value",ViewBag.Selectedrolename))" placeholder="Select Role" required>
+                                <option value="">-- Select --</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+           @*  </div>
+
+            <div class="row mt-4"> *@
+                <div class="col-lg-6">
+                    <div class="row mt-3 mt-lg-0 mt-md-3">
+                        <div class="col-lg-5">
+                            <label for="designation" class="form-label float-lg-end">@Localizer["Username"]:<span class="text-danger">*</span></label>
+                        </div>
+                        <div class="col-lg-7">
+                            <input class="form-control" id="st_username" maxlength="23" value="@ViewBag.st_username" placeholder="Enter Username" name="name">
+                        </div>
+
+                    </div>
+                </div>
+                </div>
+            <div class="row mt-4">
+                <div class="col-lg-6 ml-3 ml-lg-0 ml-md-3">
+                    <div class="row mt-3 mt-lg-0 mt-md-3">
+                        <div class="col-lg-5">
+                            <div class="d-flex justify-content-lg-end">
+                                <input class="form-check-input" type="checkbox" value="" id="st_isactive" @(ViewBag.st_isactive == "Active" ? "checked" : "")>
+                            </div>
+                        </div>
+                        <div class="col-lg-7 ml-1 ml-lg-0 ml-md-1">
+
+
+                            <label class="form-check-label" for="flexCheckChecked">
+                                @Localizer["Is Active"]
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer d-flex justify-content-lg-end justify-content-md-end">
+        <button title="Save" type="submit" id="btnsubmit" value="Create" class="btn btn-primary" onclick="submitStaff()">@Localizer["Submit"]</button>
+        <button type="button" title="Cancel" class="btn btn-secondary ml-2" data-dismiss="modal" onclick="clrstf()">@Localizer["Clear"]</button>
+        <button type="button" title="Close" class="btn btn-md text-light bg-danger ml-2" data-dismiss="modal" onclick="GoBack()">@Localizer["Close"]</button>
+    </div>
+</div>

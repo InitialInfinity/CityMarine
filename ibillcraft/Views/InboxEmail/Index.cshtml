@@ -1,0 +1,771 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization;
+@using Microsoft.Extensions.Localization;
+@using System.Globalization;
+@inject IViewLocalizer Localizer;
+@model IEnumerable<ibillcraft.Models.InboxEmailModel>
+@{
+
+    ViewData["Title"] = "Inbox Email";
+    ViewBag.Header = "Inbox Email";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    .flex-container {
+        display: flex;
+        width: 100%;
+        gap: 10px;
+    }
+
+    .box {
+        padding: 15px;
+        border: 1px solid;
+    }
+
+        .box:first-child {
+            flex: 2; /* First box will take twice the space compared to the second */
+        }
+
+        .box:nth-child(2) {
+            flex: 1; /* Second box will take normal space */
+        }
+
+    .buttons {
+        margin-top: 20px;
+        padding-left: 40%;
+    }
+
+    .attachments, .conversation {
+        margin-top: 20px;
+    }
+</style>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <div class="row align-items-center">
+            <div class="col">
+                <h2 class="m-0 font-weight-bold text-primary">@Localizer["Inbox"]</h2>
+            </div>
+            <div class="col-md-2 justify-content-lg-end justify-content-md-end justify-content-center mt-lg-0 mt-md-0 mt-3">
+                <input type="text" id="custom-search" class="form-control" placeholder="@Localizer["Search"]" />
+            </div>
+            <div class="col-auto d-flex flex-wrap toggle">
+                <button class="btn btn-md text-light bg-primary mt-3 mt-lg-0 mt-md-0 ml-2" onclick="return filter()"
+                        type="button" title="Filter">
+                    <i class="fa-solid fa-filter"></i>
+                </button>
+            </div>
+            <div class="col-auto d-flex flex-wrap toggle">
+                <a class="btn btn-md text-light float-end bg-success mt-3 mt-lg-0 mt-md-0 ml-2" asp-action="Index" asp-controller="InboxEmail"
+                   title="Sync" type="button">
+                    <i class="fas fa-sync-alt" style="font-size:18px"></i>
+                </a>
+
+
+
+            </div>
+
+        </div>
+    </div>
+
+    <ul class="nav nav-tabs" id="tabMenu" role="tablist">
+        <li class="nav-item">
+            <button class="nav-link active" id="client-tab" data-bs-toggle="tab" data-bs-target="#client" type="button" role="tab" aria-controls="client" onclick="return clienttab()">
+                Client
+            </button>
+        </li>
+        <li class="nav-item" style="display:none;">
+            <button class="nav-link" id="enquiry-tab" data-bs-toggle="tab" data-bs-target="#enquiry" type="button" role="tab" aria-controls="enquiry" onclick="return enquirytab()">
+                Enquiry
+            </button>
+        </li>
+        <li class="nav-item" style="display:none;">
+            <button class="nav-link" id="claim-tab" data-bs-toggle="tab" data-bs-target="#claim" type="button" role="tab" aria-controls="claim" onclick="return claimtab()">
+                Claim
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab" aria-controls="general" onclick="return generaltab()">
+                General
+            </button>
+        </li>
+    </ul>
+
+
+    <div class="modal fade" id="addfilter" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true" style="display:none">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-dark fw-bold" style="font-size: larger;" id="exampleModalLabel">Filter</h5>
+                    <button type="button"
+                            class="btn-close bg-danger modal-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-dark" style=" background-color: #f8f9fa;padding: 15px;border-radius: 8px;">
+                    @*   <div class="flex-container"> *@
+                    @*  <div class="box" style="background-color: #ffffff;border: 1px solid #ddd;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);"> *@
+                    <div class="row">
+                        <div class="col-xs-6 col-sm-6 col-md-12 ">
+                            <div class="form-group form-group-sm">
+                                <label class="control-label fw-bold" style="font-size: larger;" for="from">From</label>
+                                <span style="padding-left:40px"><input type="text" class="form-control" id="i_from" style="font-size:medium" /></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6 col-sm-6 col-md-12 ">
+                            <div class="form-group form-group-sm">
+                                <label class="control-label fw-bold" style="font-size: larger;" for="to">To</label>
+                                <span style="padding-left:59px"><input type="text" class="form-control" id="i_to" value="" style="font-size:medium" /></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6 col-sm-6 col-md-12 ">
+                            <div class="form-group form-group-sm">
+                                <label class="control-label fw-bold" style="font-size: larger;" for="subject">Subject</label>
+                                <span style="padding-left:23px"><input type="text" class="form-control" id="i_subject" value="" style="font-size:medium" /></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6 col-sm-6 col-md-12 ">
+                            <div class="form-group form-group-sm">
+                                <label class="control-label fw-bold" style="font-size: larger;" for="subject">Has the words</label>
+                                <span style="padding-left:23px"><input type="text" class="form-control" id="i_hasthewords" value="" style="font-size:medium" /></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6 col-sm-6 col-md-12 ">
+                            <div class="form-group form-group-sm">
+                                <label class="control-label fw-bold" style="font-size: larger;" for="subject">Search</label>
+                                <select class="form-select" id="i_tab">
+                                    <option value="client">Client</option>
+                                    @*  <option value="enquiry">Enquiry</option>
+                                    <option value="claim">Claim</option> *@
+                                     <option value="general">General</option>
+                                </select>
+                            </div>
+                        </div>
+                        @*     </div> *@
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button title="Save" type="submit" id="btnsubmit" value="Create" class="btn btn-primary" onclick="submitfilter()">@Localizer["Submit"]</button>
+                    <button type="button" title="Close" class="btn btn-danger" data-dismiss="modal" onclick="CancelData()">@Localizer["Cancel"]</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="addSubscription" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-dark fw-bold" style="font-size: larger;" id="exampleModalLabel">Email</h5>
+                    <button type="button"
+                            class="btn-close bg-danger modal-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-dark" style=" background-color: #f8f9fa;padding: 15px;border-radius: 8px;">
+                    <div class="flex-container">
+                        <div class="box" style="background-color: #ffffff;border: 1px solid #ddd;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);">
+                            <div class="form-group">
+                                <label class="control-label fw-bold" style="font-size: larger;" for="from">From:</label>
+                                <span style="padding-left:40px"><label id="ic_fromlabel" value="" style="font-size:medium"></label></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label fw-bold" style="font-size: larger;" for="to">To:</label>
+                                <span style="padding-left:59px"><label id="ic_tolabel" value="" style="font-size:medium"></label></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label fw-bold" style="font-size: larger;" for="subject">Subject:</label>
+                                <span style="padding-left:23px"><label id="ic_subjectlabel" value="" style="font-size:medium"></label></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label fw-bold" for="message" style="display: inline-block; vertical-align: top; margin-right: 10px;font-size: larger;">Message:</label>
+                                <textarea rows="20" cols="85" readonly id="ic_bodylabel" style="font-size:medium"></textarea>
+                            </div>
+
+                        </div>
+                        <div class="box" style="background-color: #ffffff;border: 1px solid #ddd;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);">
+                            <div class="box" style="background-color: #ffffff;border: 1px solid #ddd;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);height:50%">
+                                <div class="attachments">
+                                    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                                        <thead>
+                                            <tr>
+                                                <th colspan="3" style="text-align: left; padding: 10px; font-size: larger; font-weight: bold; border: 1px solid #ddd;">
+                                                    Attachments:
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="viewattachments">
+                                            <tr style=" border: 1px solid #ddd;">
+                                                <td style="padding: 8px;" id="filename"></td>
+                                                <td style="text-align: center;" id="filebuttons1">
+                                                    @* <a href="~/images/sample data/sample.pdf" title="View PDF">
+                                                    <i class="fas fa-eye" style="font-size: 16px; color: blue;"></i>
+                                                    </a> *@
+                                                </td>
+                                                <td style="text-align: center;" id="filebuttons2">
+                                                    @*  <a href="~/images/sample data/sample.pdf" download="sample.pdf" title="Download PDF">
+                                                    <i class="fas fa-download" style="font-size: 16px; color: green;"></i>
+                                                    </a> *@
+                                                </td>
+                                            </tr>
+                                            @* <tr style=" border: 1px solid #ddd;">
+                                            <td style="padding: 8px; ">file1.zip</td>
+                                            <td style="text-align: center; ">
+                                            <a href="~/images/sample data/samplezip.zip" title="View ZIP">
+                                            <i class="fas fa-eye" style="font-size: 16px; color: blue;"></i>
+                                            </a>
+                                            </td>
+                                            <td style="text-align: center;">
+                                            <a href="~/images/sample data/samplezip.zip" download="samplezip.zip" title="Download ZIP">
+                                            <i class="fas fa-download" style="font-size: 16px; color: green;"></i>
+                                            </a>
+                                            </td>
+                                            </tr>
+                                            <tr style=" border: 1px solid #ddd;">
+                                            <td style="padding: 8px;">file1.png</td>
+                                            <td style="text-align: center;">
+                                            <a href="~/images/sample data/sampleimage.png" title="View Image">
+                                            <i class="fas fa-eye" style="font-size: 16px; color: blue;"></i>
+                                            </a>
+                                            </td>
+                                            <td style="text-align: center;">
+                                            <a href="~/images/sample data/sampleimage.png" download="sampleimage.png" title="Download Image">
+                                            <i class="fas fa-download" style="font-size: 16px; color: green;"></i>
+                                            </a>
+                                            </td>
+                                            </tr> *@
+                                        </tbody>
+                                    </table>
+
+
+                                </div>
+                            </div>
+                            <div class="box" style="background-color: #ffffff;border: 1px solid #ddd;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);height:50%">
+                                <div class="conversation">
+                                    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                                        <thead>
+                                            <tr>
+                                                <th colspan="3" style="text-align: left; padding: 10px; font-size: larger; font-weight: bold; border: 1px solid #ddd;">
+                                                    Conversation:
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr style=" border: 1px solid #ddd;">
+                                                <td class="conversation-item" style="padding: 8px;">  <i class="fas fa-paper-plane" style="color: blue; font-size: 16px;" title="Sent"></i></td>
+                                                <td style="text-align:left;">
+                                                    29/09/2024
+                                                </td>
+                                            </tr>
+                                            <tr style=" border: 1px solid #ddd;">
+                                                <td class="conversation-item" style="padding: 8px;">  <i class="fas fa-envelope" style="color: green; font-size: 16px;" title="Received"></i></td>
+                                                <td style="text-align: left;">
+                                                    30/09/2024
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+
+
+                    </div>
+
+                    <div class="buttons">
+                        <button class="btn btn-danger" onclick="CancelData()" type="button" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-body">
+        <div class="table-responsive" id="print">
+            <table class="table table-bordered" id="dataTable1" width="100%" cellspacing="0">
+                <thead id="tabhead">
+                    <tr>
+                        <th width="6%">Sr.No</th>
+                        <th>Client Name</th>
+                        <th>Last Updated</th>
+                    </tr>
+                </thead>
+                <thead id="tabhead1" style="display:none">
+                    <tr>
+                        <th width="6%">Sr.No</th>
+                        <th style="display:none">id</th>
+                        <th>From</th>
+                        <th>Subject</th>
+                        <th>Date</th>
+                        <th>View</th>
+                    </tr>
+                </thead>
+                <tbody id="tabtable">
+                    @{
+                        int itemNumber = 1;
+                    }
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@itemNumber</td>
+                            <td>
+                                <a href="/InboxClient?email=@item.i_from&client=@item.i_fromname&tab=@item.i_type" class="text-primary">
+                                    @Html.DisplayFor(modelItem => item.i_fromname)
+                                </a>
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.i_receiveddate)
+                            </td>
+                        </tr>
+                        itemNumber++;
+                    }
+                </tbody>
+            </table>
+        </div>
+        <!-- End Griddata-->
+        <!-- start Pagination-->
+        <div class="row mt-3">
+            <div class="col-lg-5 col-md-5 col-12 ">
+                <div class="row ">
+                    <div class="col-lg-3 col-md-3 col-12 d-flex justify-content-lg-start justify-content-md-start justify-content-center ">
+                        <h6 class="mt-2"> @Localizer["Show"]</h6>&nbsp;&nbsp;
+                        <select name="table_id_length" id="table_length_select" aria-controls="table_id" class="form-select w-auto">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                        &nbsp;&nbsp;
+                        <h6 class="mt-2"> @Localizer["entries"]</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-2"></div>
+            <div class="col-lg-5 col-md-5 col-12 mt-lg-0 mt-md-0 mt-3">
+                <nav aria-label="Page navigation example">
+                    <div id="table_id_length">
+
+                        <div id="custom-pagination" class=" d-flex text-center text-lg-end justify-content-end  text-end float-end">
+                            <ul class="pagination justify-content-lg-end justify-content-md-end justify-content-center">
+                                <li class="page-item disabled">
+                                    <button class="page-link" href="#" aria-label="Previous" data-page="0"> <span aria-hidden="true">&laquo;</span></button>
+                                </li>
+                                <li class="page-item active"><button class="page-link" href="#" data-page="1">1</button></li>
+
+                                <li class="page-item "><button class="page-link" href="#" data-page="2" aria-label="Next">  <span aria-hidden="true">&raquo;</span></button></li>
+
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <!-- end Pagination-->
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#dataTable').DataTable();
+
+        var url = window.location.href;
+        var urlParams = new URLSearchParams(window.location.search);
+        var tab = urlParams.get('tab');
+    });
+    myFunction();
+    $('#table_length_select').change();
+
+    function clienttab() {
+        var tab = "Insurance";
+        $('#enquiry-tab').attr('aria-selected', 'false');
+        $('#client-tab').attr('aria-selected', 'true');
+        $('#claim-tab').attr('aria-selected', 'false');
+        $('#general-tab').attr('aria-selected', 'false');
+
+        $('#enquiry-tab').attr('class', 'nav-link');
+        $('#client-tab').attr('class', 'nav-link active');
+        $('#claim-tab').attr('class', 'nav-link');
+        $('#general-tab').attr('class', 'nav-link');
+
+        $.ajax({
+            url: '/InboxEmail/Tab?tab=' + tab, // Controller action URL
+            type: 'POST',             // HTTP method
+            data: { tab: tab },      // Data to send (query parameter)
+            success: function (response) {
+                // Handle success - update the page dynamically
+                console.log('Response:', response);
+                $('#tabhead').css('display', 'contents');
+                $('#tabhead1').css('display', 'none');
+                $('#tabtable').html('');
+                var htmltab = '';
+                for (var i = 0; i < response.length; i++) {
+                    htmltab += '<tr>';
+                    htmltab += '<td>' + (i + 1) + '</td>';
+                    let i_from = response[i].i_from.trim();
+                    htmltab += '<td><a href="/InboxClient?email=' + response[i].i_from + '&client=' + response[i].i_fromname + '&tab=' + tab + '">' + response[i].i_fromname + '</a></td>';
+                    htmltab += '<td>' + response[i].i_receiveddate + '</td>';
+                    htmltab += '</tr>';
+                }
+                $('#tabtable').html(htmltab);
+
+                // Example: Update a specific section with the response data
+                $('#content-area').html(response);
+            },
+            error: function (xhr, status, error) {
+                // Handle errors
+                console.error('Error:', error);
+            }
+        });
+    }
+
+    function enquirytab() {
+        var tab = "enquiry";
+        $('#enquiry-tab').attr('aria-selected', 'true');
+        $('#client-tab').attr('aria-selected', 'false');
+        $('#claim-tab').attr('aria-selected', 'false');
+        $('#general-tab').attr('aria-selected', 'false');
+
+        $('#enquiry-tab').attr('class', 'nav-link active');
+        $('#client-tab').attr('class', 'nav-link');
+        $('#claim-tab').attr('class', 'nav-link');
+        $('#general-tab').attr('class', 'nav-link');
+
+        $.ajax({
+            url: '/InboxEmail/Tab?tab=' + tab, // Controller action URL
+            type: 'POST',             // HTTP method
+            data: { tab: tab },      // Data to send (query parameter)
+            success: function (response) {
+                // Handle success - update the page dynamically
+                console.log('Response:', response);
+                $('#tabhead').css('display', 'contents');
+                $('#tabhead1').css('display', 'none');
+                $('#tabtable').html('');
+                var htmltab = '';
+                for (var i = 0; i < response.length; i++) {
+                    htmltab += '<tr>';
+                    htmltab += '<td>' + (i + 1) + '</td>'; // Serial number
+                    let i_from = response[i].i_from.trim();
+                    htmltab += '<td><a href="/InboxClient?email=' + response[i].i_from + '&client=' + response[i].i_fromname + '&tab=' + tab + '">' + response[i].i_fromname + '</a></td>';
+                    htmltab += '<td>' + response[i].i_receiveddate + '</td>';
+                    htmltab += '</tr>';
+                }
+                $('#tabtable').html(htmltab);
+
+                // Example: Update a specific section with the response data
+                $('#content-area').html(response);
+            },
+            error: function (xhr, status, error) {
+                // Handle errors
+                console.error('Error:', error);
+            }
+        });
+    }
+
+    function claimtab() {
+        var tab = "claim";
+        $('#enquiry-tab').attr('aria-selected', 'false');
+        $('#client-tab').attr('aria-selected', 'false');
+        $('#claim-tab').attr('aria-selected', 'true');
+        $('#general-tab').attr('aria-selected', 'true');
+
+        $.ajax({
+            url: '/InboxEmail/Tab?tab=' + tab, // Controller action URL
+            type: 'POST',             // HTTP method
+            data: { tab: tab },      // Data to send (query parameter)
+            success: function (response) {
+                // Handle success - update the page dynamically
+                console.log('Response:', response);
+                $('#tabhead').css('display', 'contents');
+                $('#tabhead1').css('display', 'none');
+                $('#tabtable').html('');
+                var htmltab = '';
+                for (var i = 0; i < response.length; i++) {
+                    htmltab += '<tr>';
+                    htmltab += '<td>' + (i + 1) + '</td>'; // Serial number
+                    let i_from = response[i].i_from.trim();
+                    htmltab += '<td><a href="/InboxClient?email=' + response[i].i_from + '&client=' + response[i].i_fromname + '&tab=' + tab + '">' + response[i].i_fromname + '</a></td>';
+                    htmltab += '<td>' + response[i].i_receiveddate + '</td>';
+                    htmltab += '</tr>';
+                }
+                $('#tabtable').html(htmltab);
+
+                // Example: Update a specific section with the response data
+                $('#content-area').html(response);
+            },
+            error: function (xhr, status, error) {
+                // Handle errors
+                console.error('Error:', error);
+            }
+        });
+    }
+
+    function generaltab() {
+        var tab = "General";
+        $('#enquiry-tab').attr('aria-selected', 'false');
+        $('#client-tab').attr('aria-selected', 'false');
+        $('#claim-tab').attr('aria-selected', 'false');
+        $('#general-tab').attr('aria-selected', 'true');
+
+        $.ajax({
+            url: '/InboxEmail/general?tab=' + tab, // Controller action URL
+            type: 'POST',             // HTTP method
+            data: { tab: tab },      // Data to send (query parameter)
+            success: function (response) {
+                // Handle success - update the page dynamically
+                console.log('Response:', response);
+                $('#tabhead').css('display', 'none');
+                $('#tabhead1').css('display', 'contents');
+                $('#tabtable').html('');
+                var htmltab = '';
+                for (var i = 0; i < response.length; i++) {
+                    htmltab += '<tr>';
+                    htmltab += '<td>' + (i + 1) + '</td>';
+                    htmltab += '<td style="display:none">' + response[i].i_id + '</td>';
+                    htmltab += '<td>' + response[i].i_from + '</td>';
+                    htmltab += '<td>' + response[i].i_subject + '</td>';
+                    htmltab += '<td>' + response[i].i_receiveddate + '</td>';
+                    htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].i_id + ')"></i></td>';
+                    htmltab += '</tr>';
+                }
+                $('#tabtable').html(htmltab);
+
+                // Example: Update a specific section with the response data
+                $('#content-area').html(response);
+            },
+            error: function (xhr, status, error) {
+                // Handle errors
+                console.error('Error:', error);
+            }
+        });
+    }
+
+    function inboxmsg(id) {
+
+
+        // Show the modal
+        $("#addSubscription").modal("show");
+
+        // Data payload for the request
+        var data = { id: id };
+
+        // Perform AJAX POST request
+        $.ajax({
+            url: '/InboxClient/showdetails', // Controller action URL
+            type: 'POST',                   // HTTP method
+            data: data,                     // Data to send
+            success: function (response) {
+                console.log(response);
+
+                if (response) {
+
+                    if (response.ic_attachment != "") {
+                        const fileName = response.ic_attachment.split(/[/\\]/).pop();
+                        $('#filename').text(fileName);
+
+                        const buttons1 = `<a href="" title="View PDF" onclick="viewfile()"><i class="fas fa-eye" style="font-size: 16px; color: blue;"></i></a>`;
+                        const buttons2 = `<a href="${response.ic_attachment}" title="Download PDF" onclick="downloadfile()"><i class="fas fa-download" style="font-size: 16px; color: green;"></i></a>`;
+
+                        $('#filebuttons1').html(buttons1);
+                        $('#filebuttons1').val(response.ic_attachment);
+                        $('#filebuttons2').html(buttons2);
+                        $('#filebuttons2').val(response.ic_attachment);
+                    } else {
+                        $('#viewattachments').css('display:none');
+                    }
+
+
+                    $('#ic_tolabel').text(response.ic_to || 'N/A');
+                    $('#ic_fromlabel').text(response.ic_from || 'N/A');
+                    $('#ic_subjectlabel').text(response.ic_subject || 'N/A');
+
+                    const formattedBody = (response.ic_body || '').replace(/<br\s*\/?>/gi, "\n");
+                    $('#ic_bodylabel').val(formattedBody);
+
+
+
+
+
+
+                    // Optional: Update a specific content area with additional information
+                    $('#content-area').html(response.content || 'No content available.');
+                } else {
+                    console.error('Empty response received');
+                    alert('No data available.');
+                }
+            },
+            error: function (xhr, status, error) {
+                // Display error notification
+                console.error('Error:', error);
+                alert('An error occurred while fetching the message details. Please try again later.');
+            }
+        });
+    }
+
+    function downloadfile() {
+        const filePath = $('#filebuttons2').val();
+
+        // Encode the file path to make it safe for URLs
+        const encodedPath = encodeURIComponent(filePath);
+
+        // Construct the URL to call the controller
+        const url = `/InboxClient/DownloadFile?filePath=${encodedPath}`;
+
+        // Open the file in a new tab or start downloading
+        window.open(url, "_blank");
+    }
+    function viewfile() {
+        const filePath = $('#filebuttons1').val();
+
+        // Encode the file path to make it safe for URLs
+        const encodedPath = encodeURIComponent(filePath);
+
+        // Construct the URL to call the controller
+        const url = `/InboxClient/ViewFile?filePath=${encodedPath}`;
+
+        // Open the file in a new tab or start downloading
+        window.open(url, "_blank");
+    }
+
+    function filter() {
+        $("#addfilter").modal("show");
+    }
+    function submitfilter() {
+        $("#addfilter").modal("hide");
+        var from = $('#i_from').val();
+        var to = $('#i_to').val();
+        var subject = $('#i_subject').val();
+        var hasthewords = $('#i_hasthewords').val();
+        var tab = $('#i_tab').val();
+
+
+        $('#enquiry-tab').attr('aria-selected', 'false');
+        $('#client-tab').attr('aria-selected', 'false');
+        $('#claim-tab').attr('aria-selected', 'false');
+        $('#general-tab').attr('aria-selected', 'false');
+
+
+        $('#enquiry-tab').attr('class', 'nav-link');
+        $('#client-tab').attr('class', 'nav-link');
+        $('#claim-tab').attr('class', 'nav-link');
+        $('#general-tab').attr('class', 'nav-link');
+
+        $('#' + tab + '-tab').attr('aria-selected', 'true');
+        $('#' + tab + '-tab').attr('class', 'nav-link active');
+
+
+        if (tab == 'client') {
+            tab = "insurance";
+        }
+
+        if (tab != 'general') {
+            var data = {
+                from: from,
+                to: to,
+                subject: subject,
+                hasthewords: hasthewords,
+                tab: tab,
+
+            };
+
+            $.ajax({
+                url: '/InboxEmail/filter?from=' + from + 'to=' + to + 'subject' + subject + 'hasthewords=' + hasthewords + 'tab=' + tab, // Controller action URL
+                type: 'POST',             // HTTP method
+                data: data,      // Data to send (query parameter)
+                success: function (response) {
+                    // Handle success - update the page dynamically
+                    console.log('Response:', response);
+                    $('#tabhead').css('display', 'contents');
+                    $('#tabhead1').css('display', 'none');
+                    $('#tabtable').html('');
+                    var htmltab = '';
+                    for (var i = 0; i < response.length; i++) {
+                        htmltab += '<tr>';
+                        htmltab += '<td>' + (i + 1) + '</td>'; // Serial number
+                        let i_from = response[i].i_from.trim();
+                        htmltab += '<td><a href="/InboxClient?email=' + response[i].i_from + '&client=' + response[i].i_fromname + '&tab=' + tab + '">' + response[i].i_fromname + '</a></td>';
+                        htmltab += '<td>' + response[i].i_receiveddate + '</td>';
+                        htmltab += '</tr>';
+                    }
+                    $('#tabtable').html(htmltab);
+
+                    // Example: Update a specific section with the response data
+                    $('#content-area').html(response);
+                },
+                error: function (xhr, status, error) {
+                    // Handle errors
+                    console.error('Error:', error);
+                }
+            });
+
+        }
+        else {
+
+            var data = {
+                from: from,
+                to: to,
+                subject: subject,
+                hasthewords: hasthewords,
+                tab: tab,
+
+            };
+
+            $.ajax({
+                url: '/InboxEmail/Generalfilter?from=' + from + 'to=' + to + 'subject' + subject + 'hasthewords=' + hasthewords + 'tab=' + tab, // Controller action URL
+                type: 'POST',             // HTTP method
+                data: data,      // Data to send (query parameter)
+                success: function (response) {
+                    // Handle success - update the page dynamically
+                    console.log('Response:', response);
+                    $('#tabhead').css('display', 'none');
+                    $('#tabhead1').css('display', 'contents');
+                    $('#tabtable').html('');
+                    var htmltab = '';
+                    for (var i = 0; i < response.length; i++) {
+                        htmltab += '<tr>';
+                        htmltab += '<td>' + (i + 1) + '</td>'; // Serial number
+                        let i_from = response[i].i_from.trim();
+                        htmltab += '<td>' + response[i].i_fromname + '</a></td>';
+                        htmltab += '<td>' + response[i].i_subject + '</td>';
+                        htmltab += '<td>' + response[i].i_receiveddate + '</td>';
+                        htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].i_id + ')"></i></td>';
+                        htmltab += '</tr>';
+                    }
+                    $('#tabtable').html(htmltab);
+
+                    // Example: Update a specific section with the response data
+                    $('#content-area').html(response);
+                },
+                error: function (xhr, status, error) {
+                    // Handle errors
+                    console.error('Error:', error);
+                }
+            });
+
+        }
+    }
+
+    function addorder() {
+        window.location.href = "/InboxEmail/Index";
+    }
+
+</script>

@@ -1,0 +1,885 @@
+﻿<link href="~/css/dashboard.css" rel="stylesheet" />
+<div class="container-xl px-4 mt-4">
+    <!-- Account page navigation-->
+    <nav class="nav nav-borders">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" id="summery-tab" data-bs-toggle="tab" data-bs-target="#summery" type="button" role="tab" aria-controls="summery" aria-selected="true">Summery</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Profile</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="credit-tab" data-bs-toggle="tab" data-bs-target="#credit" type="button" role="tab" aria-controls="profile" aria-selected="false">Profile</button>
+            </li>
+             <li class="nav-item" role="presentation">
+                <button class="nav-link" id="sales-tab" data-bs-toggle="tab" data-bs-target="#sales" type="button" role="tab" aria-controls="sales" aria-selected="false">Sales</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="estimate-tab" data-bs-toggle="tab" data-bs-target="#estimate" type="button" role="tab" aria-controls="estimate" aria-selected="false">Estimate</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="quotation-tab" data-bs-toggle="tab" data-bs-target="#quotation" type="button" role="tab" aria-controls="quotation" aria-selected="false">Quotation</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="transaction-tab" data-bs-toggle="tab" data-bs-target="#transaction" type="button" role="tab" aria-controls="transaction" aria-selected="false">Transaction</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="credithistory-tab" data-bs-toggle="tab" data-bs-target="#credithistory" type="button" role="tab" aria-controls="credithistory" aria-selected="false">Credit History</button>
+            </li>
+        </ul>
+       
+    </nav>
+    <hr class="mt-0 mb-4">
+    <div class="row">
+        <div class="col-xl-4">
+            <!-- Profile picture card-->
+            <div class="card mb-4 mb-xl-0 border border-primary profile-card">
+                <div class="card-header fw-bold">Profile Picture</div>
+                <div class="card-body text-center">
+                    <!-- Profile picture image-->
+                    <img class="img-account-profile rounded-circle mb-2" src="http://bootdey.com/img/Content/avatar/avatar1.png" alt="">
+                    <!-- Profile picture help block-->
+                    <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>
+                    <!-- Profile picture upload button-->
+                    @*<button class="btn btn-primary" type="button">Upload new image</button>*@
+                </div>
+            </div>
+            <div class="card mb-xl-0 mt-3 pt-3 pl-3 border border-primary profile-card">
+                @*  <div class="card-body">*@
+                    <h6 class='fw-bold'><i class="fas fa-map-marker-alt"></i>&nbsp;Address</h6>
+                    <p>Badlapur (E). 421503</p>
+                @*</div>*@
+            </div>
+            <div class="card mb-xl-0 mt-3 pt-3 pl-3 border border-primary profile-card">
+                <h6 class='fw-bold'><Email /><i class="fas fa-envelope"></i>&nbsp;Email</h6>
+                    <p>kadamrunali50@gmail.com</p>
+            </div>
+            <div class="card mb-xl-0 mt-3 pt-3 pl-3 border border-primary profile-card">
+                    <h6 class='fw-bold'><i class="fas fa-phone"></i>&nbsp;Phone</h6>
+                    <p>+91 9075372928</p>
+            </div>
+        </div>
+        <div class="col-xl-8">
+            <!-- Account details card-->
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="summery" role="tabpanel" aria-labelledby="summery-tab">
+                    <div class="card mb-4 border border-primary profile-card">
+                        <div class="card-header fw-bold">Summery Details</div>
+                <div class="card-body">
+                            <table class="table table-hover">
+
+                                <tbody>
+                                    <tr>
+                                        <th>  <label for="name" class="form-label fw-bold">Address</label></th>
+                                        <td>  <label for="name" class="form-label fw-bold"></label></td>
+
+                                    </tr>
+                                    <tr>
+                                        <th>  <label for="name" class="form-label fw-bold">Contact </label></th>
+                                        <td>  <label for="name" class="form-label fw-bold"> </label></td>
+
+                                    </tr>
+                                    <tr>
+                                        <th>  <label for="name" class="form-label fw-bold">Alternate Contact</label></th>
+                                        <td>  <label for="name" class="form-label fw-bold"></label></td>
+
+                                    </tr>
+                                    <tr>
+                                        <th>  <label for="name" class="form-label fw-bold">GST no</label></th>
+                                        <td>  <label for="name" class="form-label fw-bold"></label></td>
+
+                                    </tr>
+                                    <tr>
+                                        <th>  <label for="name" class="form-label fw-bold">Email</label></th>
+                                        <td>  <label for="name" class="form-label fw-bold"></label></td>
+
+                                    </tr>
+                                    <tr>
+                                        <th>  <label for="name" class="form-label fw-bold">Opening Balance</label></th>
+                                        <td>  <label for="name" class="form-label fw-bold"></label></td>
+
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="row">
+                                <div class="col-lg-4 col-md-4 col-sm-12">
+                                    <div class="card dash-card">
+                                        <div class="card-body p-3">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <div class="numbers">
+                                                        <h5 class="text-sm mb-0 text-uppercase font-weight-bold">0</h5>
+                                                        <hr />
+                                                        <h5 class="mb-0 float-end">
+                                                            Total Invoice
+                                                        </h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-12 mt-lg-0 mt-md-0 mt-3">
+                                    <div class="card dash-card">
+                                        <div class="card-body p-3">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <div class="numbers">
+                                                        <h5 class="text-sm mb-0 text-uppercase font-weight-bold">GNF 0</h5>
+                                                        <hr />
+                                                        <h5 class="mb-0 float-end">
+                                                            Total Invoice AMT
+                                                        </h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-12 mt-lg-0 mt-md-0 mt-3">
+                                    <div class="card dash-card">
+                                        <div class="card-body p-3">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <div class="numbers">
+                                                        <h5 class="text-sm mb-0 text-uppercase font-weight-bold">GNF 0</h5>
+                                                        <hr />
+                                                        <h5 class="mb-0 float-end">
+                                                            Total Paid
+                                                        </h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                           @* <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="card" style="background-color:#ec3b83">
+                                        <div class="header p-3 text-light">1</div>
+                                        <div class="footer p-3 text-end text-light" style="background-color:rgba(0,0,0,0.1)">Total Invoices</div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 mt-3 mt-lg-0 mt-md-0">
+                                    <div class="card" style="background-color:#f56954">
+                                        <div class="header p-3 text-light">₹ 825</div>
+                                        <div class="footer p-3 text-end text-light" style="background-color:rgba(0,0,0,0.1);">Total Invoice Amt.</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-lg-6">
+                                    <div class="card" style="background-color:#00b29e">
+                                        <div class="header p-3 text-light">₹ 825</div>
+                                        <div class="footer p-3 text-end text-light" style="background-color:rgba(0,0,0,0.1);">Total Paid</div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 mt-3 mt-lg-0 mt-md-0">
+                                    <div class="card" style="background-color:#00c0ef">
+                                        <div class="header p-3 text-light">₹ 825</div>
+                                        <div class="footer p-3 text-end text-light" style="background-color:rgba(0,0,0,0.1);">Balance</div>
+                                    </div>
+                                </div>
+                            </div>*@
+                </div>
+            </div>
+       </div>
+                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                    <div class="card mb-4 border border-primary profile-card">
+                        <div class="card-header fw-bold">Profile Details</div>
+                        <div class="card-body">
+                            <form>
+                                <div class="row py-2">
+                                    <div class="col-lg-4">
+                                        <label for="name" class="form-label fw-bold">Name <span class="text-danger">*</span></label>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <input type="text" class="form-control" id="name" placeholder="Enter Name" required />
+                                    </div>
+                                </div>
+                                <div class="row  py-2">
+                                    <div class="col-lg-4">
+                                        <label for="name" class="form-label fw-bold">Address</label>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <input type="text" class="form-control" id="address" placeholder="Enter Address" required />
+                                    </div>
+                                </div>
+                                <div class="row py-2">
+                                    <div class="col-lg-4">
+                                        <label for="contact" class="form-label fw-bold">Contact <span class="text-danger">*</span></label>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <input type="text" class="form-control" id="contact" placeholder="Enter Contact" required />
+                                    </div>
+                                </div>
+                                <div class="row py-2">
+                                    <div class="col-lg-4">
+                                        <label for="alternateContact" class="form-label fw-bold">Alternate Contact</label>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <input type="text" class="form-control" id="alternateContact" placeholder="Enter Alternate Contact" required />
+                                    </div>
+                                </div>
+                                <div class="row py-2">
+                                    <div class="col-lg-4">
+                                        <label for="gstNo" class="form-label fw-bold">GST no</label>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <input type="text" class="form-control" id="gstNo" placeholder="Enter GST no" required />
+                                    </div>
+                                </div>
+                                <div class="row py-2">
+                                    <div class="col-lg-4">
+                                        <label for="email" class="form-label fw-bold">Email</label>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <input type="text" class="form-control" id="email" placeholder="Enter Email" required />
+                                    </div>
+                                </div>
+                                <div class="row py-2">
+                                    <div class="col-lg-4">
+                                        <label for="openingBalance" class="form-label fw-bold">Opening Balance</label>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <input type="text" class="form-control" id="openingBalance" placeholder="Enter Opening Balance" required />
+                                    </div>
+                                </div>
+                                <div class="row py-2">
+                                    <div class="col-lg-5">
+                                        <button type="button" class="btn btn-success">Update Profile</button>
+                                    </div>
+
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    </div>
+                <div class="tab-pane fade" id="credit" role="tabpanel" aria-labelledby="credit-tab">
+                    <div class="card mb-4 border border-primary profile-card">
+                        <div class="card-header fw-bold">Profile Details</div>
+                        <div class="card-body">
+                            <form>
+                                <div class="row py-2">
+                                    <div class="col-lg-4">
+                                        <label for="name" class="form-label fw-bold">Total Credit Limit <span class="text-danger">*</span></label>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <input type="text" class="form-control" id="name" placeholder="Enter Total Credit Limit" required />
+                                    </div>
+                                </div>
+                                <div class="row  py-2">
+                                    <div class="col-lg-4">
+                                        <label for="name" class="form-label fw-bold">Available Balance</label>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <input type="text" class="form-control" id="address" placeholder="Available Balance" readonly />
+                                    </div>
+                                </div>
+                                <div class="row py-2">
+                                    <div class="col-lg-4">
+                                        <label for="contact" class="form-label fw-bold">Outstanding Amount <span class="text-danger">*</span></label>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <input type="text" class="form-control" id="contact" placeholder="Outstanding Amount" readonly />
+                                    </div>
+                                </div>
+                                <div class="row py-2">
+                                    <div class="col-lg-5">
+                                        <button type="button" class="btn btn-success">Update Credit</button>
+                                    </div>
+
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                    <div class="tab-pane fade" id="sales" role="tabpanel" aria-labelledby="sales-tab">
+                    <div class="card profile-card mb-4 border border-primary profile-card">
+                        <div class="card-header py-3">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <h6 class="my-auto fw-bold">Sales Report</h6>
+                                </div>
+                                <div class="col-md-2 justify-content-lg-end justify-content-md-end justify-content-center mt-lg-0 mt-md-0 mt-3">
+                                    <input type="text"
+                                           id="custom-search"
+                                           class="form-control "
+                                           placeholder="Search" />
+                                </div>                               
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th width="6%">Sr.No</th>
+                                            <th>Invoice ID</th>
+                                            <th>Date</th>
+                                            <th>Status</th>
+                                            <th>Balance</th>
+                                            <th>Total</th>
+                                            <th width="7%">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>1</td>
+                                            <td>India</td>
+                                            <td>+91</td>
+                                            <td>Rupees</td>
+                                            <td>12314</td>
+                                            @*<td class="text-success">Active</td>*@
+                                            <td>
+                                                <div class="form-check form-switch  active-toggle">
+                                                    <input class="form-check-input ml-auto" type="checkbox" id="toggleSwitch">
+                                                    <label class="form-check-label" for="toggleSwitch" data-on="On" data-off="Off"></label>
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="d-flex">
+                                                    <i class="fas fa-edit text-primary"></i>
+                                                    <i class="fa fa-trash ml-2 text-danger click"></i>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>2</td>
+                                            <td>Canada</td>
+                                            <td>90</td>
+                                            <td>Dollar</td>
+                                            <td>df+gjjk</td>
+                                            <td>
+                                                <div class="form-check form-switch ml-auto active-toggle">
+                                                    <input class="form-check-input ml-auto" type="checkbox" id="toggleSwitch">
+                                                    <label class="form-check-label" for="toggleSwitch" data-on="On" data-off="Off"></label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-inline-flex">
+                                                    <i class="fas fa-edit text-primary"></i>
+                                                    <i class="fa fa-trash ml-2 text-danger"></i>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>3</td>
+                                            <td>UK</td>
+                                            <td>22</td>
+                                            <td>Dollar</td>
+                                            <td>df+gjjk</td>
+                                            <td>
+                                                <div class="form-check form-switch ml-auto active-toggle">
+                                                    <input class="form-check-input ml-auto" type="checkbox" id="toggleSwitch">
+                                                    <label class="form-check-label" for="toggleSwitch" data-on="On" data-off="Off"></label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-inline-flex">
+                                                    <i class="fas fa-edit text-primary"></i>
+                                                    <i class="fa fa-trash ml-2 text-danger"></i>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-lg-5 col-md-5 col-12 ">
+                                    <div class="row ">
+                                        <div class="col-lg-3 col-md-3 col-12 d-flex justify-content-lg-start justify-content-md-start justify-content-center ">
+                                            <h6 class="mt-2">Show</h6>&nbsp;&nbsp;
+                                            <select class="form-select w-auto"
+                                                    aria-label="Default select example">
+                                                <option selected>10</option>
+                                                <option value="1">10</option>
+                                                <option value="2">50</option>
+                                                <option value="3">100</option>
+                                            </select>
+                                            &nbsp;&nbsp;
+                                            <h6 class="mt-2">entries</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-md-2"></div>
+                                <div class="col-lg-5 col-md-5 col-12 mt-lg-0 mt-md-0 mt-3">
+                                    <nav aria-label="Page navigation example">
+                                        <ul class="pagination justify-content-lg-end justify-content-md-end justify-content-center">
+                                            <li class="page-item">
+                                                <button class="page-link"
+                                                        aria-label="Previous">
+                                                    <span aria-hidden="true">&laquo;</span>
+                                                </button>
+                                            </li>
+                                            <li class="page-item active">
+                                                <button class="page-link">
+                                                    1
+                                                </button>
+                                            </li>
+                                            <li class="page-item">
+                                                <button class="page-link">
+                                                    2
+                                                </button>
+                                            </li>
+                                            <li class="page-item">
+                                                <button class="page-link">
+                                                    3
+                                                </button>
+                                            </li>
+                                            <li class="page-item">
+                                                <button class="page-link"
+                                                        aria-label="Next">
+                                                    <span aria-hidden="true">&raquo;</span>
+                                                </button>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="estimate" role="tabpanel" aria-labelledby="estimate-tab">
+                    <div class="card profile-card mb-4 border border-primary profile-card">
+                        <div class="card-header py-3">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <h6 class="my-auto fw-bold">Estimate Report</h6>
+                                </div>
+                                <div class="col-md-2 justify-content-lg-end justify-content-md-end justify-content-center mt-lg-0 mt-md-0 mt-3">
+                                    <input type="text"
+                                           id="custom-search"
+                                           class="form-control "
+                                           placeholder="Search" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th width="6%">Sr.No</th>
+                                            <th>Invoice ID</th>
+                                            <th>Date</th>
+                                            <th>Status</th>
+                                            <th>Balance</th>
+                                            <th>Total</th>
+                                            <th width="7%">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>1</td>
+                                            <td>India</td>
+                                            <td>+91</td>
+                                            <td>Rupees</td>
+                                            <td>12314</td>
+                                            @*<td class="text-success">Active</td>*@
+                                            <td>
+                                                <div class="form-check form-switch  active-toggle">
+                                                    <input class="form-check-input ml-auto" type="checkbox" id="toggleSwitch">
+                                                    <label class="form-check-label" for="toggleSwitch" data-on="On" data-off="Off"></label>
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="d-flex">
+                                                    <i class="fas fa-edit text-primary"></i>
+                                                    <i class="fa fa-trash ml-2 text-danger click"></i>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>2</td>
+                                            <td>Canada</td>
+                                            <td>90</td>
+                                            <td>Dollar</td>
+                                            <td>df+gjjk</td>
+                                            <td>
+                                                <div class="form-check form-switch ml-auto active-toggle">
+                                                    <input class="form-check-input ml-auto" type="checkbox" id="toggleSwitch">
+                                                    <label class="form-check-label" for="toggleSwitch" data-on="On" data-off="Off"></label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-inline-flex">
+                                                    <i class="fas fa-edit text-primary"></i>
+                                                    <i class="fa fa-trash ml-2 text-danger"></i>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>3</td>
+                                            <td>UK</td>
+                                            <td>22</td>
+                                            <td>Dollar</td>
+                                            <td>df+gjjk</td>
+                                            <td>
+                                                <div class="form-check form-switch ml-auto active-toggle">
+                                                    <input class="form-check-input ml-auto" type="checkbox" id="toggleSwitch">
+                                                    <label class="form-check-label" for="toggleSwitch" data-on="On" data-off="Off"></label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-inline-flex">
+                                                    <i class="fas fa-edit text-primary"></i>
+                                                    <i class="fa fa-trash ml-2 text-danger"></i>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-lg-5 col-md-5 col-12 ">
+                                    <div class="row ">
+                                        <div class="col-lg-3 col-md-3 col-12 d-flex justify-content-lg-start justify-content-md-start justify-content-center ">
+                                            <h6 class="mt-2">Show</h6>&nbsp;&nbsp;
+                                            <select class="form-select w-auto"
+                                                    aria-label="Default select example">
+                                                <option selected>10</option>
+                                                <option value="1">10</option>
+                                                <option value="2">50</option>
+                                                <option value="3">100</option>
+                                            </select>
+                                            &nbsp;&nbsp;
+                                            <h6 class="mt-2">entries</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-md-2"></div>
+                                <div class="col-lg-5 col-md-5 col-12 mt-lg-0 mt-md-0 mt-3">
+                                    <nav aria-label="Page navigation example">
+                                        <ul class="pagination justify-content-lg-end justify-content-md-end justify-content-center">
+                                            <li class="page-item">
+                                                <button class="page-link"
+                                                        aria-label="Previous">
+                                                    <span aria-hidden="true">&laquo;</span>
+                                                </button>
+                                            </li>
+                                            <li class="page-item active">
+                                                <button class="page-link">
+                                                    1
+                                                </button>
+                                            </li>
+                                            <li class="page-item">
+                                                <button class="page-link">
+                                                    2
+                                                </button>
+                                            </li>
+                                            <li class="page-item">
+                                                <button class="page-link">
+                                                    3
+                                                </button>
+                                            </li>
+                                            <li class="page-item">
+                                                <button class="page-link"
+                                                        aria-label="Next">
+                                                    <span aria-hidden="true">&raquo;</span>
+                                                </button>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="quotation" role="tabpanel" aria-labelledby="quotation-tab">
+                    <div class="card mb-4 border border-primary profile-card">
+                        <div class="card-header py-3">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <h6 class="my-auto fw-bold">Quotation Report</h6>
+                                </div>
+                                <div class="col-md-2 justify-content-lg-end justify-content-md-end justify-content-center mt-lg-0 mt-md-0 mt-3">
+                                    <input type="text"
+                                           id="custom-search"
+                                           class="form-control "
+                                           placeholder="Search" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th width="6%">Sr.No</th>
+                                            <th>Invoice ID</th>
+                                            <th>QuotationDate</th>
+                                            <th>Valid Date</th>                                     
+                                            <th>Total</th>
+                                            <th width="7%">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>1</td>
+                                            <td>India</td>
+                                            <td>+91</td>
+                                            <td>Rupees</td>
+                                            @*<td class="text-success">Active</td>*@
+                                            <td>
+                                                <div class="form-check form-switch  active-toggle">
+                                                    <input class="form-check-input ml-auto" type="checkbox" id="toggleSwitch">
+                                                    <label class="form-check-label" for="toggleSwitch" data-on="On" data-off="Off"></label>
+                                                </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="d-flex">
+                                                    <i class="fas fa-edit text-primary"></i>
+                                                    <i class="fa fa-trash ml-2 text-danger click"></i>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>2</td>
+                                            <td>Canada</td>
+                                            <td>90</td>
+                                            <td>Dollar</td>
+                                            <td>
+                                                <div class="form-check form-switch ml-auto active-toggle">
+                                                    <input class="form-check-input ml-auto" type="checkbox" id="toggleSwitch">
+                                                    <label class="form-check-label" for="toggleSwitch" data-on="On" data-off="Off"></label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-inline-flex">
+                                                    <i class="fas fa-edit text-primary"></i>
+                                                    <i class="fa fa-trash ml-2 text-danger"></i>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>3</td>
+                                            <td>UK</td>
+                                            <td>22</td>
+                                            <td>Dollar</td>
+                                            <td>
+                                                <div class="form-check form-switch ml-auto active-toggle">
+                                                    <input class="form-check-input ml-auto" type="checkbox" id="toggleSwitch">
+                                                    <label class="form-check-label" for="toggleSwitch" data-on="On" data-off="Off"></label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="d-inline-flex">
+                                                    <i class="fas fa-edit text-primary"></i>
+                                                    <i class="fa fa-trash ml-2 text-danger"></i>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-lg-5 col-md-5 col-12 ">
+                                    <div class="row ">
+                                        <div class="col-lg-3 col-md-3 col-12 d-flex justify-content-lg-start justify-content-md-start justify-content-center ">
+                                            <h6 class="mt-2">Show</h6>&nbsp;&nbsp;
+                                            <select class="form-select w-auto"
+                                                    aria-label="Default select example">
+                                                <option selected>10</option>
+                                                <option value="1">10</option>
+                                                <option value="2">50</option>
+                                                <option value="3">100</option>
+                                            </select>
+                                            &nbsp;&nbsp;
+                                            <h6 class="mt-2">entries</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-md-2"></div>
+                                <div class="col-lg-5 col-md-5 col-12 mt-lg-0 mt-md-0 mt-3">
+                                    <nav aria-label="Page navigation example">
+                                        <ul class="pagination justify-content-lg-end justify-content-md-end justify-content-center">
+                                            <li class="page-item">
+                                                <button class="page-link"
+                                                        aria-label="Previous">
+                                                    <span aria-hidden="true">&laquo;</span>
+                                                </button>
+                                            </li>
+                                            <li class="page-item active">
+                                                <button class="page-link">
+                                                    1
+                                                </button>
+                                            </li>
+                                            <li class="page-item">
+                                                <button class="page-link">
+                                                    2
+                                                </button>
+                                            </li>
+                                            <li class="page-item">
+                                                <button class="page-link">
+                                                    3
+                                                </button>
+                                            </li>
+                                            <li class="page-item">
+                                                <button class="page-link"
+                                                        aria-label="Next">
+                                                    <span aria-hidden="true">&raquo;</span>
+                                                </button>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="transaction" role="tabpanel" aria-labelledby="transaction-tab">
+                    <div class="card mb-4 border border-primary profile-card">
+                        <div class="card-header py-3">
+                            <div class="row align-items-center">
+                                <div class="col">
+                                    <h6 class="my-auto fw-bold">Transaction Report</h6>
+                                </div>
+                                <div class="col-md-2 justify-content-lg-end justify-content-md-end justify-content-center mt-lg-0 mt-md-0 mt-3">
+                                    <input type="text"
+                                           id="custom-search"
+                                           class="form-control "
+                                           placeholder="Search" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th width="6%">Sr.No</th>
+                                            <th>INV No.</th>
+                                            <th>Date</th>
+                                            <th>Due</th>
+                                            <th>Discount</th>
+                                            <th>Paid</th>
+                                            <th>Mode</th>
+                                            <th>Balance</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>1</td>
+                                            <td>Bill-13</td>
+                                            <td>21/10/2023</td>
+                                            <td>825</td>
+                                            <td>0</td>
+                                            <td>0</td>
+                                            <td>Cash</td>
+                                            <td>825</td>
+                                        </tr>
+                                        <tr>
+                                            <td>2</td>
+                                            <td>Bill-13</td>
+                                            <td>21/10/2023</td>
+                                            <td>825</td>
+                                            <td>0</td>
+                                            <td>0</td>
+                                            <td>Cash</td>
+                                            <td>825</td>
+                                        </tr>                                      
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-lg-5 col-md-5 col-12 ">
+                                    <div class="row ">
+                                        <div class="col-lg-3 col-md-3 col-12 d-flex justify-content-lg-start justify-content-md-start justify-content-center ">
+                                            <h6 class="mt-2">Show</h6>&nbsp;&nbsp;
+                                            <select class="form-select w-auto"
+                                                    aria-label="Default select example">
+                                                <option selected>10</option>
+                                                <option value="1">10</option>
+                                                <option value="2">50</option>
+                                                <option value="3">100</option>
+                                            </select>
+                                            &nbsp;&nbsp;
+                                            <h6 class="mt-2">entries</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-2 col-md-2"></div>
+                                <div class="col-lg-5 col-md-5 col-12 mt-lg-0 mt-md-0 mt-3">
+                                    <nav aria-label="Page navigation example">
+                                        <ul class="pagination justify-content-lg-end justify-content-md-end justify-content-center">
+                                            <li class="page-item">
+                                                <button class="page-link"
+                                                        aria-label="Previous">
+                                                    <span aria-hidden="true">&laquo;</span>
+                                                </button>
+                                            </li>
+                                            <li class="page-item active">
+                                                <button class="page-link">
+                                                    1
+                                                </button>
+                                            </li>
+                                            <li class="page-item">
+                                                <button class="page-link">
+                                                    2
+                                                </button>
+                                            </li>
+                                            <li class="page-item">
+                                                <button class="page-link">
+                                                    3
+                                                </button>
+                                            </li>
+                                            <li class="page-item">
+                                                <button class="page-link"
+                                                        aria-label="Next">
+                                                    <span aria-hidden="true">&raquo;</span>
+                                                </button>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="credithistory" role="tabpanel" aria-labelledby="credithistory-tab">
+                    <div class="card mb-4 border border-primary profile-card">
+                        <div class="card-header fw-bold">Credit History</div>
+                        <div class="card-body">
+                            <form>
+                                <div class="row py-2">
+                                    <div class="col-lg-4">
+                                        <label for="name" class="form-label fw-bold">Total Credit Limit <span class="text-danger">*</span></label>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <input type="text" class="form-control" id="name" placeholder="Enter Credit Limit" required />
+                                    </div>
+                                </div>
+                                <div class="row  py-2">
+                                    <div class="col-lg-4">
+                                        <label for="name" class="form-label fw-bold">available Balance </label>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <input type="text" class="form-control" id="address" placeholder="Enter available Balance" required />
+                                    </div>
+                                </div>
+                                <div class="row py-2">
+                                    <div class="col-lg-4">
+                                        <label for="contact" class="form-label fw-bold">Outstanding Amount <span class="text-danger">*</span></label>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <input type="text" class="form-control" id="contact" placeholder="Enter Outstanding Amount" required />
+                                    </div>
+                                </div>
+                                <div class="row py-2">
+                                    <div class="col-lg-5">
+                                        <button type="button" class="btn btn-success">Update Credit</button>
+                                    </div>
+
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

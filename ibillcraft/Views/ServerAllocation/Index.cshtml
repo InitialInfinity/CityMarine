@@ -1,0 +1,248 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization;
+@using Microsoft.Extensions.Localization
+@inject IViewLocalizer Localizer;
+@model IEnumerable<ibillcraft.Models.ServerAllocationModel>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Master";
+}
+<head>
+    <script src="~/jsfiles/serverallocation/serverallocation.js"></script>
+</head>
+<div class="card shadow mb-4">
+    <!--Start Header -->
+    <div class="card-header py-3">
+        <div class="row align-items-center">
+            <div class="col">
+                <h2 class="m-0 font-weight-bold text-primary">@Localizer["Server Allocation"]</h2>
+            </div>
+            <div class="col-md-2 justify-content-lg-end justify-content-md-end justify-content-center mt-lg-0 mt-md-0 mt-3">
+                <input type="text" id="custom-search" class="form-control" placeholder="Search" />
+            </div>
+            <div class="col-auto d-flex flex-wrap">
+
+                <button class="btn btn-md text-light bg-success mt-3 mt-lg-0 mt-md-0 ml-2" title="Excel" type="button" onclick="return Excel()" data-bs-toggle="modal" data-bs-target="#addSubscription">
+                    <i class="fas fa-file-excel"></i>
+                </button>
+                @*   <button class="btn btn-md text-light bg-warning mt-3 mt-lg-0 mt-md-0 ml-2"
+                type="button"
+                data-bs-toggle="modal"
+                data-bs-target="#addSubscription">
+                <i class="fas fa-print"></i>
+                </button>*@
+                <button class="btn btn-md text-light bg-danger mt-3 mt-lg-0 mt-md-0 ml-2" title="Pdf" type="button" data-bs-toggle="modal" onclick="return Pdf()" data-bs-target="#addSubscription">
+                    <i class="fas fa-file-pdf"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <!--End  Header -->
+    <!--Start Body -->
+    <div class="card-body">
+        <!-- start Griddata-->
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable1" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th width="6%">@Localizer["Sr.No"]</th>
+                        <th style="display:none">@Html.DisplayNameFor(model => model.com_id)</th>
+                        <th> @Localizer[@Html.DisplayNameFor(model => model.com_company_name)] </th>
+                        <th> @Localizer[@Html.DisplayNameFor(model => model.com_email)]</th>
+                        <th>@Localizer[@Html.DisplayNameFor(model => model.com_contact)]</th>
+                        <th> @Localizer[@Html.DisplayNameFor(model => model.CountryId)]</th>
+                        <th> @Localizer[@Html.DisplayNameFor(model => model.com_staff_no)] </th>
+                        <th>@Localizer[@Html.DisplayNameFor(model => model.package_name)] </th>
+                        <th>@Localizer[@Html.DisplayNameFor(model => model.StartDate)] </th>
+                        <th>@Localizer[@Html.DisplayNameFor(model => model.EndDate)]</th>
+                        <th>@Localizer[@Html.DisplayNameFor(model => model.final_Amount)]</th>
+                        <th> @Localizer[@Html.DisplayNameFor(model => model.Payment_Mode)] </th>
+                        <th width="7%">@Localizer["Action"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int itemNumber = 1;
+                    }
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td> @itemNumber </td>
+                            <td style="display:none"> @Html.DisplayFor(modelItem => item.com_id)</td>
+                            <td>@Html.DisplayFor(modelItem => item.com_company_name) </td>
+                            <td>@Html.DisplayFor(modelItem => item.com_email) </td>
+                            <td>@Html.DisplayFor(modelItem => item.com_contact)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Country)</td>
+                            <td>@Html.DisplayFor(modelItem => item.com_staff_no)</td>
+                            <td>@Html.DisplayFor(modelItem => item.package_name)</td>
+                            <td>@Html.DisplayFor(modelItem => item.StartDate) </td>
+                            <td>@Html.DisplayFor(modelItem => item.EndDate)</td>
+                            <td>@Html.DisplayFor(modelItem => item.final_Amount)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Payment_Mode)</td>
+                            @if (item.result == null)
+                            {
+                                <td> <a class='editicon mr5' title="Add Server" onclick="AddServer('@item.com_company_name','@item.com_id','@item.com_contact','@item.com_email','@item.sub_id','@item.py_id','@item.CountryId')"> <span class='fas fa-edit'></span></a></td>
+                            }
+                            else
+                            {
+                                <td> <a class='editicon mr5' title="View Server" onclick="ViewServer('@item.com_id','@item.com_company_name','@item.com_contact','@item.Allotted_Date','@item.com_code')"> <span class='fas fa-eye'></span></a></td>
+                            }
+                        </tr>
+                        itemNumber++;
+                    }
+                </tbody>
+            </table>
+        </div>
+        <!-- End Griddata-->
+        <!-- start Pagination-->
+        <!-- start Pagination-->
+        <div class="row mt-3">
+            <div class="col-lg-5 col-md-5 col-12 ">
+                <div class="row ">
+                    <div class="col-lg-3 col-md-3 col-12 d-flex justify-content-lg-start justify-content-md-start justify-content-center ">
+                        <h6 class="mt-2"> @Localizer["Show"]</h6>&nbsp;&nbsp;
+                        <select name="table_id_length" id="table_length_select" aria-controls="table_id" class="form-select w-auto">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                        &nbsp;&nbsp;
+                        <h6 class="mt-2"> @Localizer["entries"]</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-2"></div>
+            <div class="col-lg-5 col-md-5 col-12 mt-lg-0 mt-md-0 mt-3">
+                <nav aria-label="Page navigation example">
+                    <div id="table_id_length">
+
+                        <div id="custom-pagination" class=" d-flex text-center text-lg-end justify-content-end  text-end float-end">
+                            <ul class="pagination justify-content-lg-end justify-content-md-end justify-content-center">
+
+
+                                <li class="page-item disabled">
+                                    <button class="page-link" href="#" aria-label="Previous" data-page="0"> <span aria-hidden="true">&laquo;</span></button>
+                                </li>
+                                <li class="page-item active"><button class="page-link" href="#" data-page="1">1</button></li>
+
+                                <li class="page-item "><button class="page-link" href="#" data-page="2" aria-label="Next">  <span aria-hidden="true">&raquo;</span></button></li>
+
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <!-- end Pagination-->
+        <!-- start Modal-->
+
+        <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title text-dark" id="exampleModalLabel">@Localizer["Server Allocation"]</h5>
+
+                        <button type="button" class="btn-close bg-primary text-white" data-bs-dismiss="modal" aria-label="Close" onclick="CancelData()"></button>
+                    </div>
+                    <div class="modal-body text-dark">
+                        @* <div class="form-group">
+                        <label asp-for="UserId" class="control-label"></label>
+                        <input asp-for="UserId" class="form-control" />
+                        <span asp-validation-for="UserId" class="text-danger"></span>
+                        </div> *@
+
+                        <div class="form-group" style="display:none">
+                            <label class="control-label">Id</label>
+                            <input id="com_id" class="form-control" />
+                            <span class="text-danger"></span>
+                        </div>
+                        <div class="form-group" style="display:none">
+                            <label class="control-label">Subscripton Id</label>
+                            <input id="sub_id" class="form-control" />
+                            <span class="text-danger"></span>
+                        </div>
+                        <div class="form-group" style="display:none">
+                            <label class="control-label">Payment Id</label>
+                            <input id="py_id" class="form-control" />
+                            <span class="text-danger"></span>
+                        </div>
+                        <div class="form-group" style="display:none">
+                            <label class="control-label">Email Id</label>
+                            <input id="com_email" class="form-control" />
+                            <span class="text-danger"></span>
+                        </div>
+                        <div class="form-group" style="display:none">
+                            <label class="control-label">country Id</label>
+                            <input id="CountryId" class="form-control" />
+                            <span class="text-danger"></span>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
+                                <div class="form-group">
+                                    <label class="control-label">@Localizer["Company Name"]</label>
+                                    <input id="com_company_name" class="form-control" readonly />
+                                    <span id="message"></span>
+                                </div>
+                            </div>
+                            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
+                                <div class="form-group form-group-sm">
+                                    <label class="control-label">@Localizer["Company code"]<span class="text-danger">*</span></label>
+                                    <input id="com_code" class="form-control" onkeydown="validateNumchar(event)" placeholder="Enter Company Code" maxlength="100" />
+                                    <span id="message"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
+                                <div class="form-group form-group-sm">
+                                    <label class="control-label">@Localizer["Contact Number"]</label>
+                                    <input id="com_contact" class="form-control" readonly />
+                                    <span id="message"></span>
+                                </div>
+                            </div>
+                            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
+                                <div class="form-group form-group-sm">
+                                    <label class="control-label">@Localizer["Server Name"]</label>
+                                    <select class="form-select" id="server" asp-items="@(new SelectList(ViewBag.server,"Key","Value"))" required><option>-- Select --</option></select>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
+                                <div class="form-group form-group-sm" style="display:none">
+                                    <label class="control-label">@Localizer["Allotted Date"]</label>
+                                    <input id="Allotted_Date" class="form-control" />
+                                    <span id="message"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button title="Save" type="submit" id="btnsubmit" value="Create" class="btn btn-primary" onclick="submitServer()"> @Localizer["Submit"]</button>
+                        <button type="button" title="Close" class="btn btn-secondary" data-dismiss="modal" onclick="CancelData()"> @Localizer["Cancel"]</button>
+                    </div>
+
+                </div>
+            </div>
+            
+        </div>
+        <!-- end Modal-->
+        
+    </div>
+    <!--End Body -->
+</div>
+<script>
+    $(document).ready(function () {
+        //$('#dataTable').DataTable();
+        //$('.table_id_length').css("display", "none");
+        $('#createModal').modal({
+            backdrop: 'static', // Prevents closing on outside click
+            keyboard: false // Prevents closing with the escape key
+        });
+    });
+    myFunction();
+    $('#table_length_select').change();
+</script>
+

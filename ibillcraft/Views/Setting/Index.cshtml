@@ -1,0 +1,282 @@
+﻿@{
+    ViewBag.Header = "Setting";
+
+}
+<link href="~/css/dashboard.css" rel="stylesheet" />
+<div class="container-xl px-4 mt-4">
+    <!-- Account page navigation-->
+    <nav class="nav nav-borders">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a class="nav-link active" id="Feature-tab" data-bs-toggle="tab" data-bs-target="#Feature" type="button" role="tab" aria-controls="Feature" aria-selected="true">Feature</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="SMS-Configuration-tab" data-bs-toggle="tab" data-bs-target="#SMS-Configuration" type="button" role="tab" aria-controls="SMS-Configuration" aria-selected="false">SMS Configuration</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="Email-Configuration-tab" data-bs-toggle="tab" data-bs-target="#Email-Configuration" type="button" role="tab" aria-controls="Email-Configuration" aria-selected="false">Email-Configuration</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="Note-tab" data-bs-toggle="tab" data-bs-target="#Note" type="button" role="tab" aria-controls="Note" aria-selected="false">Note</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="Otp-tab" data-bs-toggle="tab" data-bs-target="#Otp" type="button" role="tab" aria-controls="Otp" aria-selected="false">Otp</button>
+            </li>
+        </ul>
+
+    </nav>
+    <hr class="mt-0 mb-4">
+    <div class="row">
+        <div class="col-xl-12">
+            <!-- Account details card-->
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="Feature" role="tabpanel" aria-labelledby="Feature-tab">
+                    <div class="card mb-4 border  profile-card">
+                        <div class="card-header fw-bold">Feature </div>
+                        <div class="card-body">
+                            <div class="row align-items-center my-4">
+                                <div class="col">
+                                    <h4 class="m-0 font-weight-normal text-primary">Sale Invoice Created SMS</h4>
+                                </div>                         
+                                <div class="col-auto d-flex flex-wrap toogle">
+                                    <div class="form-check form-switch mt-lg-1 mt-md-1 mt-3 ml-2 ">
+
+                                        <input class="form-check-input" type="checkbox" id="toggleStatus" checked >
+                                        <label class="form-check-label" for="toggleStatus" data-on="On" data-off="Off"></label>
+                                    </div>                             
+                                </div>
+                            </div>
+                              <div class="row align-items-center my-4">
+                                <div class="col">
+                                    <h4 class="m-0 font-weight-normal text-primary">Sale Invoice Created Mail</h4>
+                                </div>                         
+                                <div class="col-auto d-flex flex-wrap toogle">
+                                    <div class="form-check form-switch mt-lg-1 mt-md-1 mt-3 ml-2 ">
+
+                                        <input class="form-check-input" type="checkbox" id="toggleStatus" checked >
+                                        <label class="form-check-label" for="toggleStatus" data-on="On" data-off="Off"></label>
+                                    </div>                             
+                                </div>
+                            </div>
+                              <div class="row align-items-center my-4">
+                                <div class="col">
+                                    <h4 class="m-0 font-weight-normal text-primary">Delete Option (For Invoices)</h4>
+                                </div>                         
+                                <div class="col-auto d-flex flex-wrap toogle">
+                                    <div class="form-check form-switch mt-lg-1 mt-md-1 mt-3 ml-2 ">
+
+                                        <input class="form-check-input" type="checkbox" id="toggleStatus" checked >
+                                        <label class="form-check-label" for="toggleStatus" data-on="On" data-off="Off"></label>
+                                    </div>                             
+                                </div>
+                            </div>
+                            <div class="row align-items-center my-4">
+                                <div class="col">
+                                    <h4 class="m-0 font-weight-normal text-primary">OTP (For Login)</h4>
+                                </div>
+                                <div class="col-auto d-flex flex-wrap toogle">
+                                    <div class="form-check form-switch mt-lg-1 mt-md-1 mt-3 ml-2 ">
+
+                                        <input class="form-check-input" type="checkbox" id="toggleStatus" checked>
+                                        <label class="form-check-label" for="toggleStatus" data-on="On" data-off="Off"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="SMS-Configuration" role="tabpanel" aria-labelledby="SMS-Configuration-tab">
+                    <div class="card mb-4 border  profile-card">
+                        <div class="card-header fw-bold">SMS Configuration Details</div>
+                        <div class="card-body">
+                            <form>
+                                <div class="row py-2">
+                                    <div class="col-lg-4">
+                                        <label for="name" class="form-label fw-bold">Authentication Key <span class="text-danger">*</span></label>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <input type="text" class="form-control" id="name" placeholder="Enter Authentication Key" required />
+                                    </div>
+                                </div>                              
+                                <div class="row py-2">
+                                    <div class="col-lg-4">
+                                        <label for="contact" class="form-label fw-bold">Country Code <span class="text-danger">*</span></label>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <input type="text" class="form-control" id="contact" placeholder="Enter Country Code" required />
+                                    </div>
+                                </div>  
+                                <div class="row py-2">
+                                    <div class="col-lg-4">
+                                        <label for="contact" class="form-label fw-bold">Sender Id <span class="text-danger">*</span></label>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <input type="text" class="form-control" id="Sender Id" placeholder="Enter Sender Id" required />
+                                    </div>
+                                </div>
+                                  <div class="row py-2">
+                                    <div class="col-lg-4">
+                                        <label for="contact" class="form-label fw-bold">Route <span class="text-danger">*</span></label>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <input type="text" class="form-control" id="Route" placeholder="Enter Route" required />
+                                    </div>
+                                </div>
+                                <div class="row py-2">
+                                    <div class="card-footer d-flex justify-content-end">
+                                        <button type="button" class="btn btn-success mx-3">Update</button>
+                                        <button class="btn btn-primary mx-1" type="button">Cancel</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="Email-Configuration" role="tabpanel" aria-labelledby="Email-Configuration-tab">
+                    <div class="card mb-4 border  profile-card">
+                        <div class="card-header fw-bold">Email Configuration Details</div>
+                        <div class="card-body">
+                            <form>
+                                <div class="row py-2">
+                                    <div class="col-lg-4">
+                                        <label for="name" class="form-label fw-bold">Email Id <span class="text-danger">*</span></label>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <input type="text" class="form-control" id="name" placeholder="Enter Email Ids" required />
+                                    </div>
+                                </div>
+                                <div class="row py-2">
+                                    <div class="col-lg-4">
+                                        <label for="contact" class="form-label fw-bold">Password <span class="text-danger">*</span></label>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <input type="password" class="form-control" id="contact" placeholder="Enter Password" required />
+                                    </div>
+                                </div>
+                                <div class="row py-2">
+                                    <div class="col-lg-4">
+                                        <label for="contact" class="form-label fw-bold">Port <span class="text-danger">*</span></label>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <input type="text" class="form-control" id="Sender Id" placeholder="Enter Port" required />
+                                    </div>
+                                </div>
+                                <div class="row py-2">
+                                    <div class="col-lg-4">
+                                        <label for="contact" class="form-label fw-bold">Subject <span class="text-danger">*</span></label>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <input type="text" class="form-control" id="Route" placeholder="Enter Subject" required />
+                                    </div>
+                                </div>
+                                <div class="row py-2">
+                                    <div class="col-lg-4">
+                                        <label for="contact" class="form-label fw-bold">SMTP Server <span class="text-danger">*</span></label>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <input type="text" class="form-control" id="Route" placeholder="Enter SMTP Server" required />
+                                    </div>
+                                </div>
+                                <div class="row py-2">
+                                    <div class="card-footer d-flex justify-content-end">
+                                        <button type="button" class="btn btn-success mx-3">Update </button>
+                                        <button class="btn btn-primary mx-1" type="button">Cancel</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="Note" role="tabpanel" aria-labelledby="Note-tab">
+                    <div class="card mb-4 border  profile-card">
+                        <div class="card-header fw-bold">email Configuration Details</div>
+                        <div class="card-body">
+                            @*===========================> text editor goes here <================================================*@
+
+                           @* <form>
+                                <div class="row py-2">
+                                    <div class="col-lg-4">
+                                        <label for="name" class="form-label fw-bold">Email Id <span class="text-danger">*</span></label>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <input type="text" class="form-control" id="name" placeholder="Enter Email Ids" required />
+                                    </div>
+                                </div>
+                                <div class="row py-2">
+                                    <div class="col-lg-4">
+                                        <label for="contact" class="form-label fw-bold">Password <span class="text-danger">*</span></label>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <input type="password" class="form-control" id="contact" placeholder="Enter Password" required />
+                                    </div>
+                                </div>
+                                <div class="row py-2">
+                                    <div class="col-lg-4">
+                                        <label for="contact" class="form-label fw-bold">Port <span class="text-danger">*</span></label>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <input type="text" class="form-control" id="Sender Id" placeholder="Enter Port" required />
+                                    </div>
+                                </div>
+                                <div class="row py-2">
+                                    <div class="col-lg-4">
+                                        <label for="contact" class="form-label fw-bold">Subject <span class="text-danger">*</span></label>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <input type="text" class="form-control" id="Route" placeholder="Enter Subject" required />
+                                    </div>
+                                </div>
+                                <div class="row py-2">
+                                    <div class="col-lg-4">
+                                        <label for="contact" class="form-label fw-bold">SMTP Server <span class="text-danger">*</span></label>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <input type="text" class="form-control" id="Route" placeholder="Enter SMTP Server" required />
+                                    </div>
+                                </div>
+                                <div class="row py-2">
+                                    <div class="card-footer d-flex justify-content-end">
+                                        <button type="button" class="btn btn-success mx-3">Update </button>
+                                        <button class="btn btn-primary mx-1" type="button">Cancel</button>
+                                    </div>
+                                </div>
+                            </form>*@
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="Otp" role="tabpanel" aria-labelledby="Otp-tab">
+                    <div class="card mb-4 border  profile-card">
+                        <div class="card-header fw-bold">Email Configuration Details</div>
+                        <div class="card-body">
+                            <form>
+                                <div class="row py-2">
+                                    <div class="col-lg-4">
+                                        <label for="name" class="form-label fw-bold">Contact no<span class="text-danger">*</span></label>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <input type="text" class="form-control" id="name" placeholder="Enter Contact no" required />
+                                    </div>
+                                </div>
+                                <div class="row py-2">
+                                    <div class="col-lg-4">
+                                        <label for="contact" class="form-label fw-bold">Enter OTP <span class="text-danger">*</span></label>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <input type="number" class="form-control" id="contact" placeholder="Enter Enter OTP" required />
+                                    </div>
+                                </div>
+                                <div class="row py-2">
+                                    <div class="card-footer d-flex justify-content-end">
+                                        <button type="button" class="btn btn-warning mx-3">Send OTP </button>
+                                        <button type="button" class="btn btn-success mx-3">Verify & Update </button>
+                                     
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

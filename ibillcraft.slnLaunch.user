@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "Master\\Master.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "ibillcraft\\ibillcraft.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]
