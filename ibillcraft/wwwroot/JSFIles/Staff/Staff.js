@@ -7,6 +7,7 @@ function GoBack() {
 function clrstf() {
    // window.location.href = '/Staff/Index';
     $('#st_staff_name').val("");
+    $('#co_country_code').val("");
     $('#st_email').val("");
     $('#st_address').val("");
     $('#st_contact').val("");
@@ -40,6 +41,10 @@ function submitStaff() {
     }
     else if ($('#st_address').val() == '') {
         alert("Please enter address!");
+        return false;
+    }
+    else if ($('#co_country_code').val().trim() == '') {
+        alert("Please enter country code!");
         return false;
     }
     else if ($('#st_contact').val() == '') {

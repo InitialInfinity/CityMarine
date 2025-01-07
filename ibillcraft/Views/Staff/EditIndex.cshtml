@@ -104,7 +104,7 @@
                             <label for="name" class="form-label float-lg-end">@Localizer["Contact No"]:<span class="text-danger">*</span></label>
                         </div>
                         <div class="col-lg-7 d-flex">
-                            <input class="form-control" id="co_country_code" style="width:60px" type="text" value="@ViewBag.co_country_code" name="name" maxlength="4" readonly>
+                            <input class="form-control" id="co_country_code" value="@ViewBag.co_country_code" style="width:60px" type="text" name="name" maxlength="4" >
                             <input type="text" class="form-control ml-2" onkeydown="return isNumber(event)" onblur="isNumber(this)" maxlength="15" value="@ViewBag.st_contact" id="st_contact" placeholder="Enter Contact No" name="name">
                         </div>
                     </div>

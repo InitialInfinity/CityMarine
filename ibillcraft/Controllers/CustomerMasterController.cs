@@ -118,7 +118,7 @@ namespace ibillcraft.Controllers
 			}
 			ViewBag.Format = CUtility.format;
 			Guid UserId = CUtility.rolename == "Admin" ? new Guid(CUtility.comid) : new Guid(CUtility.userid);
-            ViewBag.co_country_code = CUtility.co_country_code;
+           // ViewBag.co_country_code = CUtility.co_country_code;
             CustomerMasterModel model = new CustomerMasterModel();
             try
             {
@@ -250,7 +250,7 @@ namespace ibillcraft.Controllers
                 ViewBag.Format = CUtility.format;
                 ViewBag.comid = CUtility.comid;
                 Guid UserId = CUtility.rolename == "Admin" ? new Guid(CUtility.comid) : new Guid(CUtility.userid);
-                ViewBag.co_country_code = CUtility.co_country_code;
+               // ViewBag.co_country_code = CUtility.co_country_code;
                 string eurl = $"{_httpClient.BaseAddress}/ViewBag/GetViewBag?userId&sTableName=tbl_ParameterValueMaster&sValue=pv_parametervalue&id=pv_id&IsActiveColumn=pv_isactive&sCoulmnName=pv_parameterid&sColumnValue=16aa2b3f-76db-44d2-bbd4-2dc7a4d0e430";
                 HttpResponseMessage eresponseView = _httpClient.GetAsync(eurl).Result;
                 dynamic edata = eresponseView.Content.ReadAsStringAsync().Result;
