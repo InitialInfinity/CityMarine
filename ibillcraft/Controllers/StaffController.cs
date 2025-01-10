@@ -86,7 +86,7 @@ namespace ibillcraft.Controllers
                     return RedirectToAction("Index", "CompanyLoginRegistration");
                 }
                 ViewBag.Format = CUtility.format;
-                ViewBag.co_country_code = CUtility.co_country_code;
+                //ViewBag.co_country_code = CUtility.co_country_code;
                 string geurl = $"{_httpClient.BaseAddress}/ViewBag/GetViewBag?userId&sTableName=tbl_ParameterValueMaster&sValue=pv_parametervalue&id=pv_id&IsActiveColumn=pv_isactive&sCoulmnName=pv_parameterid&sColumnValue=2371016c-70a0-4582-9da7-17d0386c1d9c";
                 HttpResponseMessage geresponseView = _httpClient.GetAsync(geurl).Result;
                 dynamic gedata = geresponseView.Content.ReadAsStringAsync().Result;
@@ -232,18 +232,19 @@ namespace ibillcraft.Controllers
                     var rrootObject = JsonConvert.DeserializeObject<List<FillDropdown>>(rdata1);
                     ViewBag.st_rolename = rrootObject;
                     ViewBag.Selectedrolename = model.st_rolename;
-                    if (model.co_country_code ==null)
-                    {
-                        ViewBag.co_country_code = CUtility.co_country_code;
-                    }
-                    else
-                    {
-                        ViewBag.co_country_code = model.co_country_code;
-                    }
+                    ViewBag.co_country_code = model.co_country_code;
+                    //if (model.co_country_code ==null)
+                    //{
+                    //    ViewBag.co_country_code = CUtility.co_country_code;
+                    //}
+                    //else
+                    //{
+                    //    ViewBag.co_country_code = model.co_country_code;
+                    //}
 
 
                     //ViewBag.SelectedCi = model.st_city_id;
-                   
+
                     ViewBag.st_staff_name = model.st_staff_name;
                     ViewBag.st_staff_code = model.st_staff_code;
                     ViewBag.st_username = model.st_username;

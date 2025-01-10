@@ -334,6 +334,10 @@ function submitCustomer() {
             alert("Please enter address!");
             return false;
         }
+        else if ($('#co_country_code').val().trim() == '') {
+            alert("Please enter country code!");
+            return false;
+        }
         else if ($('#c_contact').val().trim() == '') {
             alert("Please enter contact no!");
             return false;
@@ -663,6 +667,7 @@ function readURL(input) {
         $('#c_contact').val('');
         $('#c_contact2').val('');
         $('#c_ccode').val('');
+        $('#co_country_code').val('');
      
         $('#c_email').val('');
         $('#c_dob').val('');
