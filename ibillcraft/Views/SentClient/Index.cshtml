@@ -44,6 +44,158 @@
     .attachments, .conversation {
         margin-top: 20px;
     }
+
+
+    .modal-body {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+    }
+
+    .box {
+        background-color: #ffffff;
+        border: 1px solid #ddd;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 15px;
+        padding: 15px;
+    }
+
+    .form-group label {
+        font-size: larger;
+        font-weight: bold;
+    }
+
+    .form-group textarea {
+        width: 100%;
+        font-size: medium;
+        resize: none;
+    }
+
+    .attachments table,
+    .conversation table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    .attachments th,
+    .conversation th {
+        text-align: left;
+        padding: 10px;
+        font-size: larger;
+        font-weight: bold;
+        border: 1px solid #ddd;
+    }
+
+    .attachments td,
+    .conversation td {
+        padding: 8px;
+        border: 1px solid #ddd;
+    }
+
+
+
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+    }
+
+    .container {
+        width: 60%;
+        margin: 20px auto;
+        background: white;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .date {
+        font-size: 14px;
+        color: #555;
+    }
+
+    .subject {
+        font-weight: bold;
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+
+    .content {
+        line-height: 1.6;
+        color: #333;
+    }
+
+    ul {
+        margin: 10px 0;
+        padding-left: 20px;
+    }
+
+    .footer {
+        margin-top: 20px;
+    }
+
+    .button {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+        .button a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #5a67d8;
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            border-radius: 4px;
+        }
+
+    .email-info {
+        font-size: 14px;
+        color: #555;
+        margin-bottom: 10px;
+    }
+
+
+
+    /* arrow */
+    .arrow-container {
+        background-color: #4a4747;
+        padding: 10px;
+        width: 100px;
+        color: white;
+        font-family: Arial, sans-serif;
+    }
+
+    .arrow-item {
+        background-color: #d3d3d3;
+        color: black;
+        padding: 4px;
+        position: relative;
+        margin-bottom: 15px;
+        font-size: 14px;
+        text-align: center;
+        border-radius: 3px;
+    }
+
+        .arrow-item::after {
+            content: '';
+            position: absolute;
+            top: 53%;
+            right: -26px;
+            transform: translateY(-50%);
+            border-width: 14px;
+            border-style: solid;
+            border-color: transparent transparent transparent #d3d3d3;
+        }
 </style>
 
 <div class="card shadow mb-4">
@@ -52,10 +204,10 @@
             <div class="col">
                 <h2 class="m-0 font-weight-bold text-primary">@Localizer["Email Sent"]</h2>
             </div>
-            <div class="col-lg-1 col-md-1 ">
+            <div class="col-lg-1 col-md-1 " style="display:none">
                 <label for="name" class="form-label float-lg-end">@Localizer["Client Name"]:</label>
             </div>
-            <div class="col-lg-2 col-md-2">
+            <div class="col-lg-2 col-md-2" style="display:none">
                 <select id="clientDropdown" class="form-select" placeholder="select type" asp-items="@(new SelectList(ViewBag.customer,"Id","Value"))" onchange="return clientchange()">
                     <option value="">--Select--</option>
                 </select>
@@ -67,37 +219,14 @@
         </div>
     </div>
 
-    <ul class="nav nav-tabs" id="tabMenu" role="tablist">
-        <li class="nav-item">
-            <button class="nav-link" id="client-tab" data-bs-toggle="tab" data-bs-target="#client" type="button" role="tab" aria-controls="client" onclick="return clienttab()">
-                Client
-            </button>
-        </li>
-        <li class="nav-item">
-            <button class="nav-link" id="enquiry-tab" data-bs-toggle="tab" data-bs-target="#enquiry" type="button" role="tab" aria-controls="enquiry" onclick="return enquirytab()">
-                Enquiry
-            </button>
-        </li>
-        <li class="nav-item">
-            <button class="nav-link" id="claim-tab" data-bs-toggle="tab" data-bs-target="#claim" type="button" role="tab" aria-controls="claim" onclick="return claimtab()">
-                Claim
-            </button>
-        </li>
-    @*     <li class="nav-item">
-            <button class="nav-link" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab" aria-controls="general" onclick="return generaltab()">
-                General
-            </button>
-        </li> *@
-    </ul>
-
     <div class="card-body">
-        <div class="table-responsive" id="print">
+        <div class="table-responsive" id="print" style="display:none">
             <table class="table table-bordered" id="dataTable1" width="100%" cellspacing="0">
                 <thead>
                     <tr>
                         <th width="6%">@Localizer["Sr.No"]</th>
-                        <th style="display:none">to</th>
-                        <th style="display:none">toemail</th>
+                        <th style="display:none">from</th>
+                        <th style="display:none">fromemail</th>
                         <th>@Localizer["Year"]</th>
                         <th>@Localizer["Count"]</th>
                     </tr>
@@ -110,9 +239,9 @@
                     {
                         <tr>
                             <td>@itemNumber</td>
-                            <td style="display:none"> @Html.DisplayFor(modelItem => item.sc_to)</td>
-                            <td style="display:none"> @Html.DisplayFor(modelItem => item.sc_toname)</td>
-                            <td onclick="show('@item.sc_year.Substring(0, 4)', '@item.sc_toname', '@item.sc_to')">
+                            <td style="display:none"> @Html.DisplayFor(modelItem => item.sc_from)</td>
+                            <td style="display:none"> @Html.DisplayFor(modelItem => item.sc_fromname)</td>
+                            <td onclick="show('@item.sc_year.Substring(0, 4)', '@item.sc_fromname', '@item.sc_from','enquiry')">
                                 @Html.DisplayFor(modelItem => item.sc_year)
                             </td>
 
@@ -145,9 +274,8 @@
                     <label for="name" class="form-label float-lg-end">@Localizer["Year"]:</label>
                 </div>
                 <div class="col-md-2 justify-content-lg-end justify-content-md-end justify-content-center mt-lg-0 mt-md-0 mt-3">
-                    <select id="yearDropdown" class="form-select">
+                    <select id="yearDropdown" class="form-select" asp-items="@(new SelectList(ViewBag.year,"Id","Value"))" onchange="return clientchange1()">
                         <option value="">--Select Year--</option>
-                        <option value="2024">2024</option>
                         <!-- You can dynamically add more options here if needed -->
                     </select>
                 </div>
@@ -159,16 +287,41 @@
                 </div>
 
             </div>
+            <div class="row align-items-center">
+                <ul class="nav nav-tabs" id="tabMenu" role="tablist">
+                    <li class="nav-item" style="display:none">
+                        <button class="nav-link" id="client-tab" data-bs-toggle="tab" data-bs-target="#client" type="button" role="tab" aria-controls="client" onclick="return clienttab()">
+                            Client
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" id="enquiry-tab" data-bs-toggle="tab" data-bs-target="#enquiry" type="button" role="tab" aria-controls="enquiry" onclick="return enquirytab()">
+                            Enquiry
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" id="claim-tab" data-bs-toggle="tab" data-bs-target="#claim" type="button" role="tab" aria-controls="claim" onclick="return claimtab()">
+                            Claim
+                        </button>
+                    </li>
+                    @*     <li class="nav-item">
+                    <button class="nav-link" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab" aria-controls="general" onclick="return generaltab()">
+                    General
+                    </button>
+                    </li> *@
+                </ul>
+            </div>
         </div>
 
         <div id="detailsGrid" class="table-responsive" style="display:none">
-            <h5 style="display:none">Details for Year: <span id="selectedYear">2024</span></h5>
+            <h5 style="display:none">Details for Year: <span id="selectedYear">2025</span></h5>
             <table class="table table-bordered" id="dataTable1" width="100%" cellspacing="0">
                 <thead>
                     <tr>
                         <th>Sr.No</th>
                         <th style="display:none">Id</th>
                         <th>To</th>
+                        <th>From</th>
                         <th>Subject</th>
                         <th>Date</th>
                         <th style="display:none">Attachment</th>
@@ -180,9 +333,11 @@
             </table>
         </div>
 
+
+        @* Start Filter Model*@
         <div class="modal fade" id="addfilter" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
              aria-hidden="true" style="display:none">
-            <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-dialog modal-md" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title text-dark fw-bold" style="font-size: larger;" id="exampleModalLabel">Filter</h5>
@@ -192,45 +347,67 @@
                                 aria-label="Close"></button>
                     </div>
                     <div class="modal-body text-dark" style=" background-color: #f8f9fa;padding: 15px;border-radius: 8px;">
-                        <div class="flex-container">
-                            @*  <div class="box" style="background-color: #ffffff;border: 1px solid #ddd;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);"> *@
-                            <div class="form-group">
-                                <label class="control-label fw-bold" style="font-size: larger;" for="from">From</label>
-                                <span style="padding-left:40px"><input type="text" class="form-control" id="s_from" style="font-size:medium" /></span>
-                            </div>
+                        @*    <div class="flex-container"> *@
+                        @*  <div class="box" style="background-color: #ffffff;border: 1px solid #ddd;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);"> *@
+                        <div class="row">
+                            <div class="col-xs-6 col-sm-6 col-md-12 ">
+                                <div class="form-group form-group-sm">
 
-                            <div class="form-group">
-                                <label class="control-label fw-bold" style="font-size: larger;" for="to">To</label>
-                                <span style="padding-left:59px"><input type="text" class="form-control" id="s_to" value="" style="font-size:medium" /></span>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="control-label fw-bold" style="font-size: larger;" for="subject">Subject</label>
-                                <span style="padding-left:23px"><input type="text" class="form-control" id="s_subject" value="" style="font-size:medium" /></span>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="control-label fw-bold" style="font-size: larger;" for="hasthewords">Has the words</label>
-                                <span style="padding-left:23px"><input type="text" class="form-control" id="s_hasthewords" value="" style="font-size:medium" /></span>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label fw-bold" style="font-size: larger;" for="year">Year</label>
-                                <span style="padding-left:23px">
-                                    <select id="yearDropdown1" class="form-select">
-                                        <option value="">--Select Year--</option>
-                                        <option value="2024">2024</option>
-                                    </select>
-                                </span>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label fw-bold" style="font-size: larger;" for="subject">Search</label>
-                                <select class="form-select" id="s_tab">
-                                    <option value="client">Client</option>
-                                    <option value="enquiry">Enquiry</option>
-                                    <option value="claim">Claim</option>>
-                                </select>
+                                    <label class="control-label fw-bold" style="font-size: larger;" for="from">From</label>
+                                    <span style="padding-left:40px"><input type="text" class="form-control" id="s_from" style="font-size:medium" /></span>
+                                </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-xs-6 col-sm-6 col-md-12 ">
+                                <div class="form-group form-group-sm">
+                                    <label class="control-label fw-bold" style="font-size: larger;" for="to">To</label>
+                                    <span style="padding-left:59px"><input type="text" class="form-control" id="s_to" value="" style="font-size:medium" /></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-6 col-sm-6 col-md-12 ">
+                                <div class="form-group form-group-sm">
+                                    <label class="control-label fw-bold" style="font-size: larger;" for="subject">Subject</label>
+                                    <span style="padding-left:23px"><input type="text" class="form-control" id="s_subject" value="" style="font-size:medium" /></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-6 col-sm-6 col-md-12 ">
+                                <div class="form-group form-group-sm">
+                                    <label class="control-label fw-bold" style="font-size: larger;" for="hasthewords">Has the words</label>
+                                    <span style="padding-left:23px"><input type="text" class="form-control" id="s_hasthewords" value="" style="font-size:medium" /></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-6 col-sm-6 col-md-12 ">
+                                <div class="form-group form-group-sm">
+                                    <label class="control-label fw-bold" style="font-size: larger;" for="year">Year</label>
+                                    <span style="padding-left:23px">
+                                        <select id="yearDropdown1" class="form-select" asp-items="@(new SelectList(ViewBag.year,"Id","Value"))">
+                                            <option value="">--Select Year--</option>
+                                        </select>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-6 col-sm-6 col-md-12 ">
+                                <div class="form-group form-group-sm">
+                                    <label class="control-label fw-bold" style="font-size: larger;" for="subject">Search</label>
+                                    <select class="form-select" id="s_tab">
+                                        @*<option value="client">Client</option> *@
+                                        <option value="enquiry">Enquiry</option>
+                                        <option value="claim">Claim</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        @*</div>*@
                     </div>
                     <div class="modal-footer">
                         <button title="Save" type="submit" id="btnsubmit" value="Create" class="btn btn-primary" onclick="submitfilter()">@Localizer["Submit"]</button>
@@ -240,8 +417,11 @@
             </div>
         </div>
 
-        <div class="modal fade" id="addSubscription" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-             aria-hidden="true">
+        @* End filter model *@
+
+
+        @* Start view model *@
+        <div class="modal fade" id="addSubscription" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
             <div class="modal-dialog modal-xl" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -253,112 +433,128 @@
                     </div>
                     <div class="modal-body text-dark" style=" background-color: #f8f9fa;padding: 15px;border-radius: 8px;">
                         <div class="flex-container">
-                            <div class="box" style="background-color: #ffffff;border: 1px solid #ddd;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);">
-                                <div class="form-group">
-                                    <label class="control-label fw-bold" style="font-size: larger;" for="from">From:</label>
-                                    <span style="padding-left:40px"><label id="sc_fromlabel" value="" style="font-size:medium"></label></span>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="control-label fw-bold" style="font-size: larger;" for="to">To:</label>
-                                    <span style="padding-left:59px"><label id="sc_tolabel" value="" style="font-size:medium"></label></span>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="control-label fw-bold" style="font-size: larger;" for="subject">Subject:</label>
-                                    <span style="padding-left:23px"><label id="sc_subjectlabel" value="" style="font-size:medium"></label></span>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="control-label fw-bold" for="message" style="display: inline-block; vertical-align: top; margin-right: 10px;font-size: larger;">Message:</label>
-                                    <textarea rows="20" cols="85" readonly id="sc_bodylabel" style="font-size:medium"></textarea>
-                                </div>
-
+                            <div style="background-color: #4a4747;border: 1px solid #ddd;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);margin-bottom: 15px;padding: 15px;width: 11%;max-width: 800px;">
+                              <div class="arrow-container" id="arrow-container"></div>
+                                @*  <div class="arrow-item" id="date1"></div>
+                                <div style="padding:12px"></div>
+                                <div class="arrow-item" id="date2"></div>
+                                <div style="padding:12px"></div>
+                                <div class="arrow-item" id="date3"></div> *@
                             </div>
                             <div class="box" style="background-color: #ffffff;border: 1px solid #ddd;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);">
-                                <div class="box" style="background-color: #ffffff;border: 1px solid #ddd;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);height:50%">
-                                    <div class="attachments">
-                                        <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-                                            <thead>
-                                                <tr>
-                                                    <th colspan="3" style="text-align: left; padding: 10px; font-size: larger; font-weight: bold; border: 1px solid #ddd;">
-                                                        Attachments:
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="viewattachments">
-                                                <tr style=" border: 1px solid #ddd;">
-                                                    <td style="padding: 8px;" id="filename"></td>
-                                                    <td style="text-align: center;" id="filebuttons1">
-                                                        @* <a href="~/images/sample data/sample.pdf" title="View PDF">
-                                                            <i class="fas fa-eye" style="font-size: 16px; color: blue;"></i>
-                                                        </a> *@
-                                                    </td>
-                                                    <td style="text-align: center;" id="filebuttons2">
-                                                       @*  <a href="~/images/sample data/sample.pdf" download="sample.pdf" title="Download PDF">
-                                                            <i class="fas fa-download" style="font-size: 16px; color: green;"></i>
-                                                        </a> *@
-                                                    </td>
-                                                </tr>
-                                                @* <tr style=" border: 1px solid #ddd;">
-                                                    <td style="padding: 8px; ">file1.zip</td>
-                                                    <td style="text-align: center; ">
-                                                        <a href="~/images/sample data/samplezip.zip" title="View ZIP">
-                                                            <i class="fas fa-eye" style="font-size: 16px; color: blue;"></i>
-                                                        </a>
-                                                    </td>
-                                                    <td style="text-align: center;">
-                                                        <a href="~/images/sample data/samplezip.zip" download="samplezip.zip" title="Download ZIP">
-                                                            <i class="fas fa-download" style="font-size: 16px; color: green;"></i>
-                                                        </a>
-                                                    </td>
-                                                </tr>
-                                                <tr style=" border: 1px solid #ddd;">
-                                                    <td style="padding: 8px;">file1.png</td>
-                                                    <td style="text-align: center;">
-                                                        <a href="~/images/sample data/sampleimage.png" title="View Image">
-                                                            <i class="fas fa-eye" style="font-size: 16px; color: blue;"></i>
-                                                        </a>
-                                                    </td>
-                                                    <td style="text-align: center;">
-                                                        <a href="~/images/sample data/sampleimage.png" download="sampleimage.png" title="Download Image">
-                                                            <i class="fas fa-download" style="font-size: 16px; color: green;"></i>
-                                                        </a>
-                                                    </td>
-                                                </tr> *@
-                                            </tbody>
-                                        </table>
+                                <div class="form-group">
+                                    <h3>
+                                        <label class="control-label fw-bold" style="font-size: larger;" for="subject">Subject :</label>
+                                        <span style="padding-left:23px"><label id="sc_subjectlabel" value="" style="font-size:larger"></label></span>
+                                    </h3>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label" style="font-weight:500;" for="from">From :</label>
+                                    <span style="padding-left:5px"><label id="sc_fromlabel" value="" style="font-size:medium;font-weight:500"></label></span>
+
+                                    <label class="" style="font-weight:500;padding-left: 10%;" for="to">To :</label>
+                                    <span style="padding-left:5px"><label id="sc_tolabel" value="" style="font-size:medium;font-weight:500"></label></span>
+
+                                    <div style="width: 100%; height: 1px; background-color: black; margin-top: 5px;"></div>
+
+                                </div>
 
 
+
+                                <div class="form-group">
+                                    @*  <label class="control-label fw-bold" for="message" style="display: inline-block; vertical-align: top; margin-right: 10px;font-size: larger;">Message:</label> *@
+                                    <textarea rows="20" cols="85" readonly id="sc_bodylabel" style="font-size:medium;border:none"></textarea>
+                                </div>
+                                <div id="attachments-container">
+                                    <div class="attachments" id="attachdiv">
+                                        <button id="viewattachments" style="display: inline-block;">
+                                            <div style="padding: 8px;" id="filename"></div>
+                                        </button>
+                                        <button style="display: inline-block;height: 42px;width: 40px;">
+                                            <div style="text-align: center; display: inline-block; " id="filebuttons2"></div>
+                                        </button>
                                     </div>
                                 </div>
-                                <div class="box" style="background-color: #ffffff;border: 1px solid #ddd;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);height:50%">
-                                    <div class="conversation">
-                                        <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-                                            <thead>
-                                                <tr>
-                                                    <th colspan="3" style="text-align: left; padding: 10px; font-size: larger; font-weight: bold; border: 1px solid #ddd;">
-                                                        Conversation:
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr style=" border: 1px solid #ddd;">
-                                                    <td class="conversation-item" style="padding: 8px;">  <i class="fas fa-paper-plane" style="color: blue; font-size: 16px;" title="Sent"></i></td>
-                                                    <td style="text-align:left;">
-                                                        29/09/2024
-                                                    </td>
-                                                </tr>
-                                                <tr style=" border: 1px solid #ddd;">
-                                                    <td class="conversation-item" style="padding: 8px;">  <i class="fas fa-envelope" style="color: green; font-size: 16px;" title="Received"></i></td>
-                                                    <td style="text-align: left;">
-                                                        30/09/2024
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
+
+                                @*   <div class="attachments">
+                                <div id="viewattachments">
+
+                                <div style="padding: 8px;" id="filename"></div>
+                                <div style="text-align: center;" id="filebuttons2"></div>
                                 </div>
+                                </div>
+                                *@
+
+
+
+
+                                @*  <div class="attachments">
+                                <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                                <thead>
+                                <tr>
+                                <th colspan="3" style="text-align: left; padding: 10px; font-size: larger; font-weight: bold; border: 1px solid #ddd;">
+                                Attachments:
+                                </th>
+                                </tr>
+                                </thead>
+                                <tbody id="viewattachments">
+                                <tr style=" border: 1px solid #ddd;">
+                                <td style="padding: 8px;" id="filename"></td>
+                                <td style="text-align: center;" id="filebuttons1">
+
+                                </td>
+                                <td style="text-align: center;" id="filebuttons2">
+
+                                </td>
+                                </tr>
+
+                                <tr style=" border: 1px solid #ddd;">
+                                <td style="padding: 8px;">file1.png</td>
+                                <td style="text-align: center;">
+                                <a href="~/images/sample data/sampleimage.png" title="View Image">
+                                <i class="fas fa-eye" style="font-size: 16px; color: blue;"></i>
+                                </a>
+                                </td>
+                                <td style="text-align: center;">
+                                <a href="~/images/sample data/sampleimage.png" download="sampleimage.png" title="Download Image">
+                                <i class="fas fa-download" style="font-size: 16px; color: green;"></i>
+                                </a>
+                                </td>
+                                </tr>
+                                </tbody>
+                                </table>
+
+
+                                </div>
+                                </div> *@
+                                @*          <div class="box" style="background-color: #ffffff;border: 1px solid #ddd;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);height:50%">
+                                <div class="conversation">
+                                <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                                <thead>
+                                <tr>
+                                <th colspan="3" style="text-align: left; padding: 10px; font-size: larger; font-weight: bold; border: 1px solid #ddd;">
+                                Conversation:
+                                </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr style=" border: 1px solid #ddd;">
+                                <td class="conversation-item" style="padding: 8px;">  <i class="fas fa-paper-plane" style="color: blue; font-size: 16px;" title="Sent"></i></td>
+                                <td style="text-align:left;">
+                                29/09/2024
+                                </td>
+                                </tr>
+                                <tr style=" border: 1px solid #ddd;">
+                                <td class="conversation-item" style="padding: 8px;">  <i class="fas fa-envelope" style="color: green; font-size: 16px;" title="Received"></i></td>
+                                <td style="text-align: left;">
+                                30/09/2024
+                                </td>
+                                </tr>
+                                </tbody>
+                                </table>
+                                </div>
+                                </div> *@
 
 
 
@@ -367,16 +563,16 @@
 
                         </div>
 
-                        <div class="buttons">
-                            <button class="btn btn-danger" onclick="CancelData()" type="button" data-dismiss="modal">Close</button>
-                        </div>
+                        @*  <div class="buttons">
+                        <button class="btn btn-danger" onclick="CancelData()" type="button" data-dismiss="modal">Close</button>
+                        </div> *@
                     </div>
                 </div>
             </div>
         </div>
 
 
-
+        @* End view model *@
 
         <!-- End Griddata-->
         <!-- start Pagination-->
@@ -419,9 +615,13 @@
         <!-- end Pagination-->
     </div>
 </div>
+
 <script>
     $(document).ready(function () {
         $('#dataTable1').DataTable();
+
+
+
     });
     myFunction();
     $('#table_length_select').change();
@@ -442,27 +642,43 @@
             });
         }
         var tab = urlParams.get('tab');
+        var email = urlParams.get('email');
 
         if (tab == "Insurance") {
             tab = "client";
         }
-        $('#' + tab + '-tab').attr('class', 'nav-link active');
+        // $('#' + tab + '-tab').attr('class', 'nav-link active');
 
+        $('#enquiry-tab').attr('class', 'nav-link active');
+
+        $('#detailsgridname').css('display', 'block');
+        var tab = "enquiry";
+
+
+        show(2025, client, email, tab);
     });
 
 
-    function show(sc_year, sc_toname, sc_to) {
+    function show(sc_year, sc_fromname, sc_from, tab) {
 
-        var urlParams = new URLSearchParams(window.location.search);
+        $('#enquiry-tab').attr('class', 'nav-link active');
 
-        var tab = urlParams.get('tab');
+        // var urlParams = new URLSearchParams(window.location.search);
+
+        // var tab = urlParams.get('tab');
+        // var tab = "enquiry";
 
         $('#detailsgridname').css('display', 'block');
         $('#yearDropdown').val(sc_year);
+        $('#yearDropdown option').each(function () {
+            return $(this).text() === sc_year; // Match the text
+        }).prop('selected', true);
+
+        sc_year = $('#yearDropdown option:selected').text();
         var data = {
             sc_year: sc_year, // Use the provided `sc_year` parameter
-            sc_toname: sc_toname,
-            sc_to: sc_to,
+            sc_fromname: sc_fromname,
+            sc_from: sc_from,
             tab: tab,
 
         };
@@ -481,7 +697,8 @@
                     htmltab += '<tr>';
                     htmltab += '<td>' + (i + 1) + '</td>';
                     htmltab += '<td style="display:none">' + response[i].sc_id + '</td>';
-                    htmltab += '<td>' + response[i].sc_toname + '</td>';
+                    htmltab += '<td>' + response[i].sc_from + '</td>';
+                    htmltab += '<td>' + response[i].sc_to + '</td>';
                     htmltab += '<td>' + response[i].sc_subject + '</td>';
                     htmltab += '<td>' + response[i].sc_sentdate + '</td>';
                     htmltab += '<td style="display:none">' + response[i].sc_attachment + '</td>';
@@ -526,29 +743,164 @@
 
                 if (response) {
 
-                    if (response.sc_attachment != "") {
-                        const fileName = response.sc_attachment.split(/[/\\]/).pop();
-                        $('#filename').text(fileName);
+                    //if (response.sc_attachment != "" ) {
+                    if (response.sc_attachment != "No attachments available.") {
+                        // const fileName = response.sc_attachment.split(/[/\\]/).pop();
+                        // $('#filename').text(fileName);
 
-                        const buttons1 = `<a href="" title="View PDF" onclick="viewfile()"><i class="fas fa-eye" style="font-size: 16px; color: blue;"></i></a>`;
-                        const buttons2 = `<a href="${response.sc_attachment}" title="Download PDF" onclick="downloadfile()"><i class="fas fa-download" style="font-size: 16px; color: green;"></i></a>`;
+                        // const buttons1 = `<a href="" title="View PDF" onclick="viewfile()"><i class="fas fa-eye" style="font-size: 16px; color: blue;"></i></a>`;
+                        // const buttons2 = `<a href="${response.sc_attachment}" title="Download PDF" onclick="downloadfile()"><i <i class="fa-solid fa-chevron-down" style="font-size: 16px; color: black;"></i></a>`;
 
-                        $('#filebuttons1').html(buttons1);
-                        $('#filebuttons1').val(response.sc_attachment);
-                        $('#filebuttons2').html(buttons2);
-                        $('#filebuttons2').val(response.sc_attachment);
+                        // $('#filebuttons1').html(buttons1);
+                        // $('#filebuttons1').val(response.sc_attachment);
+                        // $('#filebuttons2').html(buttons2);
+                        // $('#filebuttons2').val(response.sc_attachment);
+                        // $('#attachdiv').show();
+
+
+                        //     const attachments = response.sc_attachment;
+                        //     const attachmentArray = attachments.trim().split('\n');
+                        //     let attachmentHTML = '';
+                        //     attachmentArray.forEach((attachmentPath) => {
+                        //         const fileName = attachmentPath.split(/[/\\]/).pop(); // Extract the filename
+                        //         const safeAttachmentPath = attachmentPath.replace(/\\/g, '\\\\');
+                        //         const name = "hello";
+                        //         attachmentHTML += `
+                        // <div class="attachments">
+                        // <!-- Button for filename -->
+                        //     <button style = "display: inline-block; padding: 8px;">
+                        //     ${fileName}
+                        // </button>
+                        // <!-- Button for download -->
+                        //    <button  style = "display: inline-block; height: 42px; width: auto;" onclick="downloadfile('${attachmentPath}')"><i class="fa-solid fa-chevron-down" style="font-size: 16px; color: black;"></i> </button>
+                        //     </div>`;
+                        //     });
+                        //     document.getElementById('attachdiv').innerHTML = attachmentHTML;
+                        //     document.getElementById('attachdiv').style.display = 'block';
+
+
+
+                        const attachments = response.sc_attachment;
+
+                        // Split and process each attachment path
+                        const attachmentArray = attachments.trim().split('\n');
+
+                        // Generate the HTML
+                        let attachmentHTML = '';
+                        attachmentArray.forEach((attachmentPath) => {
+                            const fileName = attachmentPath.split(/[/\\]/).pop(); // Extract the filename
+                            const trimmedpath = attachmentPath.trim();
+                            const safeAttachmentPath = trimmedpath.replace(/\\/g, '/');
+
+                            attachmentHTML += `
+        <div class="attachments" style="margin: 8px 0;">
+            <!-- Button for filename -->
+            <button style="display: inline-block; padding: 8px; margin-right: 8px;" title="${fileName}">
+                ${fileName}
+            </button>
+            <!-- Button for download -->
+            <button style="display: inline-block; height: 42px; width: auto;"
+                    onclick="downloadFile('${safeAttachmentPath}')">
+                <i class="fa-solid fa-chevron-down" style="font-size: 16px; color: black;"></i>
+            </button>
+        </div>`;
+                        });
+
+                        // Append the generated HTML to the container
+                        document.getElementById('attachdiv').innerHTML = attachmentHTML;
+                        document.getElementById('attachdiv').style.display = 'block';
+                        // $('#attachdiv').show();
                     } else {
-                        $('#viewattachments').css('display:none');
+                        $('#attachdiv').hide();
+
                     }
                     $('#sc_tolabel').text(response.sc_to || 'N/A');
                     $('#sc_fromlabel').text(response.sc_from || 'N/A');
                     $('#sc_subjectlabel').text(response.sc_subject || 'N/A');
 
-                    const formattedBody = (response.sc_body || '').replace(/<br\s*\/?>/gi, "\n");
+
+                    const formattedBody = (response.sc_body || '').replace(/<br\s*\/?>/gi, "\n").replace(/<\/?[^>]+(>|$)/g, "");
+
                     $('#sc_bodylabel').val(formattedBody);
+
 
                     // Optional: Update a specific content area with additional information
                     $('#content-area').html(response.content || 'No content available.');
+
+
+                    $.ajax({
+                        url: '/SentEmail/inboxdates', // Controller action URL
+                        type: 'POST',                   // HTTP method
+                        data: data,                     // Data to send
+                        success: function (response) {
+                            console.log(response);
+                            // $('#date1').show();
+                            // $('#date2').show();
+                            // $('#date3').show();
+
+                            // for (var i = 0; i < response.length; i++) {
+                            //     if (response.length == "1") {
+                            //         const date1 = response[0].s_sentdate;
+                            //         $('#date1').val(response[0].s_id);
+                            //         $('#date1').attr('onclick', `inboxmsg('${response[0].s_id}')`);
+                            //         $('#date1').text(date1);
+                            //         $('#date2').hide();
+                            //         $('#date3').hide();
+                            //     }
+                            //     else {
+                            //         const date1 = response[0].s_sentdate;
+                            //         const date2 = response[1].s_sentdate;
+                            //         const date3 = response[2].s_sentdate;
+
+                            //         $('#date1').val(response[0].s_id);
+                            //         $('#date2').val(response[1].s_id);
+                            //         $('#date3').val(response[2].s_id);
+
+
+                            //         $('#date1').attr('onclick', `inboxmsg('${response[0].s_id}')`);
+                            //         $('#date2').attr('onclick', `inboxmsg('${response[1].s_id}')`);
+                            //         $('#date3').attr('onclick', `inboxmsg('${response[2].s_id}')`);
+
+
+
+                            //         $('#date1').text(date1);
+                            //         $('#date2').text(date2);
+                            //         $('#date3').text(date3);
+                            //         break;
+                            //     }
+                            // }
+
+
+                            $('#arrow-container').empty();
+
+                            // Iterate through the response and dynamically create elements
+                            response.forEach((item, index) => {
+                                const date = item.s_sentdate; // Get the date
+                                const id = item.s_id; // Get the ID
+
+                                // Create a new arrow div
+                                const arrowDiv = $(`<div class="arrow-item" id="date${index + 1}" onclick="inboxmsg('${id}')">${date}</div>`);
+
+                                // Append the arrow div to the container
+                                $('#arrow-container').append(arrowDiv);
+
+                                // Add spacing if needed
+                                $('#arrow-container').append('<div style="padding:12px"></div>');
+                            });
+
+
+                            $('#content-area').html(response.content || 'No content available.');
+
+                        },
+                        error: function (xhr, status, error) {
+                            // Display error notification
+                            console.error('Error:', error);
+                            alert('An error occurred while fetching the message details. Please try again later.');
+                        }
+                    });
+
+
+
                 } else {
                     console.error('Empty response received');
                     // alert('No data available.');
@@ -562,18 +914,44 @@
         });
     }
 
-    function downloadfile() {
-        const filePath = $('#filebuttons2').val();
+    // function downloadfile() {
+    //     const filePath = $('#filebuttons2').val();
 
-        // Encode the file path to make it safe for URLs
-        const encodedPath = encodeURIComponent(filePath);
+    //     // Encode the file path to make it safe for URLs
+    //     const encodedPath = encodeURIComponent(filePath);
 
-        // Construct the URL to call the controller
-        const url = `/SentClient/DownloadFile?filePath=${encodedPath}`;
+    //     // Construct the URL to call the controller
+    //     const url = `/SentClient/DownloadFile?filePath=${encodedPath}`;
 
-        // Open the file in a new tab or start downloading
-        window.open(url, "_blank");
+    //     // Open the file in a new tab or start downloading
+    //     window.open(url, "_blank");
+    // }
+
+    // function downloadFile(encodedPath) {
+    //     const url = `/SentClient/DownloadFile?filePath=${encodedPath}`;
+    //     window.open(url, "_blank");
+    // }
+
+    function downloadfile(filePath) {
+        console.log("Original File Path:", filePath); // Log the input
+
+        try {
+            // Trim and encode the file path
+            const trimmedPath = filePath.trim();
+            const encodedPath = encodeURIComponent(trimmedPath);
+            console.log("Encoded File Path:", encodedPath); // Log the encoded path
+
+            // Construct the URL
+            const url = `/SentClient/DownloadFile?filePath=${encodedPath}`;
+            console.log("Download URL:", url); // Log the final URL
+
+            // Open the file in a new tab
+            window.open(url, "_blank");
+        } catch (error) {
+            console.error("Error during file download:", error); // Log any errors
+        }
     }
+
     function viewfile() {
         const filePath = $('#filebuttons1').val();
 
@@ -590,91 +968,6 @@
     function CancelData() {
         $("#addSubscription").modal("hide");
     }
-
-    // function clientchange() {
-    //     $('#detailsgridname').css('display', 'none');
-    //     $('#detailsGrid').css('display', 'none');
-
-    //     var urlParams = new URLSearchParams(window.location.search);
-    //     var tab = urlParams.get('tab');
-
-    //     var clientid = $('#clientDropdown').val();
-    //     var data = {
-    //         clientid: clientid,
-    //         tab: tab,
-    //     };
-
-    //     $.ajax({
-    //         url: '/SentClient/Clientchange', // Controller action URL
-    //         type: 'POST',             // HTTP method
-    //         data: data,
-    //         // Data to send (query parameter)
-    //         success: function (response) {
-    //             console.log(response);
-    //             // Handle success - update the page dynamically
-
-
-               
-    //             $('#tbodyid').html('');
-    //             var htmltab = '';
-
-    //             for (var i = 0; i < response.length; i++) {
-    //                 htmltab += '<tr>';
-    //                 htmltab += '<td>' + (i + 1) + '</td>';
-    //                 htmltab += '<td style=display:none>' + response[i].sc_to + '</td>';
-    //                 htmltab += '<td style=display:none>' + response[i].sc_toname + '</td>';
-    //                 //htmltab += '<td onclick=show('+response[i].sc_year+','+response[i].sc_toemail+','+response[i].sc_email+')>' + response[i].sc_year + '</td>';
-    //                 htmltab += '<td onclick="show(\'' + response[i].sc_year + '\', \'' + response[i].sc_toname + '\', \'' + response[i].sc_to + '\')">' + response[i].sc_year + '</td>';
-
-    //                 htmltab += '<td>' + response[i].sc_count + '</td>';
-    //                 htmltab += '</tr>';
-
-    //                 // Update the query parameter in the URL
-                   
-    //                 var sc_to = response[i].sc_to;
-    //                 var sc_toname = response[i].sc_toname;
-    //                 if (response[i].sc_to==''){
-    //                     var sc_to = "";
-    //                     var sc_toname = "";
-    //                 }
-
-
-    //                 // var sc_to = response[i].sc_to; // Fetch `sc_to` from input field
-    //                 // var sc_toemail = response[i].sc_toemail; // Fetch `sc_to` from input field
-    //             }
-
-    //              window.location.search = '?email=' + sc_to + '&client=' + sc_toname + '&tab=' + tab;
-                  
-
-    //             $('#tbodyid').html(htmltab);
-
-    //             // var dropdownvalue = $('#clientDropdown').val();
-    //             // $('#clientDropdown1').val(dropdownvalue);
-
-               
-
-
-    //             // Example: Update a specific section with the response data
-    //             $('#content-area').html(response);
-
-    //         },
-    //         error: function (xhr, status, error) {
-    //             // Handle errors
-    //             console.error('Error:', error);
-    //         }
-    //     });
-    //     var client = $('#clientDropdown').val();
-
-    //     // Match the text in the dropdown options and set the value
-    //     if (client) {
-    //         $('#clientDropdown option').each(function () {
-    //             if ($(this).val() == client) {
-    //                 $('#clientDropdown').val($(this).val());
-    //                 $('#clientDropdown1').val($(this).val());
-    //             }
-    //         });
-    //     }
-    // }
 
 
     function clientchange() {
@@ -704,23 +997,23 @@
                 for (var i = 0; i < response.length; i++) {
                     htmltab += '<tr>';
                     htmltab += '<td>' + (i + 1) + '</td>';
-                    htmltab += '<td style=display:none>' + response[i].sc_to + '</td>';
-                    htmltab += '<td style=display:none>' + response[i].sc_toname + '</td>';
-                    htmltab += '<td onclick="show(\'' + response[i].sc_year + '\', \'' + response[i].sc_toname + '\', \'' + response[i].sc_to + '\')">' + response[i].sc_year + '</td>';
+                    htmltab += '<td style=display:none>' + response[i].sc_from + '</td>';
+                    htmltab += '<td style=display:none>' + response[i].sc_fromname + '</td>';
+                    htmltab += '<td onclick="show(\'' + response[i].sc_year + '\', \'' + response[i].sc_fromname + '\', \'' + response[i].sc_from + '\')">' + response[i].sc_year + '</td>';
                     htmltab += '<td>' + response[i].sc_count + '</td>';
                     htmltab += '</tr>';
 
                     // Prepare the URL parameters
-                    var sc_to = response[i].sc_to;
-                    var sc_toname = response[i].sc_toname;
-                    if (response[i].sc_to == '') {
-                        var sc_to = "";
-                        var sc_toname = "";
+                    var sc_from = response[i].sc_from;
+                    var sc_fromname = response[i].sc_fromname;
+                    if (response[i].sc_from == '') {
+                        var sc_from = "";
+                        var sc_fromname = "";
                     }
                 }
 
                 // Update the URL without reloading the page
-                history.pushState(null, '', '?email=' + sc_to + '&client=' + sc_toname + '&tab=' + tab);
+                history.pushState(null, '', '?email=' + sc_from + '&client=' + sc_fromname + '&tab=' + tab);
 
                 $('#tbodyid').html(htmltab);
 
@@ -747,91 +1040,31 @@
     }
 
 
-    // function clientchange1() {
-    //     $('#detailsgridname').css('display', 'none');
-    //     $('#detailsGrid').css('display', 'none');
-
-    //     var urlParams = new URLSearchParams(window.location.search);
-    //     var tab = urlParams.get('tab');
-
-    //     var clientid = $('#clientDropdown1').val();
-    //     var data = {
-    //         clientid: clientid,
-    //         tab: tab,
-    //     };
-
-    //     $.ajax({
-    //         url: '/SentClient/Clientchange1', // Controller action URL
-    //         type: 'POST',             // HTTP method
-    //         data: data,
-    //         success: function (response) {
-    //             console.log(response);
-    //             $('#detailsgridname').css('display','content')
-    //             $('#detailsTableBody').html('');
-    //             var htmltab = '';
-    //             for (var i = 0; i < response.length; i++) {
-    //                 htmltab += '<tr>';
-    //                 htmltab += '<td>' + (i + 1) + '</td>';
-    //                 htmltab += '<td style="display:none">' + response[i].sc_id + '</td>';
-    //                 htmltab += '<td>' + response[i].sc_toname + '</td>';
-    //                 htmltab += '<td>' + response[i].sc_subject + '</td>';
-    //                 htmltab += '<td>' + response[i].sc_sentdate + '</td>';
-    //                 htmltab += '<td style="display:none">' + response[i].sc_attachment + '</td>';
-    //                 //htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg('+response[i].sc_toemail+')"></i></td>';
-    //                 htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].sc_id + ')"></i></td>';
-
-    //                 htmltab += '</tr>';
-
-    //                 var sc_to = response[i].sc_to;
-    //                     var sc_toname = response[i].sc_toname;
-    //                     if (response[i].sc_to == '') {
-    //                         var sc_to = "";
-    //                         var sc_toname = "";
-    //                     }
-    //             }
-    //            // history.pushState(null, '', '?email=' + sc_to + '&client=' + sc_toname + '&tab=' + tab);
-    //             $('#detailsTableBody').html(htmltab);
-
-
-
-
-    //             // Example: Update a specific section with the response data
-    //             $('#content-area').html(response);
-    //         },
-    //         error: function (xhr, status, error) {
-    //             // Handle errors
-    //             console.error('Error:', error);
-    //         }
-    //     });
-
-    //     var client = $('#clientDropdown1').val();
-
-    //     // Match the text in the dropdown options and set the value
-    //     if (client) {
-    //         $('#clientDropdown1 option').each(function () {
-    //             if ($(this).val() == client) {
-    //                 $('#clientDropdown1').val($(this).val());
-    //             }
-    //         });
-    //     }
-    // }
-
-
     function clientchange1() {
 
         $('#detailsgridname').css('display', 'none');
         $('#detailsGrid').css('display', 'none');
 
-        var urlParams = new URLSearchParams(window.location.search);
-        var tab = urlParams.get('tab');
+        // var urlParams = new URLSearchParams(window.location.search);
+        // var tab = urlParams.get('tab');
+        var year = $('#yearDropdown option:selected').text();
 
         $('#detailsgridname').css('display', 'block');
         $('#detailsGrid').css('display', 'block');
+
+
+        if ($('#enquiry-tab').hasClass('active')) {
+            tab = "Enquiry";
+        }
+        else {
+            tab = "Claim";
+        }
 
         var clientid = $('#clientDropdown1').val();
         var data = {
             clientid: clientid,
             tab: tab,
+            year: year,
         };
 
         $.ajax({
@@ -849,7 +1082,7 @@
                 }
 
                 // Make details grid visible when there is data
-               
+
                 $('#detailsTableBody').html('');  // Clear previous table content
 
                 var htmltab = '';
@@ -857,12 +1090,13 @@
                     htmltab += '<tr>';
                     htmltab += '<td>' + (i + 1) + '</td>';
                     htmltab += '<td style="display:none">' + response[i].sc_id + '</td>';
-                    htmltab += '<td>' + response[i].sc_toname + '</td>';
+                    htmltab += '<td>' + response[i].sc_from + '</td>';
+                    htmltab += '<td>' + response[i].sc_to + '</td>';
                     htmltab += '<td>' + response[i].sc_subject + '</td>';
                     htmltab += '<td>' + response[i].sc_sentdate + '</td>';
                     htmltab += '<td style="display:none">' + response[i].sc_attachment + '</td>';
                     htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].sc_id + ')"></i></td>';
-                    htmltab += '</tr>';                    
+                    htmltab += '</tr>';
                 }
 
                 // Update the table body with new data
@@ -924,14 +1158,14 @@
                 for (var i = 0; i < response.length; i++) {
                     htmltab += '<tr>';
                     htmltab += '<td>' + (i + 1) + '</td>';
-                    htmltab += '<td style=display:none>' + response[i].sc_to + '</td>';
-                    htmltab += '<td style=display:none>' + response[i].sc_toname + '</td>';
-                    htmltab += '<td onclick="show(\'' + response[i].sc_year + '\', \'' + response[i].sc_toname + '\', \'' + response[i].sc_to + '\')">' + response[i].sc_year + '</td>';
+                    htmltab += '<td style=display:none>' + response[i].sc_from + '</td>';
+                    htmltab += '<td style=display:none>' + response[i].sc_fromname + '</td>';
+                    htmltab += '<td onclick="show(\'' + response[i].sc_year + '\', \'' + response[i].sc_fromname + '\', \'' + response[i].sc_from + '\')">' + response[i].sc_year + '</td>';
                     htmltab += '<td>' + response[i].sc_count + '</td>';
                     htmltab += '</tr>';
 
                     //window.location.search = '?email=' + response[i].sc_to + '&client=' + response[i].sc_toname + '&tab=' + tab;
-                    history.pushState(null, '', '?email=' + sc_to + '&client=' + sc_toname + '&tab=' + tab);
+                    history.pushState(null, '', '?email=' + sc_from + '&client=' + sc_fromname + '&tab=' + tab);
                 }
                 $('#tbodyid').html(htmltab);
                 $('#content-area').html(response);
@@ -955,36 +1189,77 @@
         $('#claim-tab').attr('class', 'nav-link');
         $('#general-tab').attr('class', 'nav-link');
 
-        var urlParams = new URLSearchParams(window.location.search);
-        var email = urlParams.get('email');
+        //var email = $('#clientDropdown1').val();
+        //  var year = $('#yearDropdown').val();
+        var year = $('#yearDropdown option:selected').text();
+
+        var email = $('#clientDropdown1 option:selected').text();
 
         var data = {
-            email: email,
+            sc_from: email,
             tab: tab,
+            sc_year: year,
         };
 
+        // $.ajax({
+        //     url: '/SentClient/Tab?email=' + email + '&tab=' + tab, // Controller action URL
+        //     type: 'POST',             // HTTP method
+        //     data: data,      // Data to send (query parameter)
+        //     success: function (response) {
+        //         // Handle success - update the page dynamically
+        //         console.log('Response:', response);
+        //         $('#tbodyid').html('');
+        //         var htmltab = '';
+        //         for (var i = 0; i < response.length; i++) {
+        //             htmltab += '<tr>';
+        //             htmltab += '<td>' + (i + 1) + '</td>';
+        //             htmltab += '<td style=display:none>' + response[i].sc_from + '</td>';
+        //             htmltab += '<td style=display:none>' + response[i].sc_fromname + '</td>';
+        //             htmltab += '<td onclick="show(\'' + response[i].sc_year + '\', \'' + response[i].sc_fromname + '\', \'' + response[i].sc_from + '\')">' + response[i].sc_year + '</td>';
+        //             htmltab += '<td>' + response[i].sc_count + '</td>';
+        //             htmltab += '</tr>';
+
+        //             // window.location.search = '?email=' + response[i].sc_to + '&client=' + response[i].sc_toname + '&tab=' + tab;
+        //             history.pushState(null, '', '?email=' + response[i].sc_from + '&client=' + response[i].sc_fromname + '&tab=' + tab);
+        //         }
+        //         $('#tbodyid').html(htmltab);
+
+        //         // Example: Update a specific section with the response data
+        //         $('#content-area').html(response);
+        //     },
+        //     error: function (xhr, status, error) {
+        //         // Handle errors
+        //         console.error('Error:', error);
+        //     }
+        // });
+
         $.ajax({
-            url: '/SentClient/Tab?email=' + email + '&tab=' + tab, // Controller action URL
+            url: '/SentClient/fetchdetails', // Controller action URL
             type: 'POST',             // HTTP method
-            data: data,      // Data to send (query parameter)
+            data: data,
+            // Data to send (query parameter)
             success: function (response) {
                 // Handle success - update the page dynamically
                 console.log('Response:', response);
-                $('#tbodyid').html('');
+                $('#detailsTableBody').html('');
                 var htmltab = '';
                 for (var i = 0; i < response.length; i++) {
                     htmltab += '<tr>';
                     htmltab += '<td>' + (i + 1) + '</td>';
-                    htmltab += '<td style=display:none>' + response[i].sc_to + '</td>';
-                    htmltab += '<td style=display:none>' + response[i].sc_toname + '</td>';
-                    htmltab += '<td onclick="show(\'' + response[i].sc_year + '\', \'' + response[i].sc_toname + '\', \'' + response[i].sc_to + '\')">' + response[i].sc_year + '</td>';
-                    htmltab += '<td>' + response[i].sc_count + '</td>';
+                    htmltab += '<td style="display:none">' + response[i].sc_id + '</td>';
+                    htmltab += '<td>' + response[i].sc_from + '</td>';
+                    htmltab += '<td>' + response[i].sc_to + '</td>';
+                    htmltab += '<td>' + response[i].sc_subject + '</td>';
+                    htmltab += '<td>' + response[i].sc_sentdate + '</td>';
+                    htmltab += '<td style="display:none">' + response[i].sc_attachment + '</td>';
+                    //htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg('+response[i].sc_toemail+')"></i></td>';
+                    htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].sc_id + ')"></i></td>';
+
                     htmltab += '</tr>';
 
-                   // window.location.search = '?email=' + response[i].sc_to + '&client=' + response[i].sc_toname + '&tab=' + tab;
-                    history.pushState(null, '', '?email=' + sc_to + '&client=' + sc_toname + '&tab=' + tab);
+
                 }
-                $('#tbodyid').html(htmltab);
+                $('#detailsTableBody').html(htmltab);
 
                 // Example: Update a specific section with the response data
                 $('#content-area').html(response);
@@ -1003,36 +1278,51 @@
         $('#claim-tab').attr('aria-selected', 'true');
         $('#general-tab').attr('aria-selected', 'true');
 
-        var urlParams = new URLSearchParams(window.location.search);
-        var email = urlParams.get('email');
+        $('#enquiry-tab').attr('class', 'nav-link');
+        $('#client-tab').attr('class', 'nav-link');
+        $('#claim-tab').attr('class', 'nav-link active');
+        $('#general-tab').attr('class', 'nav-link');
+
+        // var urlParams = new URLSearchParams(window.location.search);
+        // var email = urlParams.get('email');
+
+        //var email = $('#clientDropdown1').val();
+        var email = $('#clientDropdown1 option:selected').text();
+        var year = $('#yearDropdown option:selected').text();
 
         var data = {
-            email: email,
+            sc_from: email,
             tab: tab,
+            sc_year: year,
         };
 
         $.ajax({
-            url: '/SentClient/Tab?email=' + email + '&tab=' + tab, // Controller action URL
+            url: '/SentClient/fetchdetails', // Controller action URL
             type: 'POST',             // HTTP method
-            data: data,      // Data to send (query parameter)
+            data: data,
+            // Data to send (query parameter)
             success: function (response) {
                 // Handle success - update the page dynamically
                 console.log('Response:', response);
-                $('#tbodyid').html('');
+                $('#detailsTableBody').html('');
                 var htmltab = '';
                 for (var i = 0; i < response.length; i++) {
                     htmltab += '<tr>';
                     htmltab += '<td>' + (i + 1) + '</td>';
-                    htmltab += '<td style=display:none>' + response[i].sc_to + '</td>';
-                    htmltab += '<td style=display:none>' + response[i].sc_toname + '</td>';
-                    htmltab += '<td onclick="show(\'' + response[i].sc_year + '\', \'' + response[i].sc_toname + '\', \'' + response[i].sc_to + '\')">' + response[i].sc_year + '</td>';
-                    htmltab += '<td>' + response[i].sc_count + '</td>';
+                    htmltab += '<td style="display:none">' + response[i].sc_id + '</td>';
+                    htmltab += '<td>' + response[i].sc_from + '</td>';
+                    htmltab += '<td>' + response[i].sc_to + '</td>';
+                    htmltab += '<td>' + response[i].sc_subject + '</td>';
+                    htmltab += '<td>' + response[i].sc_sentdate + '</td>';
+                    htmltab += '<td style="display:none">' + response[i].sc_attachment + '</td>';
+                    //htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg('+response[i].sc_toemail+')"></i></td>';
+                    htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].sc_id + ')"></i></td>';
+
                     htmltab += '</tr>';
 
-                   // window.location.search = '?email=' + response[i].sc_to + '&client=' + response[i].sc_toname + '&tab=' + tab;
-                    history.pushState(null, '', '?email=' + sc_to + '&client=' + sc_toname + '&tab=' + tab);
+
                 }
-                $('#tbodyid').html(htmltab);
+                $('#detailsTableBody').html(htmltab);
 
                 // Example: Update a specific section with the response data
                 $('#content-area').html(response);
@@ -1063,14 +1353,14 @@
                 for (var i = 0; i < response.length; i++) {
                     htmltab += '<tr>';
                     htmltab += '<td>' + (i + 1) + '</td>';
-                    htmltab += '<td style=display:none>' + response[i].sc_to + '</td>';
-                    htmltab += '<td style=display:none>' + response[i].sc_toname + '</td>';
-                    htmltab += '<td onclick="show(\'' + response[i].sc_year + '\', \'' + response[i].sc_toname + '\', \'' + response[i].sc_to + '\')">' + response[i].sc_year + '</td>';
+                    htmltab += '<td style=display:none>' + response[i].sc_from + '</td>';
+                    htmltab += '<td style=display:none>' + response[i].sc_fromname + '</td>';
+                    htmltab += '<td onclick="show(\'' + response[i].sc_year + '\', \'' + response[i].sc_fromname + '\', \'' + response[i].sc_from + '\')">' + response[i].sc_year + '</td>';
                     htmltab += '<td>' + response[i].sc_count + '</td>';
                     htmltab += '</tr>';
 
-                   // window.location.search = '?email=' + response[i].sc_to + '&client=' + response[i].sc_toname + '&tab=' + tab;
-                    history.pushState(null, '', '?email=' + sc_to + '&client=' + sc_toname + '&tab=' + tab);
+                    // window.location.search = '?email=' + response[i].sc_to + '&client=' + response[i].sc_toname + '&tab=' + tab;
+                    history.pushState(null, '', '?email=' + sc_from + '&client=' + sc_fromname + '&tab=' + tab);
                 }
                 $('#tbodyid').html(htmltab);
                 $('#content-area').html(response);
@@ -1138,7 +1428,7 @@
                     htmltab += '<tr>';
                     htmltab += '<td>' + (i + 1) + '</td>';
                     htmltab += '<td style="display:none">' + response[i].sc_id + '</td>';
-                    htmltab += '<td>' + response[i].sc_to + '</td>';
+                    htmltab += '<td>' + response[i].sc_from + '</td>';
                     htmltab += '<td>' + response[i].sc_subject + '</td>';
                     htmltab += '<td>' + response[i].sc_sentdate + '</td>';
                     htmltab += '<td style="display:none">' + response[i].sc_attachment + '</td>';
@@ -1160,6 +1450,7 @@
 
 
     }
+
 </script>
 
 

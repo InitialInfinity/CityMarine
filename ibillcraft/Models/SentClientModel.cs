@@ -16,7 +16,7 @@
         public string? sc_toemail { get; set; }
         public string? sc_email { get; set; }
         public string? clientid { get; set; }
-        public string? sc_toname {  get; set; }
+        public string? sc_fromname {  get; set; }
         
 
     }

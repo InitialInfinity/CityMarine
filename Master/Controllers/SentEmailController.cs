@@ -136,6 +136,28 @@ namespace Master.Controllers
                     user.BaseModel = new BaseModel();
                 }
                 user.BaseModel.OperationType = "GetClientFile";
+                var createduser = await _sentemail.Get(user);
+                var data = ((Microsoft.AspNetCore.Mvc.ObjectResult)createduser).Value;
+                return Ok(data);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        [HttpGet("inboxdates")]
+        public async Task<IActionResult> inboxdates(Guid UserId, string id)
+        {
+            try
+            {
+                SentEmailModel user = new SentEmailModel();
+                user.UserId = UserId;
+                user.s_id = id;
+                if (user.BaseModel == null)
+                {
+                    user.BaseModel = new BaseModel();
+                }
+                user.BaseModel.OperationType = "inboxdates";
                 var createduser = await _sentemail.SentEmail(user);
                 var data = ((Microsoft.AspNetCore.Mvc.ObjectResult)createduser).Value;
                 return Ok(data);

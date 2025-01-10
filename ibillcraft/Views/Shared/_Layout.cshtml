@@ -178,9 +178,10 @@
 				<!--begin::Primary-->
 				<!--end::Primary-->
 				<!--begin::Secondary-->
-				<div class="aside-secondary d-flex flex-row-fluid">
+				<div class="aside-secondary d-flex flex-row-fluid">                   
 					<!--begin::Workspace-->
 					<div class="aside-workspace my-5 p-5" id="kt_aside_wordspace">
+						<img src="/images/citydashboard.jpg" style="height: 81px;width: 260px;">
 						<div class="d-flex h-100 flex-column">
 							<!--begin::Wrapper-->
 							<div class="flex-column-fluid hover-scroll-y" data-kt-scroll="true" data-kt-scroll-activate="true" data-kt-scroll-height="auto" data-kt-scroll-wrappers="#kt_aside_wordspace" data-kt-scroll-dependencies="#kt_aside_secondary_footer" data-kt-scroll-offset="0px">
@@ -1788,7 +1789,9 @@
 										<a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
 											<!-- <span style="color:black; margin-right:10px ">Welcome @staffname</span>-->
 											<span style="color:black; margin-right:10px ">Welcome Admin</span>
-											 <span class="user-img" style="margin-top:40px">
+											 <!--<span class="user-img" style="margin-top:40px">-->
+											<i class="fa fa-bars" aria-hidden="true"> 
+												<span style="margin-top:40px">
 											
 												@{
 													
@@ -1796,9 +1799,10 @@
 													? $"data:image/png;base64,{logo}"
 													: "~/Images/citydashboard.jpg";
 												}
-												<img src="@imageSrc" alt="" style="height:8%" />
-												<span class="status online"></span>
-											</span>
+											
+												
+												</span>
+											</i>
 										</a>
 										<div class="dropdown-menu dropdown-menu-right mt-5 pt-1 ml-4">
 											<!--// <div class="user-header" style="margin-left:13px">

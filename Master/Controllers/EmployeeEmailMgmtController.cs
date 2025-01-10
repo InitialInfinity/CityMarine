@@ -45,6 +45,28 @@ namespace Master.Controllers
             }
         }
 
+        [HttpGet("GetEmail")]
+        public async Task<IActionResult> GetEmail(Guid user_id)
+        {
+            try
+            {
+                EmployeeEmailMgmtModel user = new EmployeeEmailMgmtModel();
+                user.UserId = user_id;
+                if (user.BaseModel == null)
+                {
+                    user.BaseModel = new BaseModel();
+                }
+                user.BaseModel.OperationType = "GetEmail";
+                var createduser = await _emplorepo.EmployeeEmailMgmt(user);
+                var data = ((Microsoft.AspNetCore.Mvc.ObjectResult)createduser).Value;
+                return Ok(data);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> Insert([FromBody] EmployeeEmailMgmtModel user)
         {

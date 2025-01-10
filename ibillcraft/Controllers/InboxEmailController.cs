@@ -226,7 +226,7 @@ namespace ibillcraft.Controllers
 
             var sentclientDataList = new InboxEmailModel();
             var sentclientList = new InboxEmailModel();
-            string sentclienturl = $"{_httpClient.BaseAddress}/InboxEmail/Get?UserId={UserId}&s_id={id}";
+            string sentclienturl = $"{_httpClient.BaseAddress}/InboxEmail/Get?UserId={UserId}&i_id={id}";
             HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
             if (response.IsSuccessStatusCode)
             {
@@ -336,6 +336,39 @@ namespace ibillcraft.Controllers
                 // Handle errors (e.g., log the error)
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
+        }
+
+        public JsonResult Inboxdates(string id)
+        {
+
+            GetCookies gk = new GetCookies();
+            CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
+
+            ViewBag.Format = CUtility.format;
+
+            Guid? UserId = new Guid(CUtility.userid);
+            var sentemailDataList = new List<InboxEmailModel>();
+            var sentemailList = new List<InboxEmailModel>();
+            string sentemailurl = $"{_httpClient.BaseAddress}/InboxEmail/inboxdates?UserId={UserId}&id={id}";
+            HttpResponseMessage response = _httpClient.GetAsync(sentemailurl).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                dynamic data = response.Content.ReadAsStringAsync().Result;
+                var dataObject = new { data = new List<InboxEmailModel>() };
+                var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
+                sentemailList = response2.data;
+
+                if (sentemailList != null)
+                {
+                    return Json(sentemailList);
+                }
+                else
+                {
+                    var sentemailList1 = new List<InboxEmailModel>();
+                    return Json(sentemailList1);
+                }
+            }
+            return Json(sentemailDataList);
         }
     }
 }

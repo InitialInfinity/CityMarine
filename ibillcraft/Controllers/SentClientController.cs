@@ -36,6 +36,10 @@ namespace ibillcraft.Controllers
         }
         public IActionResult Index(string email, string tab)
         {
+            if(tab==null)
+            {
+                tab = "Enquiry";
+            }
             GetCookies gk = new GetCookies();
             CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
 
@@ -52,6 +56,12 @@ namespace ibillcraft.Controllers
             dynamic data1 = responseView.Content.ReadAsStringAsync().Result;
             var rootObject = JsonConvert.DeserializeObject<List<FillDropdown>>(data1);
             ViewBag.customer = rootObject;
+
+            string geurl = $"{_httpClient.BaseAddress}/ViewBag/GetViewBag?userId&sTableName=tbl_ParameterValueMaster&sValue=pv_parametervalue&id=pv_id&IsActiveColumn=pv_isactive&sCoulmnName=pv_parameterid&sColumnValue=ce8449d3-24fb-49c4-8dd8-6a6093d7607c";
+            HttpResponseMessage geresponseView = _httpClient.GetAsync(geurl).Result;
+            dynamic gedata = geresponseView.Content.ReadAsStringAsync().Result;
+            var gerootObject = JsonConvert.DeserializeObject<List<FillDropdown>>(gedata);
+            ViewBag.year = gerootObject;
 
 
             var sentclientDataList = new List<SentClientModel>();
@@ -128,7 +138,7 @@ namespace ibillcraft.Controllers
             return Json(sentclientDataList);
         }
 
-        public JsonResult fetchdetails(string? sc_year, string? sc_to,string? tab)
+        public JsonResult fetchdetails(string? sc_year, string? sc_from,string? tab)
         {
             GetCookies gk = new GetCookies();
             CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);         
@@ -138,7 +148,7 @@ namespace ibillcraft.Controllers
 
             var sentclientDataList = new List<SentClientModel>();
             var sentclientList = new List<SentClientModel>();
-            string sentclienturl = $"{_httpClient.BaseAddress}/SentClient/GetDetails?UserId={UserId}&sc_year={sc_year}&sc_to={sc_to}&sc_type={tab}";
+            string sentclienturl = $"{_httpClient.BaseAddress}/SentClient/GetDetails?UserId={UserId}&sc_year={sc_year}&sc_from={sc_from}&sc_type={tab}";
             HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
             if (response.IsSuccessStatusCode)
             {
@@ -394,7 +404,7 @@ namespace ibillcraft.Controllers
             }
         }
 
-        public JsonResult Clientchange1(string? clientid, string? tab)
+        public JsonResult Clientchange1(string? clientid, string? tab, string? year)
         {
             GetCookies gk = new GetCookies();
             CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
@@ -404,7 +414,7 @@ namespace ibillcraft.Controllers
 
             var sentclientDataList = new List<SentClientModel>();
             var sentclientList = new List<SentClientModel>();
-            string sentclienturl = $"{_httpClient.BaseAddress}/SentClient/Clientchange1?UserId={UserId}&clientid={clientid}&sc_type={tab}";
+            string sentclienturl = $"{_httpClient.BaseAddress}/SentClient/Clientchange1?UserId={UserId}&clientid={clientid}&sc_type={tab}&sc_year={year}";
             HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
             if (response.IsSuccessStatusCode)
             {

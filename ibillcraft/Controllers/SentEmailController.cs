@@ -224,14 +224,14 @@ namespace ibillcraft.Controllers
             ViewBag.Format = CUtility.format;
             Guid? UserId = new Guid(CUtility.comid);
 
-            var sentclientDataList = new SentClientModel();
-            var sentclientList = new SentClientModel();
+            var sentclientDataList = new SentEmailModel();
+            var sentclientList = new SentEmailModel();
             string sentclienturl = $"{_httpClient.BaseAddress}/SentEmail/Get?UserId={UserId}&s_id={id}";
             HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
             if (response.IsSuccessStatusCode)
             {
                 dynamic data = response.Content.ReadAsStringAsync().Result;
-                var dataObject = new { data = new SentClientModel() };
+                var dataObject = new { data = new SentEmailModel() };
                 var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
                 sentclientList = response2.data;
 
@@ -241,7 +241,7 @@ namespace ibillcraft.Controllers
                 }
                 else
                 {
-                    var sentclientList1 = new List<SentClientModel>();
+                    var sentclientList1 = new List<SentEmailModel>();
                     return Json(sentclientList1);
                 }
             }
@@ -336,6 +336,39 @@ namespace ibillcraft.Controllers
                 // Handle errors (e.g., log the error)
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
+        }
+
+        public JsonResult Inboxdates(string id)
+        {
+
+            GetCookies gk = new GetCookies();
+            CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
+
+            ViewBag.Format = CUtility.format;
+
+            Guid? UserId = new Guid(CUtility.userid);
+            var sentemailDataList = new List<SentEmailModel>();
+            var sentemailList = new List<SentEmailModel>();
+            string sentemailurl = $"{_httpClient.BaseAddress}/SentEmail/inboxdates?UserId={UserId}&id={id}";
+            HttpResponseMessage response = _httpClient.GetAsync(sentemailurl).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                dynamic data = response.Content.ReadAsStringAsync().Result;
+                var dataObject = new { data = new List<SentEmailModel>() };
+                var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
+                sentemailList = response2.data;
+
+                if (sentemailList != null)
+                {
+                    return Json(sentemailList);
+                }
+                else
+                {
+                    var sentemailList1 = new List<SentEmailModel>();
+                    return Json(sentemailList1);
+                }
+            }
+            return Json(sentemailDataList);
         }
 
     }

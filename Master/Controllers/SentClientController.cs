@@ -24,13 +24,13 @@ namespace Master.Controllers
         }
 
         [HttpGet("GetAll")]
-        public async Task<IActionResult> GetAll(Guid UserId, string sc_to,string sc_type)
+        public async Task<IActionResult> GetAll(Guid UserId, string sc_from,string sc_type)
         {
             try
             {
                 SentClientModel user = new SentClientModel();
                 user.UserId = UserId;
-                user.sc_to = sc_to;
+                user.sc_from = sc_from;
                 user.sc_type = sc_type;
                 if (user.BaseModel == null)
                 {
@@ -48,14 +48,14 @@ namespace Master.Controllers
         }
 
         [HttpGet("GetDetails")]
-        public async Task<IActionResult> GetDetails(Guid UserId, string sc_year,string sc_to,string sc_type)
+        public async Task<IActionResult> GetDetails(Guid UserId, string sc_year,string sc_from, string sc_type)
         {
             try
             {
                 SentClientModel user = new SentClientModel();
                 user.UserId = UserId;
                 user.sc_year = sc_year;
-                user.sc_to = sc_to;
+                user.sc_from = sc_from;
                 user.sc_type=sc_type;
                 if (user.BaseModel == null)
                 {
@@ -119,7 +119,7 @@ namespace Master.Controllers
         }
 
         [HttpGet("Clientchange1")]
-        public async Task<IActionResult> Clientchange1(Guid UserId, string clientid, string sc_type)
+        public async Task<IActionResult> Clientchange1(Guid UserId, string clientid, string sc_type,string sc_year)
         {
             try
             {
@@ -127,6 +127,7 @@ namespace Master.Controllers
                 user.UserId = UserId;
                 user.clientid = clientid;
                 user.sc_type = sc_type;
+                user.sc_year = sc_year;
                 if (user.BaseModel == null)
                 {
                     user.BaseModel = new BaseModel();

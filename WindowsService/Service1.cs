@@ -30,6 +30,9 @@ using System.Net;
 using System.Text.RegularExpressions;
 using Microsoft.Graph;
 using System.Management;
+using Microsoft.Graph.Models.ExternalConnectors;
+using Microsoft.IdentityModel.Protocols;
+using System.Configuration;
 //using Microsoft.Graph.Models;
 
 
@@ -39,10 +42,13 @@ namespace WindowsService
     public partial class Service1 : ServiceBase
     {
         private Timer timer = new Timer();
+        private readonly HttpClient _httpClient;
+
 
         public Service1()
         {
             InitializeComponent();
+            _httpClient = new HttpClient();
         }
 
         protected override void OnStart(string[] args)
@@ -64,18 +70,6 @@ namespace WindowsService
             FetchEmails();
         }
 
-        //City Marine EMS
-        //private static string tenantId = "26d892b0-3196-4399-ba55-2f2f17cf30c7"; // Azure AD tenant ID
-        //private static string clientId = "55fac2e0-ff2b-4445-ad42-398b7762c3a0"; // Application (client) ID
-        //private static string clientSecret = "UrR8Q~jypNvM7T6ZEY-ntpesnxqqB12EVwaqob1E"; // Application (client) secret
-
-        //EMSCityMarine
-        //private static string tenantId = "26d892b0-3196-4399-ba55-2f2f17cf30c7"; // Azure AD tenant ID
-        //private static string clientId = "b79fde29-4df9-413b-b8f4-5286e1224ee4"; // Application (client) ID
-        //private static string clientSecret = "Jd ~8Q ~HEWXSMQh~K2eHVeFegN1awDT0N4.zJxa4o"; // Application (client) secret
-
-
-
         //CityMarine
         private static string tenantId = "26d892b0-3196-4399-ba55-2f2f17cf30c7"; // Azure AD tenant ID
         private static string clientId = "c84beebd-a48c-4aad-b0c1-814fcb7fba17"; // Application (client) ID
@@ -83,21 +77,6 @@ namespace WindowsService
 
 
         private static string authority = $"https://login.microsoftonline.com/{tenantId}";
-
-        //public static async Task<string> GetAccessTokenAsync()
-        //{
-        //    var confidentialClient = ConfidentialClientApplicationBuilder.Create(clientId)
-        //        .WithClientSecret(clientSecret)
-        //        .WithAuthority(new Uri(authority))
-        //        .Build();
-
-        //    var result = await confidentialClient.AcquireTokenForClient(new string[] { "https://graph.microsoft.com/.default" })
-        //        .ExecuteAsync();
-
-        //    return result.AccessToken; // Access token
-        //}
-
-
 
 
         private void WriteToFile(string Message)
@@ -124,11 +103,6 @@ namespace WindowsService
             }
         }
 
-
-
-
-
-
         public static async Task<string> GetAccessTokenAsync()
         {
             try
@@ -152,190 +126,6 @@ namespace WindowsService
             }
         }
 
-
-
-        //private async void FetchEmails()
-        //{
-        //    try
-        //    {
-        //        string token = await GetAccessTokenAsync();
-        //        string userId = "0f5fb42b-eeab-48f5-8345-5e32fa67158e";  // Use correct user ID  6245c1fb-637d-484d-864a-26bdae49a6df   admin@Citymarinebrokers.com
-        //        using (var httpClient = new HttpClient())
-        //        {
-        //            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-        //            // Use the correct Graph API URL for a user
-
-
-
-        //            string inboxUrl = $"https://graph.microsoft.com/v1.0/users/{userId}/messages?$filter=isRead eq false";
-        //            var inboxResponse = await httpClient.GetAsync(inboxUrl);
-
-        //            if (inboxResponse.IsSuccessStatusCode)
-        //            {
-        //                var inboxContent = await inboxResponse.Content.ReadAsStringAsync();
-        //                var emails = JsonConvert.DeserializeObject<GraphApiEmailResponse>(inboxContent);
-
-        //                foreach (var email in emails.Value)
-        //                {
-        //                    ProcessEmail(email);
-
-        //                    // Simulate `inbox.AddFlags(uid, MessageFlags.Seen, true)`
-        //                    await MarkEmailAsRead(httpClient, userId, email.Id);
-
-        //                }
-        //            }
-        //            else
-        //            {
-        //                Console.WriteLine($"Error fetching emails: {inboxResponse.StatusCode}");
-        //                var errorDetails = await inboxResponse.Content.ReadAsStringAsync();
-        //                Console.WriteLine($"Error details: {errorDetails}");
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine($"Error in FetchEmails: {ex.Message}");
-        //    }
-        //}
-
-        //private async void FetchEmails()
-        //{
-        //    try
-        //    {
-        //        string token = await GetAccessTokenAsync();
-        //        string userId = "0f5fb42b-eeab-48f5-8345-5e32fa67158e";  // Use correct user ID  6245c1fb-637d-484d-864a-26bdae49a6df   admin@Citymarinebrokers.com
-        //        using (var httpClient = new HttpClient())
-        //        {
-        //            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-        //            // Use the correct Graph API URL for a user
-
-
-        //            string sentUrl = $"https://graph.microsoft.com/v1.0/users/{userId}/mailFolders/sentitems/messages?$filter=isRead eq false";
-        //            string inboxUrl = $"https://graph.microsoft.com/v1.0/users/{userId}/messages?$filter=isRead eq false";
-        //            var inboxResponse = await httpClient.GetAsync(inboxUrl);
-        //            var sendResponse = await httpClient.GetAsync(sentUrl);
-
-        //            if (inboxResponse.IsSuccessStatusCode)
-        //            {
-        //                var inboxContent = await inboxResponse.Content.ReadAsStringAsync();
-        //                var emails = JsonConvert.DeserializeObject<GraphApiEmailResponse>(inboxContent);
-
-        //                foreach (var email in emails.Value)
-        //                {
-        //                    InboxEmail(email);
-
-        //                    // Simulate `inbox.AddFlags(uid, MessageFlags.Seen, true)`
-        //                    await MarkEmailAsRead(httpClient, userId, email.Id);
-
-        //                }
-        //            }
-        //            else
-        //            {
-        //                Console.WriteLine($"Error fetching emails: {inboxResponse.StatusCode}");
-        //                var errorDetails = await inboxResponse.Content.ReadAsStringAsync();
-        //                Console.WriteLine($"Error details: {errorDetails}");
-        //            }
-        //            if (sendResponse.IsSuccessStatusCode)
-        //            {
-        //                var sendContent = await sendResponse.Content.ReadAsStringAsync();
-        //                var sendemails = JsonConvert.DeserializeObject<GraphApiEmailResponse>(sendContent);
-
-        //                foreach (var sendemail in sendemails.Value)
-        //                {
-        //                    SentEmail(sendemail);
-
-        //                    // Simulate `inbox.AddFlags(uid, MessageFlags.Seen, true)`
-        //                    await MarkEmailAsRead(httpClient, userId, sendemail.Id);
-
-        //                }
-        //            }
-        //            else
-        //            {
-        //                Console.WriteLine($"Error fetching emails: {sendResponse.StatusCode}");
-        //                var errorDetails = await sendResponse.Content.ReadAsStringAsync();
-        //                Console.WriteLine($"Error details: {errorDetails}");
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine($"Error in FetchEmails: {ex.Message}");
-        //    }
-        //}
-        //private async Task FetchEmails()
-        //{
-        //    try
-        //    {
-        //        string token = await GetAccessTokenAsync();
-        //        string userId = "0f5fb42b-eeab-48f5-8345-5e32fa67158e";  // Use correct user ID
-        //        using (var httpClient = new HttpClient())
-        //        {
-        //            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-        //            string sentUrl = $"https://graph.microsoft.com/v1.0/users/{userId}/mailFolders/sentitems/messages?$filter=isRead eq false";
-        //            string inboxUrl = $"https://graph.microsoft.com/v1.0/users/{userId}/messages?$filter=isRead eq false";
-
-        //            var inboxResponse = await httpClient.GetAsync(inboxUrl);
-        //            var sendResponse = await httpClient.GetAsync(sentUrl);
-
-        //            if (inboxResponse.IsSuccessStatusCode)
-        //            {
-        //                var inboxContent = await inboxResponse.Content.ReadAsStringAsync();
-        //                var emails = JsonConvert.DeserializeObject<GraphApiEmailResponse>(inboxContent);
-
-        //                if (emails?.Value?.Any() == true)
-        //                {
-        //                    foreach (var email in emails.Value)
-        //                    {
-        //                        InboxEmail(email);
-        //                        await MarkEmailAsRead(httpClient, userId, email.Id);
-        //                    }
-        //                }
-        //                else
-        //                {
-        //                    Console.WriteLine("No unread emails found in inbox.");
-        //                }
-        //            }
-        //            else
-        //            {
-        //                Console.WriteLine($"Error fetching inbox emails: {inboxResponse.StatusCode}");
-        //                var errorDetails = await inboxResponse.Content.ReadAsStringAsync();
-        //                Console.WriteLine($"Error details: {errorDetails}");
-        //            }
-
-        //            if (sendResponse.IsSuccessStatusCode)
-        //            {
-        //                var sendContent = await sendResponse.Content.ReadAsStringAsync();
-        //                var sendemails = JsonConvert.DeserializeObject<GraphApiEmailResponse>(sendContent);
-
-        //                if (sendemails?.Value?.Any() == true)
-        //                {
-        //                    foreach (var sendemail in sendemails.Value)
-        //                    {
-        //                        SentEmail(sendemail);
-        //                        await MarkEmailAsRead(httpClient, userId, sendemail.Id);
-        //                    }
-        //                }
-        //                else
-        //                {
-        //                    Console.WriteLine("No unread emails found in sent items.");
-        //                }
-        //            }
-        //            else
-        //            {
-        //                Console.WriteLine($"Error fetching sent emails: {sendResponse.StatusCode}");
-        //                var errorDetails = await sendResponse.Content.ReadAsStringAsync();
-        //                Console.WriteLine($"Error details: {errorDetails}");
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine($"Error in FetchEmails: {ex.Message}");
-        //    }
-        //}
         private async Task FetchEmails()
         {
             try
@@ -345,7 +135,8 @@ namespace WindowsService
                 // string userId = "0f5fb42b-eeab-48f5-8345-5e32fa67158e"; // Replace with the correct user ID
 
                 string userId = "";
-                string connectionString = "Server=P3NWPLSK12SQL-v13.shr.prod.phx3.secureserver.net;Database=CityMarineMgmt;User Id=CityMarineMgmt;Password=bZl34u0^6;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+                string connectionString = ConfigurationManager.AppSettings["constring"];
+                // string connectionString = "Server=P3NWPLSK12SQL-v13.shr.prod.phx3.secureserver.net;Database=CityMarineMgmt;User Id=CityMarineMgmt;Password=bZl34u0^6;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
 
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
@@ -396,15 +187,19 @@ namespace WindowsService
                         Console.WriteLine("Sent Items folder not found.");
                         return;
                     }
-
+                    var inboxFolder = folders.Value.FirstOrDefault(f => f.DisplayName.Equals("Inbox", StringComparison.OrdinalIgnoreCase));
+                    if (inboxFolder == null)
+                    {
+                        Console.WriteLine("Sent Items folder not found.");
+                        return;
+                    }
+                    string inboxfolderid = inboxFolder.Id;
                     string sentFolderId = sentFolder.Id;
-
-                    // Define API URLs for Inbox and Sent Items
-                    // string inboxUrl = $"https://graph.microsoft.com/v1.0/users/{userId}/messages";
-                    //string sentUrl = $"https://graph.microsoft.com/v1.0/users/{userId}/mailFolders/{sentFolderId}/messages?$filter=isRead eq false";
-                    string inboxUrl = $"https://graph.microsoft.com/v1.0/users/{userId}/messages?$expand=attachments";
+                    string inboxUrl = $"https://graph.microsoft.com/v1.0/users/{userId}/mailFolders/{inboxfolderid}/messages?$expand=attachments";
                     string sentUrl = $"https://graph.microsoft.com/v1.0/users/{userId}/mailFolders/{sentFolderId}/messages?$expand=attachments";
 
+
+                    //INBOX
                     // Fetch and process emails from Inbox
                     var inboxResponse = await httpClient.GetAsync(inboxUrl);
                     if (inboxResponse.IsSuccessStatusCode)
@@ -422,12 +217,21 @@ namespace WindowsService
                             if (inboxEmails?.Value?.Any() == true)
                             {
                                 // Filter for unread emails
-                                var unreadInboxEmails = inboxEmails.Value.Where(email => !email.IsRead).ToList();
-                               // var unreadInboxEmails = inboxEmails.Value.ToList();
+                                //var unreadInboxEmails = inboxEmails.Value.Where(email => !email.IsRead).ToList();
 
-                                if (unreadInboxEmails.Any())
+                                //latest email
+                                //var Emails = inboxEmails.Value.OrderByDescending(email => email.ReceivedDateTime).GroupBy(email => email.ReceivedDateTime).FirstOrDefault();
+
+                                //today's all emails
+                                var today = DateTime.UtcNow.Date; // Get today's date in UTC
+                                var Emails = inboxEmails.Value
+                                    .Where(email => email.ReceivedDateTime.HasValue && email.ReceivedDateTime.Value.Date == today) // Ensure the value is not null
+                                    .OrderByDescending(email => email.ReceivedDateTime); // Order by ReceivedDateTime descending
+
+
+                                if (Emails.Any())
                                 {
-                                    foreach (var email in unreadInboxEmails)
+                                    foreach (var email in Emails)
                                     {
                                         try
                                         {
@@ -462,6 +266,9 @@ namespace WindowsService
                     {
                         Console.WriteLine($"Failed to retrieve inbox emails. Status Code: {inboxResponse.StatusCode}");
                     }
+
+
+                    //SENT
                     // Fetch and process emails from Sent Items
                     var sentResponse = await httpClient.GetAsync(sentUrl);
                     if (sentResponse.IsSuccessStatusCode)
@@ -473,10 +280,22 @@ namespace WindowsService
                         {
                             // Filter for unread emails
                             //var unreadEmails = sentEmails.Value.Where(email => email.IsRead == false).ToList();
-                            var unreadEmails = sentEmails.Value.ToList(); // Simply take all emails
-                            if (unreadEmails.Any())
+                            //var unreadEmails = sentEmails.Value.ToList(); // Simply take all emails
+
+
+                            //latest email
+                            //var Emails = sentEmails.Value.OrderByDescending(email => email.ReceivedDateTime).GroupBy(email => email.ReceivedDateTime).FirstOrDefault();
+
+                            //today's all emails
+                            var today = DateTime.UtcNow.Date; // Get today's date in UTC
+                            var Emails = sentEmails.Value
+                                .Where(email => email.ReceivedDateTime.HasValue && email.ReceivedDateTime.Value.Date == today) // Ensure the value is not null
+                                .OrderByDescending(email => email.ReceivedDateTime); // Order by ReceivedDateTime descending
+
+
+                            if (Emails.Any())
                             {
-                                foreach (var email in unreadEmails)
+                                foreach (var email in Emails)
                                 {
                                     // Process unread email
                                     SentEmail(email, userId);
@@ -531,8 +350,6 @@ namespace WindowsService
                 using (HttpClient httpClient = new HttpClient())
                 {
                     // Create an instance of AttachmentSaver to save attachments
-
-
                     // Pass the HttpClient instance to the SaveAttachments method
                     string attachmentPath = await attachmentSaver.SaveAttachments(email, userId, httpClient);
 
@@ -551,60 +368,6 @@ namespace WindowsService
                 WriteToFile($"Error processing email (ID: {email?.Id ?? "Unknown"}): {ex.Message}");
             }
         }
-        //private async Task SentEmail(GraphApiEmailResponse.GraphApiMessage email, string userId)
-        //{
-        //    try
-        //    {
-        //        // Extract email details with null checks
-        //        string subject = email.Subject ?? string.Empty;
-        //        string from = email.From?.EmailAddress?.Address ?? string.Empty;
-        //        string to = string.Join(", ", email.ToRecipients?.Select(r => r.EmailAddress?.Address) ?? new List<string>());
-        //        string body = email.Body?.Content ?? string.Empty;
-        //        string inReplyTo = email.InReplyToId ?? string.Empty;
-        //        string messageId = email.Id ?? string.Empty;
-        //        DateTime sentDate = email.ReceivedDateTime ?? DateTime.MinValue; // Use appropriate sent date field if available
-        //        string emailType = "Sent";
-
-        //        // Create an instance of AttachmentSaver to save attachments
-        //        var attachmentSaver = new AttachmentSaver();
-
-        //        // Await the asynchronous SaveAttachments method
-
-        //        using (HttpClient httpClient = new HttpClient())
-        //        {
-        //            // Create an instance of AttachmentSaver to save attachments
-
-
-        //            // Pass the HttpClient instance to the SaveAttachments method
-        //            string attachmentPath = await attachmentSaver.SaveAttachments1(email, userId, httpClient);
-
-        //            // Insert into the database
-        //            InsertSentEmailToDatabase(
-        //          subject,
-        //          from,
-        //          to,
-        //          body,
-        //          inReplyTo,
-        //          messageId,
-        //          sentDate,
-        //          attachmentPath,
-        //          emailType
-        //      );
-
-        //            // Log success
-        //            WriteToFile($"Sent email processed successfully: {subject}");
-        //        }
-        //        // Insert into the database
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        // Log the error with details
-        //        string emailId = email?.Id ?? "Unknown";
-        //        WriteToFile($"Error processing sent email (ID: {emailId}): {ex.Message}");
-
-        //    }
-        //}
 
         private async Task SentEmail(GraphApiEmailResponse.GraphApiMessage email, string userId)
         {
@@ -618,7 +381,7 @@ namespace WindowsService
                 string inReplyTo = email.InReplyToId ?? string.Empty;
                 string messageId = email.Id ?? string.Empty;
                 DateTime sentDate = email.ReceivedDateTime ?? DateTime.MinValue; // Use appropriate sent date field if available
-                string emailType = "Sent";
+                string emailType = "General";
 
                 // Process attachments if available
                 var attachmentSaver = new AttachmentSaver();
@@ -629,17 +392,7 @@ namespace WindowsService
                     string attachmentPath = await attachmentSaver.SaveAttachments1(email, userId, httpClient);
 
                     // Insert email into the database along with attachments
-                    InsertSentEmailToDatabase(
-                        subject,
-                        from,
-                        to,
-                        body,
-                        inReplyTo,
-                        messageId,
-                        sentDate,
-                        attachmentPath,
-                        emailType
-                    );
+                    InsertSentEmailToDatabase(subject, from, to, body, inReplyTo, messageId, sentDate, attachmentPath, emailType);
 
                     // Log success
                     WriteToFile($"Sent email processed successfully: {subject} with attachments.");
@@ -657,7 +410,8 @@ namespace WindowsService
 
         private void InsertInboxEmailToDatabase(string subject, string from, string to, string body, string inReplyTo, string messageId, DateTime receivedDate, string attachmentPath, string emailType)
         {
-            string connectionString = "Server=P3NWPLSK12SQL-v13.shr.prod.phx3.secureserver.net;Database=CityMarineMgmt;User Id=CityMarineMgmt;Password=bZl34u0^6;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+            //string connectionString = "Server=P3NWPLSK12SQL-v13.shr.prod.phx3.secureserver.net;Database=CityMarineMgmt;User Id=CityMarineMgmt;Password=bZl34u0^6;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+            string connectionString = ConfigurationManager.AppSettings["constring"];
 
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
@@ -687,36 +441,6 @@ namespace WindowsService
                             string E_conditionName = reader["E_conditionName"].ToString();
                             string E_categoryName = reader["E_categoryName"].ToString();
                             string E_value = reader["E_value"].ToString();
-
-                            // Check if the parameter name is "Subject" or "Domain" and apply corresponding conditions
-                            //if (E_parameterName == "Subject" || E_parameterName == "Domain")
-                            //{
-                            //    bool conditionMatched = false;
-
-                            //    // Check the condition against subject or domain (for "Subject" or "Domain")
-                            //    if (E_conditionName == "Contains")
-                            //    {
-                            //        conditionMatched = (subject.IndexOf(E_value, StringComparison.OrdinalIgnoreCase) >= 0);
-                            //        emailType = E_categoryName;
-                            //    }
-                            //    else if (E_conditionName == "Begin With")
-                            //    {
-                            //        conditionMatched = (subject.StartsWith(E_value, StringComparison.OrdinalIgnoreCase));
-                            //        emailType = E_categoryName;
-                            //    }
-                            //    else if (E_conditionName == "Equal To")
-                            //    {
-                            //        conditionMatched = subject.Equals(E_value, StringComparison.OrdinalIgnoreCase);
-                            //        emailType = E_categoryName;
-                            //    }
-
-                            //    // If the condition matches, set the email type to the category name
-                            //    //if (conditionMatched)
-                            //    //{
-                            //    //    emailType = E_categoryName;
-                            //    //}
-                            //}
-
 
                             if (E_parameterName == "Subject")
                             {
@@ -816,80 +540,113 @@ namespace WindowsService
 
         private void InsertSentEmailToDatabase(string subject, string from, string to, string body, string inReplyTo, string messageId, DateTime sendDate, string attachmentPath, string sType)
         {
-            string connectionString = "Server=P3NWPLSK12SQL-v13.shr.prod.phx3.secureserver.net;Database=CityMarineMgmt;User Id=CityMarineMgmt;Password=bZl34u0^6;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+            string connectionString = ConfigurationManager.AppSettings["constring"];
+            //string connectionString = "Server=P3NWPLSK12SQL-v13.shr.prod.phx3.secureserver.net;Database=CityMarineMgmt;User Id=CityMarineMgmt;Password=bZl34u0^6;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
 
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 conn.Open();
 
                 // Query to fetch email rules
-                string emailRuleQuery = @"
-            SELECT 
-                E_id,
-                pv1.pv_parametervalue AS E_parameterName, 
-                pv2.pv_parametervalue AS E_conditionName, 
-                pv3.pv_parametervalue AS E_categoryName,
-                E_category, 
-                E_value, 
-                E_parameter, 
-                E_condition, 
-                E_createdby, 
-                E_updatedby, 
-                E_updateddate, 
-                E_createddate, 
-                E_isactive
-            FROM dbo.tbl_EmailRuleConfg ec
-            JOIN tbl_parametervaluemaster pv1 ON pv1.pv_id = ec.E_parameter
-            JOIN tbl_parametervaluemaster pv2 ON pv2.pv_id = ec.E_condition
-            JOIN tbl_parametervaluemaster pv3 ON pv3.pv_id = ec.E_category
-            WHERE E_isactive = '1'";
+                string query1 = @"SELECT E_id, pv1.pv_parametervalue as E_parameterName, pv2.pv_parametervalue as E_conditionName,
+                                pv3.pv_parametervalue as E_categoryName, E_category, E_value, E_parameter, E_condition,
+                                E_createdby, E_updatedby, E_updateddate, E_createddate, E_isactive 
+                          FROM [dbo].[tbl_EmailRuleConfg] ec
+                          JOIN tbl_parametervaluemaster pv1 ON pv1.pv_id = ec.E_parameter
+                          JOIN tbl_parametervaluemaster pv2 ON pv2.pv_id = ec.E_condition
+                          JOIN tbl_parametervaluemaster pv3 ON pv3.pv_id = ec.E_category 
+                          WHERE E_isactive = '1'";
 
-                // Read rules and determine email type
-                using (SqlCommand ruleCmd = new SqlCommand(emailRuleQuery, conn))
-                using (SqlDataReader reader = ruleCmd.ExecuteReader())
+
+
+
+                using (SqlCommand cmd = new SqlCommand(query1, conn))
                 {
-                    while (reader.Read())
+                    using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        string parameterName = reader["E_parameterName"].ToString();
-                        string conditionName = reader["E_conditionName"].ToString();
-                        string categoryName = reader["E_categoryName"].ToString();
-                        string value = reader["E_value"].ToString();
+                        // Loop through each row in the result
+                        while (reader.Read())
+                        {
+                            string E_parameterName = reader["E_parameterName"].ToString();
+                            string E_conditionName = reader["E_conditionName"].ToString();
+                            string E_categoryName = reader["E_categoryName"].ToString();
+                            string E_value = reader["E_value"].ToString();
 
-                        if (parameterName.Equals("Subject", StringComparison.OrdinalIgnoreCase))
-                        {
-                            sType = ApplyRule(subject, conditionName, value, categoryName, sType);
-                        }
-                        else if (parameterName.Equals("Domain", StringComparison.OrdinalIgnoreCase))
-                        {
-                            sType = ApplyRule(from, conditionName, value, categoryName, sType);
+                            if (E_parameterName == "Subject")
+                            {
+                                if (E_conditionName == "Contains")
+                                {
+                                    //if (subject.Contains(E_value))
+                                    if (subject.IndexOf(E_value, StringComparison.OrdinalIgnoreCase) >= 0)
+                                    {
+                                        sType = E_categoryName;
+                                    }
+                                }
+                                else if (E_conditionName == "Begin With")
+                                {
+                                    if (subject.StartsWith(E_value, StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        sType = E_categoryName;
+                                    }
+                                }
+                                else if (E_conditionName == "Equal To")
+                                {
+                                    if (subject.Equals(E_value, StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        sType = E_categoryName;
+                                    }
+                                }
+
+                            }
+                            else if (E_parameterName == "Domain")
+                            {
+                                if (E_conditionName == "Contains")
+                                {
+                                    //if (subject.Contains(E_value))
+                                    if (subject.IndexOf(E_value, StringComparison.OrdinalIgnoreCase) >= 0)
+                                    {
+                                        sType = E_categoryName;
+                                    }
+                                }
+                                else if (E_conditionName == "Begin With")
+                                {
+                                    if (subject.StartsWith(E_value, StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        sType = E_categoryName;
+                                    }
+                                }
+                                else if (E_conditionName == "Equal To")
+                                {
+                                    if (subject.Equals(E_value, StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        sType = E_categoryName;
+                                    }
+                                }
+                            }
                         }
                     }
                 }
 
+
+                string query2 = @"SELECT COUNT(*) FROM [dbo].[tbl_customermaster] WHERE c_email = @Email";
+
+
+                using (SqlCommand cmd2 = new SqlCommand(query2, conn))
+                {
+                    cmd2.Parameters.AddWithValue("@Email", from);
+
+                    // Execute the query and get the count
+                    int count = (int)cmd2.ExecuteScalar();
+
+                    if (count == 0)
+                    {
+                        sType = "General";
+                    }
+                }
+
                 // Insert email into SentEmail table
-                string insertQuery = @"
-            INSERT INTO dbo.tbl_SentEmail (
-                s_subject, 
-                s_from, 
-                s_to, 
-                s_body, 
-                s_replyto, 
-                s_messageid, 
-                s_sentdate, 
-                s_attachment, 
-                s_type
-            ) 
-            VALUES (
-                @s_subject, 
-                @s_from, 
-                @s_to, 
-                @s_body, 
-                @s_replyto, 
-                @s_messageid, 
-                @s_sentdate, 
-                @s_attachment, 
-                @s_type
-            )";
+                string insertQuery = @"INSERT INTO dbo.tbl_SentEmail (s_subject,s_from,s_to,s_body,s_replyto,s_messageid,s_sentdate,s_attachment,s_type) 
+            VALUES (@s_subject,@s_from,@s_to,@s_body,@s_replyto,@s_messageid,@s_sentdate,@s_attachment,@s_type)";
 
                 using (SqlCommand insertCmd = new SqlCommand(insertQuery, conn))
                 {
@@ -908,37 +665,35 @@ namespace WindowsService
             }
         }
 
-        private string ApplyRule(string fieldValue, string conditionName, string ruleValue, string categoryName, string currentType)
-        {
-            if (conditionName.Equals("Contains", StringComparison.OrdinalIgnoreCase) &&
-                fieldValue.IndexOf(ruleValue, StringComparison.OrdinalIgnoreCase) >= 0)
-            {
-                return categoryName;
-            }
-            else if (conditionName.Equals("Begin With", StringComparison.OrdinalIgnoreCase) &&
-                     fieldValue.StartsWith(ruleValue, StringComparison.OrdinalIgnoreCase))
-            {
-                return categoryName;
-            }
-            else if (conditionName.Equals("Equal To", StringComparison.OrdinalIgnoreCase) &&
-                     fieldValue.Equals(ruleValue, StringComparison.OrdinalIgnoreCase))
-            {
-                return categoryName;
-            }
+        //private string ApplyRule(string fieldValue, string conditionName, string ruleValue, string categoryName, string currentType)
+        //{
+        //    if (conditionName.Equals("Contains", StringComparison.OrdinalIgnoreCase) &&
+        //        fieldValue.IndexOf(ruleValue, StringComparison.OrdinalIgnoreCase) >= 0)
+        //    {
+        //        return categoryName;
+        //    }
+        //    else if (conditionName.Equals("Begin With", StringComparison.OrdinalIgnoreCase) &&
+        //             fieldValue.StartsWith(ruleValue, StringComparison.OrdinalIgnoreCase))
+        //    {
+        //        return categoryName;
+        //    }
+        //    else if (conditionName.Equals("Equal To", StringComparison.OrdinalIgnoreCase) &&
+        //             fieldValue.Equals(ruleValue, StringComparison.OrdinalIgnoreCase))
+        //    {
+        //        return categoryName;
+        //    }
 
-            return currentType; // Default to current type if no rule matches
-        }
+        //    return currentType; // Default to current type if no rule matches
+        //}
 
 
         public class AttachmentSaver
         {
-
-
-
             //Inbox
             public async Task<string> SaveAttachments(GraphApiEmailResponse.GraphApiMessage email, string userId, HttpClient httpClient)
             {
                 List<string> filePaths = new List<string>();
+                string attachmentpath = ConfigurationManager.AppSettings["attachmentpath"];
 
                 // Ensure email has attachments
                 if (email.Attachments != null && email.Attachments.Count > 0)
@@ -946,7 +701,7 @@ namespace WindowsService
                     foreach (var attachment in email.Attachments)
                     {
                         string senderEmail = email.From?.EmailAddress?.Address ?? "UnknownSender";
-                        string attachmentsFolder = Path.Combine("E:\\ServiceLog1\\Attachments", senderEmail);
+                        string attachmentsFolder = Path.Combine(attachmentpath, senderEmail);
 
                         // Ensure the folder exists
                         if (!Directory.Exists(attachmentsFolder))
@@ -1022,6 +777,7 @@ namespace WindowsService
             public async Task<string> SaveAttachments1(GraphApiEmailResponse.GraphApiMessage email, string userId, HttpClient httpClient)
             {
                 List<string> filePaths = new List<string>();
+                string attachmentpath = ConfigurationManager.AppSettings["attachmentpath"];
 
                 // Ensure email has attachments
                 if (email.Attachments != null && email.Attachments.Any())
@@ -1029,7 +785,7 @@ namespace WindowsService
                     foreach (var attachment in email.Attachments)
                     {
                         string senderEmail = email.From?.EmailAddress?.Address ?? "UnknownSender";
-                        string attachmentsFolder = Path.Combine("E:\\ServiceLog1\\Attachments", senderEmail);
+                        string attachmentsFolder = Path.Combine(attachmentpath, senderEmail);
 
                         // Ensure the folder exists
                         if (!Directory.Exists(attachmentsFolder))
@@ -1080,11 +836,6 @@ namespace WindowsService
                 return string.Join(Environment.NewLine, filePaths);
             }
 
-
-
-
-
-
             public async Task DownloadAttachmentFromUrl1(string contentUrl, string filePath, HttpClient httpClient)
             {
                 try
@@ -1108,15 +859,7 @@ namespace WindowsService
                     Console.WriteLine($"Error downloading attachment: {ex.Message}");
                 }
             }
-
-
-
-
         }
-
-
-
-
 
         private async Task MarkEmailAsRead(HttpClient httpClient, string userId, string emailId)
         {

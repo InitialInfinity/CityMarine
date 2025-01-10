@@ -52,24 +52,31 @@ namespace ibillcraft.Controllers
             ViewBag.Format = CUtility.format;
             Guid? UserId = new Guid(CUtility.comid);
 
-            string url = $"{_httpClient.BaseAddress}/ViewBag/GetViewBag?userId&sTableName=tbl_staff&sValue=st_staff_name&id=st_id&IsActiveColumn=st_isactive&sCoulmnName=st_com_id&sColumnValue={CUtility.comid}";
+            string url = $"{_httpClient.BaseAddress}/ViewBag/GetViewBag?userId&sTableName=tbl_staff&sValue=st_staff_name&id=st_id&IsActiveColumn=st_isactive&sCoulmnName=st_com_id&sColumnValue={CUtility.comid}";            
+
             HttpResponseMessage responseView = _httpClient.GetAsync(url).Result;
             dynamic data1 = responseView.Content.ReadAsStringAsync().Result;
             var rootObject = JsonConvert.DeserializeObject<List<FillDropdown>>(data1);
             ViewBag.staffname = rootObject;
 
 
-            string emailurl = $"{_httpClient.BaseAddress}/ViewBag/GetViewBag?userId&sTableName=tbl_EmailList&sValue=E_email&id=E_id&IsActiveColumn=E_isactive";
-            HttpResponseMessage emailresponseView = _httpClient.GetAsync(emailurl).Result;
-            dynamic emaildata = emailresponseView.Content.ReadAsStringAsync().Result;
-            var emailrootObject = JsonConvert.DeserializeObject<List<FillDropdown>>(emaildata);
-            ViewBag.email = emailrootObject;
+            ////string emailurl = $"{_httpClient.BaseAddress}/ViewBag/GetViewBag?userId&sTableName=tbl_EmailList&sValue=E_email&id=E_id&IsActiveColumn=E_isactive&ExcludeTable=tbl_employeeemailmgmt&ExcludeColumn=E_email";
+            //string emailurl = $"{_httpClient.BaseAddress}/ViewBag/GetViewBag?userId&sTableName=tbl_EmailList&sValue=E_email&id=E_id&IsActiveColumn=E_isactivesCoulmnName=E_id&sColumnValue!=";
+                                                
+            //HttpResponseMessage emailresponseView = _httpClient.GetAsync(emailurl).Result;
+            //dynamic emaildata = emailresponseView.Content.ReadAsStringAsync().Result;
+            //var emailrootObject = JsonConvert.DeserializeObject<List<FillDropdown>>(emaildata);
+            //ViewBag.email = emailrootObject;
 
 
 
             var emailmgmtDataList = new List<EmployeeEmailMgmtModel>(); ;
 
             var emailmgmtList = new List<EmployeeEmailMgmtModel>();
+
+            string emailurl = $"{_httpClient.BaseAddress}/EmployeeEmailMgmt/GetEmail?UserId={UserId}";
+            HttpResponseMessage emailresponse = _httpClient.GetAsync(emailurl).Result;
+
             string emailmgmturl = $"{_httpClient.BaseAddress}/EmployeeEmailMgmt/GetAll?UserId={UserId}&status={status}";
             HttpResponseMessage response = _httpClient.GetAsync(emailmgmturl).Result;
             if (response.IsSuccessStatusCode)
@@ -78,6 +85,26 @@ namespace ibillcraft.Controllers
                 var dataObject = new { data = new List<EmployeeEmailMgmtModel>() };
                 var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
                 emailmgmtList = response2.data;
+
+
+                // Read the JSON response as a string
+                string emaildata = emailresponse.Content.ReadAsStringAsync().Result;
+
+                // If the JSON is an object with an array property
+                var emaildataObject = JsonConvert.DeserializeObject<dynamic>(emaildata);
+
+                if (emaildataObject != null && emaildataObject.data != null)
+                {
+                    var emailrootObject = JsonConvert.DeserializeObject<List<FillDropdown>>(emaildataObject.data.ToString());
+                    ViewBag.email = emailrootObject;
+                }
+                else
+                {
+                    // Handle case when response is not as expected
+                    throw new Exception("Unexpected JSON structure or empty response.");
+                }
+
+
 
                 if (emailmgmtList != null)
                 {

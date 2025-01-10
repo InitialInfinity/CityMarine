@@ -42,6 +42,36 @@
     .attachments, .conversation {
         margin-top: 20px;
     }
+    /* arrow */
+    .arrow-container {
+        background-color: #4a4747;
+        padding: 10px;
+        width: 100px;
+        color: white;
+        font-family: Arial, sans-serif;
+    }
+
+    .arrow-item {
+        background-color: #d3d3d3;
+        color: black;
+        padding: 4px;
+        position: relative;
+        margin-bottom: 15px;
+        font-size: 14px;
+        text-align: center;
+        border-radius: 3px;
+    }
+
+        .arrow-item::after {
+            content: '';
+            position: absolute;
+            top: 53%;
+            right: -26px;
+            transform: translateY(-50%);
+            border-width: 14px;
+            border-style: solid;
+            border-color: transparent transparent transparent #d3d3d3;
+        }
 </style>
 
 <div class="card shadow mb-4">
@@ -97,7 +127,7 @@
 
 
     <div class="modal fade" id="addfilter" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-         aria-hidden="true" style="display:none">
+        style="display:none">
         <div class="modal-dialog modal-md" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -150,7 +180,7 @@
                                     <option value="client">Client</option>
                                     @*  <option value="enquiry">Enquiry</option>
                                     <option value="claim">Claim</option> *@
-                                     <option value="general">General</option>
+                                    <option value="general">General</option>
                                 </select>
                             </div>
                         </div>
@@ -166,8 +196,112 @@
         </div>
     </div>
 
-    <div class="modal fade" id="addSubscription" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-         aria-hidden="true">
+    @*  <div class="modal fade" id="addSubscription" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+    <div class="modal-header">
+    <h5 class="modal-title text-dark fw-bold" style="font-size: larger;" id="exampleModalLabel">Email</h5>
+    <button type="button"
+    class="btn-close bg-danger modal-close"
+    data-bs-dismiss="modal"
+    aria-label="Close"></button>
+    </div>
+    <div class="modal-body text-dark" style=" background-color: #f8f9fa;padding: 15px;border-radius: 8px;">
+    <div class="flex-container">
+    <div class="box" style="background-color: #ffffff;border: 1px solid #ddd;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);">
+    <div class="form-group">
+    <label class="control-label fw-bold" style="font-size: larger;" for="from">From:</label>
+    <span style="padding-left:40px"><label id="ic_fromlabel" value="" style="font-size:medium"></label></span>
+    </div>
+
+    <div class="form-group">
+    <label class="control-label fw-bold" style="font-size: larger;" for="to">To:</label>
+    <span style="padding-left:59px"><label id="ic_tolabel" value="" style="font-size:medium"></label></span>
+    </div>
+
+    <div class="form-group">
+    <label class="control-label fw-bold" style="font-size: larger;" for="subject">Subject:</label>
+    <span style="padding-left:23px"><label id="ic_subjectlabel" value="" style="font-size:medium"></label></span>
+    </div>
+
+    <div class="form-group">
+    <label class="control-label fw-bold" for="message" style="display: inline-block; vertical-align: top; margin-right: 10px;font-size: larger;">Message:</label>
+    <textarea rows="20" cols="85" readonly id="ic_bodylabel" style="font-size:medium"></textarea>
+    </div>
+
+    </div>
+    <div class="box" style="background-color: #ffffff;border: 1px solid #ddd;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);">
+    <div class="box" style="background-color: #ffffff;border: 1px solid #ddd;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);height:50%">
+    <div class="attachments">
+    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+    <thead>
+    <tr>
+    <th colspan="3" style="text-align: left; padding: 10px; font-size: larger; font-weight: bold; border: 1px solid #ddd;">
+    Attachments:
+    </th>
+    </tr>
+    </thead>
+    <tbody id="viewattachments">
+    <tr style=" border: 1px solid #ddd;">
+    <td style="padding: 8px;" id="filename"></td>
+    <td style="text-align: center;" id="filebuttons1">
+    </td>
+    <td style="text-align: center;" id="filebuttons2">
+    </td>
+    </tr>
+
+    </tbody>
+    </table>
+
+
+    </div>
+    </div>
+    <div class="box" style="background-color: #ffffff;border: 1px solid #ddd;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);height:50%">
+    <div class="conversation">
+    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+    <thead>
+    <tr>
+    <th colspan="3" style="text-align: left; padding: 10px; font-size: larger; font-weight: bold; border: 1px solid #ddd;">
+    Conversation:
+    </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr style=" border: 1px solid #ddd;">
+    <td class="conversation-item" style="padding: 8px;">  <i class="fas fa-paper-plane" style="color: blue; font-size: 16px;" title="Sent"></i></td>
+    <td style="text-align:left;">
+    29/09/2024
+    </td>
+    </tr>
+    <tr style=" border: 1px solid #ddd;">
+    <td class="conversation-item" style="padding: 8px;">  <i class="fas fa-envelope" style="color: green; font-size: 16px;" title="Received"></i></td>
+    <td style="text-align: left;">
+    30/09/2024
+    </td>
+    </tr>
+    </tbody>
+    </table>
+    </div>
+    </div>
+
+
+
+    </div>
+
+
+    </div>
+
+    <div class="buttons">
+    <button class="btn btn-danger" onclick="CancelData()" type="button" data-dismiss="modal">Close</button>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div> *@
+
+
+    @* Start view model *@
+    <div class="modal fade" id="addSubscription" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
         <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -179,127 +313,76 @@
                 </div>
                 <div class="modal-body text-dark" style=" background-color: #f8f9fa;padding: 15px;border-radius: 8px;">
                     <div class="flex-container">
-                        <div class="box" style="background-color: #ffffff;border: 1px solid #ddd;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);">
-                            <div class="form-group">
-                                <label class="control-label fw-bold" style="font-size: larger;" for="from">From:</label>
-                                <span style="padding-left:40px"><label id="ic_fromlabel" value="" style="font-size:medium"></label></span>
+                        <div style="background-color: #4a4747;border: 1px solid #ddd;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);margin-bottom: 15px;padding: 15px;width: 11%;max-width: 800px;">
+                            <div class="arrow-container" id="arrow-container">
+                              @*   <div class="arrow-item" id="date1" ></div>
+                                <div style="padding:12px"></div>
+                                <div class="arrow-item" id="date2" ></div>
+                                <div style="padding:12px"></div>
+                                <div class="arrow-item" id="date3" ></div> *@
                             </div>
-
-                            <div class="form-group">
-                                <label class="control-label fw-bold" style="font-size: larger;" for="to">To:</label>
-                                <span style="padding-left:59px"><label id="ic_tolabel" value="" style="font-size:medium"></label></span>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="control-label fw-bold" style="font-size: larger;" for="subject">Subject:</label>
-                                <span style="padding-left:23px"><label id="ic_subjectlabel" value="" style="font-size:medium"></label></span>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="control-label fw-bold" for="message" style="display: inline-block; vertical-align: top; margin-right: 10px;font-size: larger;">Message:</label>
-                                <textarea rows="20" cols="85" readonly id="ic_bodylabel" style="font-size:medium"></textarea>
-                            </div>
-
                         </div>
                         <div class="box" style="background-color: #ffffff;border: 1px solid #ddd;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);">
-                            <div class="box" style="background-color: #ffffff;border: 1px solid #ddd;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);height:50%">
-                                <div class="attachments">
-                                    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-                                        <thead>
-                                            <tr>
-                                                <th colspan="3" style="text-align: left; padding: 10px; font-size: larger; font-weight: bold; border: 1px solid #ddd;">
-                                                    Attachments:
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="viewattachments">
-                                            <tr style=" border: 1px solid #ddd;">
-                                                <td style="padding: 8px;" id="filename"></td>
-                                                <td style="text-align: center;" id="filebuttons1">
-                                                    @* <a href="~/images/sample data/sample.pdf" title="View PDF">
-                                                    <i class="fas fa-eye" style="font-size: 16px; color: blue;"></i>
-                                                    </a> *@
-                                                </td>
-                                                <td style="text-align: center;" id="filebuttons2">
-                                                    @*  <a href="~/images/sample data/sample.pdf" download="sample.pdf" title="Download PDF">
-                                                    <i class="fas fa-download" style="font-size: 16px; color: green;"></i>
-                                                    </a> *@
-                                                </td>
-                                            </tr>
-                                            @* <tr style=" border: 1px solid #ddd;">
-                                            <td style="padding: 8px; ">file1.zip</td>
-                                            <td style="text-align: center; ">
-                                            <a href="~/images/sample data/samplezip.zip" title="View ZIP">
-                                            <i class="fas fa-eye" style="font-size: 16px; color: blue;"></i>
-                                            </a>
-                                            </td>
-                                            <td style="text-align: center;">
-                                            <a href="~/images/sample data/samplezip.zip" download="samplezip.zip" title="Download ZIP">
-                                            <i class="fas fa-download" style="font-size: 16px; color: green;"></i>
-                                            </a>
-                                            </td>
-                                            </tr>
-                                            <tr style=" border: 1px solid #ddd;">
-                                            <td style="padding: 8px;">file1.png</td>
-                                            <td style="text-align: center;">
-                                            <a href="~/images/sample data/sampleimage.png" title="View Image">
-                                            <i class="fas fa-eye" style="font-size: 16px; color: blue;"></i>
-                                            </a>
-                                            </td>
-                                            <td style="text-align: center;">
-                                            <a href="~/images/sample data/sampleimage.png" download="sampleimage.png" title="Download Image">
-                                            <i class="fas fa-download" style="font-size: 16px; color: green;"></i>
-                                            </a>
-                                            </td>
-                                            </tr> *@
-                                        </tbody>
-                                    </table>
-
-
-                                </div>
+                            <div class="form-group">
+                                <h3>
+                                    <label class="control-label fw-bold" style="font-size: larger;" for="subject">Subject :</label>
+                                    <span style="padding-left:23px"><label id="ic_subjectlabel" value="" style="font-size:larger"></label></span>
+                                </h3>
                             </div>
-                            <div class="box" style="background-color: #ffffff;border: 1px solid #ddd;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);height:50%">
-                                <div class="conversation">
-                                    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-                                        <thead>
-                                            <tr>
-                                                <th colspan="3" style="text-align: left; padding: 10px; font-size: larger; font-weight: bold; border: 1px solid #ddd;">
-                                                    Conversation:
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr style=" border: 1px solid #ddd;">
-                                                <td class="conversation-item" style="padding: 8px;">  <i class="fas fa-paper-plane" style="color: blue; font-size: 16px;" title="Sent"></i></td>
-                                                <td style="text-align:left;">
-                                                    29/09/2024
-                                                </td>
-                                            </tr>
-                                            <tr style=" border: 1px solid #ddd;">
-                                                <td class="conversation-item" style="padding: 8px;">  <i class="fas fa-envelope" style="color: green; font-size: 16px;" title="Received"></i></td>
-                                                <td style="text-align: left;">
-                                                    30/09/2024
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
+
+                            <div class="form-group">
+                                <label class="control-label" style="font-weight:500;" for="from">From :</label>
+                                <span style="padding-left:5px"><label id="ic_fromlabel" value="" style="font-size:medium;font-weight:500"></label></span>
+
+                                <label class="" style="font-weight:500;padding-left: 10%;" for="to">To :</label>
+                                <span style="padding-left:5px"><label id="ic_tolabel" value="" style="font-size:medium;font-weight:500"></label></span>
+
+                                <div style="width: 100%; height: 1px; background-color: black; margin-top: 5px;"></div>
+
                             </div>
 
 
 
+                            <div class="form-group">
+                                @*  <label class="control-label fw-bold" for="message" style="display: inline-block; vertical-align: top; margin-right: 10px;font-size: larger;">Message:</label> *@
+                                <textarea rows="20" cols="105" readonly id="ic_bodylabel" style="font-size:medium;border:none"></textarea>
+                            </div>
+
+                            @* <div class="attachments" id="attachdiv">
+                                <button id="viewattachments" style="display: inline-block;">
+                                    <div style="padding: 8px;" id="filename"></div>
+                                </button>
+                                <button style="display: inline-block;height: 42px;width: 40px;">
+                                    <div style="text-align: center; display: inline-block; " id="filebuttons2"></div>
+                                </button>
+                            </div>*@
+
+                            <div class="attachments" id="attachdiv" style="display: none;">
+                                <button id="viewattachments" style="display: inline-block; padding: 8px;">
+                                    <div id="filename"></div>
+                                </button>
+                                <button id="downloadbutton" style="display: inline-block; height: 42px; width: auto;">
+                                    <div id="filebuttons2"></div>
+                                </button>
+                                <!-- New buttons will be added here -->
+                                <div id="additionalButtons"></div>
+                            </div>
+                          
                         </div>
 
 
                     </div>
 
-                    <div class="buttons">
-                        <button class="btn btn-danger" onclick="CancelData()" type="button" data-dismiss="modal">Close</button>
-                    </div>
+                   @*  <div class="buttons">
+                        <button class="btn btn-danger" onclick="Cancel()" type="button" data-dismiss="modal">Close</button>
+                    </div> *@
                 </div>
             </div>
         </div>
     </div>
+
+
+    @* End view model *@
 
     <div class="card-body">
         <div class="table-responsive" id="print">
@@ -316,6 +399,7 @@
                         <th width="6%">Sr.No</th>
                         <th style="display:none">id</th>
                         <th>From</th>
+                        <th>To</th>
                         <th>Subject</th>
                         <th>Date</th>
                         <th>View</th>
@@ -394,6 +478,10 @@
     });
     myFunction();
     $('#table_length_select').change();
+
+    function Cancel(){
+        $("#addSubscription").modal("hide");
+    }
 
     function clienttab() {
         var tab = "Insurance";
@@ -542,6 +630,7 @@
                     htmltab += '<td>' + (i + 1) + '</td>';
                     htmltab += '<td style="display:none">' + response[i].i_id + '</td>';
                     htmltab += '<td>' + response[i].i_from + '</td>';
+                    htmltab += '<td>' + response[i].i_to + '</td>';
                     htmltab += '<td>' + response[i].i_subject + '</td>';
                     htmltab += '<td>' + response[i].i_receiveddate + '</td>';
                     htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].i_id + ')"></i></td>';
@@ -570,7 +659,7 @@
 
         // Perform AJAX POST request
         $.ajax({
-            url: '/InboxClient/showdetails', // Controller action URL
+            url: '/InboxEmail/showdetails', // Controller action URL
             type: 'POST',                   // HTTP method
             data: data,                     // Data to send
             success: function (response) {
@@ -578,27 +667,106 @@
 
                 if (response) {
 
-                    if (response.ic_attachment != "") {
-                        const fileName = response.ic_attachment.split(/[/\\]/).pop();
-                        $('#filename').text(fileName);
+                    if (response.i_attachment != "No attachments available.") {
+                        // const fileName = response.i_attachment.split(/[/\\]/).pop();
 
-                        const buttons1 = `<a href="" title="View PDF" onclick="viewfile()"><i class="fas fa-eye" style="font-size: 16px; color: blue;"></i></a>`;
-                        const buttons2 = `<a href="${response.ic_attachment}" title="Download PDF" onclick="downloadfile()"><i class="fas fa-download" style="font-size: 16px; color: green;"></i></a>`;
 
-                        $('#filebuttons1').html(buttons1);
-                        $('#filebuttons1').val(response.ic_attachment);
-                        $('#filebuttons2').html(buttons2);
-                        $('#filebuttons2').val(response.ic_attachment);
+
+                        // $('#filename').text(fileName);
+
+                        // const buttons1 = `<a href="" title="View PDF" onclick="viewfile()"><i class="fas fa-eye" style="font-size: 16px; color: blue;"></i></a>`;
+                        // const buttons2 = `<a href="${response.i_attachment}" title="Download PDF" onclick="downloadfile()"><i class="fa-solid fa-chevron-down" style="font-size: 16px; color: black;"></i></a>`;
+
+                        // $('#filebuttons1').html(buttons1);
+                        // $('#filebuttons1').val(response.i_attachment);
+                        // $('#filebuttons2').html(buttons2);
+                        // $('#filebuttons2').val(response.i_attachment);
+                        // $('#attachdiv').show();
+
+
+
+        //                 // Sample response.i_attachment data
+        //                 const attachments = response.i_attachment;
+
+        //                 // Split and process each attachment path
+        //                 const attachmentArray = attachments.trim().split('\n');
+
+        //                 // Generate the HTML
+        //                 let attachmentHTML = '';
+        //                 attachmentArray.forEach((attachmentPath) => {
+        //                     const fileName = attachmentPath.split(/[/\\]/).pop(); // Extract the filename
+        //                     attachmentHTML += `
+        //     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border: 1px solid black; padding: 5px;">
+        //         <span style="flex: 1;">${fileName}</span>
+        //         <a href="${attachmentPath.trim()}" title="Download ${fileName}" style="flex: 0;">
+        //             <i class="fa-solid fa-chevron-down" style="font-size: 16px; color: black;"></i>
+        //         </a>
+        //     </div>
+        // `;
+        //                 });
+
+        //                 // Insert the generated HTML into a container
+        //                 document.getElementById('attachdiv').innerHTML = attachmentHTML;
+
+        //                 // Show the attachment container
+        //                 document.getElementById('attachdiv').style.display = 'block';
+
+
+                        // Sample response.i_attachment data
+                        const attachments = response.i_attachment;
+
+                        // Split and process each attachment path
+                        const attachmentArray = attachments.trim().split('\n');
+
+                        // Generate the HTML
+                        let attachmentHTML = '';
+                        attachmentArray.forEach((attachmentPath) => {
+                            const fileName = attachmentPath.split(/[/\\]/).pop(); // Extract the filename
+                            const trimmedPath = attachmentPath.trim(); // Trim to remove newline or extra spaces
+                            const safeAttachmentPath = trimmedPath.replace(/\\/g, '/');
+                            //                     attachmentHTML += `
+        // <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border: 1px solid black; padding: 5px;">
+        //     <!-- Button for filename -->
+        //     <button style="flex: 1; background-color: #f0f0f0; border: 1px solid black; padding: 5px; cursor: default;">
+        //         ${fileName}
+        //     </button>
+        //     <!-- Button for download -->
+        //     <button style="flex: 0; background-color: #e0e0e0; border: 1px solid black; padding: 5px; cursor: pointer;" onclick="window.open('${attachmentPath.trim()}', '_blank')">
+        //         Download
+        //     </button>
+        // </div>
+        // `;
+                            const name = "hello";
+                            attachmentHTML += `
+                <div class="attachments">
+                <!-- Button for filename -->
+                    <button style = "display: inline-block; padding: 8px;">
+                    ${fileName}
+                </button>
+                <!-- Button for download -->
+                                                    <button  style = "display: inline-block; height: 42px; width: auto;" onclick="downloadfile('${safeAttachmentPath}')">
+                         <i class="fa-solid fa-chevron-down" style="font-size: 16px; color: black;"></i>
+                </button>
+            </div>
+            `;
+                        });
+
+                        // Insert the generated HTML into a container
+                        document.getElementById('attachdiv').innerHTML = attachmentHTML;
+
+                        // Show the attachment container
+                        document.getElementById('attachdiv').style.display = 'block';
+
                     } else {
-                        $('#viewattachments').css('display:none');
+                        $('#attachdiv').hide();
                     }
 
 
-                    $('#ic_tolabel').text(response.ic_to || 'N/A');
-                    $('#ic_fromlabel').text(response.ic_from || 'N/A');
-                    $('#ic_subjectlabel').text(response.ic_subject || 'N/A');
+                    $('#ic_tolabel').text(response.i_to || 'N/A');
+                    $('#ic_fromlabel').text(response.i_from || 'N/A');
+                    $('#ic_subjectlabel').text(response.i_subject || 'N/A');
 
-                    const formattedBody = (response.ic_body || '').replace(/<br\s*\/?>/gi, "\n");
+                    const formattedBody = (response.i_body || '').replace(/<br\s*\/?>/gi, "\n").replace(/<\/?[^>]+(>|$)/g, "");
                     $('#ic_bodylabel').val(formattedBody);
 
 
@@ -608,6 +776,92 @@
 
                     // Optional: Update a specific content area with additional information
                     $('#content-area').html(response.content || 'No content available.');
+
+
+                    $.ajax({
+                        url: '/InboxEmail/inboxdates', // Controller action URL
+                        type: 'POST',                   // HTTP method
+                        data: data,                     // Data to send
+                        success: function (response) {
+                            console.log(response);
+                            // $('#date1').show();
+                            // $('#date2').show();
+                            // $('#date3').show();
+
+                            // for (var i = 0; i < response.length; i++) {
+                            //     if (response.length == "1") {
+                            //         const date1 = response[0].i_receiveddate;
+                            //         $('#date1').val(response[0].i_id);
+                            //         $('#date1').attr('onclick', `inboxmsg('${response[0].i_id}')`);
+                            //         $('#date1').text(date1);
+                            //         $('#date2').hide();
+                            //         $('#date3').hide();
+                            //     }
+                            //     else {
+                            //         const date1 = response[0].i_receiveddate;
+                            //         const date2 = response[1].i_receiveddate;
+                            //         const date3 = response[2].i_receiveddate;
+
+                            //         $('#date1').val(response[0].i_id);
+                            //         $('#date2').val(response[1].i_id);
+                            //         $('#date3').val(response[2].i_id);
+
+
+                            //         $('#date1').attr('onclick', `inboxmsg('${response[0].i_id}')`);
+                            //         $('#date2').attr('onclick', `inboxmsg('${response[1].i_id}')`);
+                            //         $('#date3').attr('onclick', `inboxmsg('${response[2].i_id}')`);
+
+
+
+                            //         $('#date1').text(date1);
+                            //         $('#date2').text(date2);
+                            //         $('#date3').text(date3);
+                            //         break;
+                            //     }
+                            // }
+
+
+                            $('#arrow-container').empty();
+
+                            // Iterate through the response and dynamically create elements
+                            response.forEach((item, index) => {
+                                const date = item.i_receiveddate; // Get the date
+                                const id = item.i_id; // Get the ID
+
+                                // Create a new arrow div
+                                const arrowDiv = $(`<div class="arrow-item" id="date${index + 1}" onclick="inboxmsg('${id}')">${date}</div>`);
+
+                                // Append the arrow div to the container
+                                $('#arrow-container').append(arrowDiv);
+
+                                // Add spacing if needed
+                                $('#arrow-container').append('<div style="padding:12px"></div>');
+                            });
+
+
+
+
+
+
+                            // Optional: Update a specific content area with additional information
+                            $('#content-area').html(response.content || 'No content available.');
+
+
+
+
+
+
+
+                        },
+                        error: function (xhr, status, error) {
+                            // Display error notification
+                            console.error('Error:', error);
+                            alert('An error occurred while fetching the message details. Please try again later.');
+                        }
+                    });
+
+
+
                 } else {
                     console.error('Empty response received');
                     alert('No data available.');
@@ -621,18 +875,73 @@
         });
     }
 
-    function downloadfile() {
-        const filePath = $('#filebuttons2').val();
+    // function downloadfile(filePath) {
+    //   //  const filePath = $('#filebuttons2').val();
 
-        // Encode the file path to make it safe for URLs
-        const encodedPath = encodeURIComponent(filePath);
+    //     // Encode the file path to make it safe for URLs
+    //     const encodedPath = encodeURIComponent(filePath);
 
-        // Construct the URL to call the controller
-        const url = `/InboxClient/DownloadFile?filePath=${encodedPath}`;
+    //     // Construct the URL to call the controller
+    //     const url = `/InboxClient/DownloadFile?filePath=${filePath}`;
 
-        // Open the file in a new tab or start downloading
-        window.open(url, "_blank");
+    //     // Open the file in a new tab or start downloading
+    //     window.open(url, "_blank");
+    // }
+
+    function downloadfile(filePath) {
+        console.log("Original File Path:", filePath); // Log the input
+
+        try {
+            // Trim and encode the file path
+            const trimmedPath = filePath.trim();
+            const encodedPath = encodeURIComponent(trimmedPath);
+            console.log("Encoded File Path:", encodedPath); // Log the encoded path
+
+            // Construct the URL
+            const url = `/InboxClient/DownloadFile?filePath=${encodedPath}`;
+            console.log("Download URL:", url); // Log the final URL
+
+            // Open the file in a new tab
+            window.open(url, "_blank");
+        } catch (error) {
+            console.error("Error during file download:", error); // Log any errors
+        }
     }
+    // function downloadfile(filePath) {
+    //     console.log("Original File Path:", filePath); // Log the input
+
+    //     try {
+    //         // Trim and encode the file path
+    //         const trimmedPath = filePath.trim();
+    //         const encodedPath = encodeURIComponent(trimmedPath);
+    //         console.log("Encoded File Path:", encodedPath); // Log the encoded path
+
+    //         // Construct the URL
+    //         const url = `/InboxClient/DownloadFile?filePath=${encodedPath}`;
+    //         console.log("Download URL:", url); // Log the final URL
+
+    //         // Test if the URL is accessible
+    //         fetch(url, { method: 'HEAD' })
+    //             .then((response) => {
+    //                 if (response.ok) {
+    //                     console.log("File is available for download.");
+    //                     window.open(url, "_blank"); // Download the file
+    //                 } else {
+    //                     console.error(`Error: Server responded with status ${response.status}`);
+    //                 }
+    //             })
+    //             .catch((error) => {
+    //                 console.error("Error testing file availability:", error);
+    //             });
+    //     } catch (error) {
+    //         console.error("Error during file download:", error); // Log any errors
+    //     }
+    // }
+
+
+
+
+
     function viewfile() {
         const filePath = $('#filebuttons1').val();
 
@@ -645,6 +954,26 @@
         // Open the file in a new tab or start downloading
         window.open(url, "_blank");
     }
+
+   // function downloadfile(filename) {
+    // // Remove any unwanted whitespace or line breaks from the filePath
+    // const cleanedFilePath = filePath.trim();
+
+    // // Encode the file path to make it safe for URLs
+    // const encodedPath = encodeURIComponent(cleanedFilePath);
+
+    // // Construct the URL to call the controller
+    // const url = `/InboxClient/DownloadFile?filePath=${encodedPath}`;
+
+    // // Open the file in a new tab or start downloading
+    // window.open(url, "_blank");
+
+    // console.log("Download URL:", url); // Debugging
+
+     //   alert("hello");
+//}
+
+
 
     function filter() {
         $("#addfilter").modal("show");
@@ -745,6 +1074,7 @@
                         htmltab += '<td>' + (i + 1) + '</td>'; // Serial number
                         let i_from = response[i].i_from.trim();
                         htmltab += '<td>' + response[i].i_fromname + '</a></td>';
+                        htmltab += '<td>' + response[i].i_to + '</a></td>';
                         htmltab += '<td>' + response[i].i_subject + '</td>';
                         htmltab += '<td>' + response[i].i_receiveddate + '</td>';
                         htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].i_id + ')"></i></td>';

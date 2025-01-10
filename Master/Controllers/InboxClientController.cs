@@ -118,7 +118,7 @@ namespace Master.Controllers
         }
 
         [HttpGet("Clientchange1")]
-        public async Task<IActionResult> Clientchange1(Guid UserId, string clientid, string ic_type)
+        public async Task<IActionResult> Clientchange1(Guid UserId, string clientid, string ic_type,string ic_year)
         {
             try
             {
@@ -126,6 +126,7 @@ namespace Master.Controllers
                 user.UserId = UserId;
                 user.clientid = clientid;
                 user.ic_type = ic_type;
+                user.ic_year = ic_year;
                 if (user.BaseModel == null)
                 {
                     user.BaseModel = new BaseModel();

@@ -102,7 +102,7 @@ namespace Master.Repository
         {
             DynamicParameters parameters = new DynamicParameters();
             parameters.Add("@OperationType", user.BaseModel.OperationType, DbType.String);
-            parameters.Add("@i_id", user.i_id, DbType.Guid);
+            parameters.Add("@i_id", user.i_id, DbType.String);
             parameters.Add("@UserId", user.UserId, DbType.Guid);
             parameters.Add("@i_from", user.i_from, DbType.String);
             parameters.Add("@i_to", user.i_to, DbType.String);

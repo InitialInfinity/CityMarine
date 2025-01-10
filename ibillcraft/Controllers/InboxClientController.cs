@@ -57,6 +57,13 @@ namespace ibillcraft.Controllers
             ViewBag.customer = rootObject;
 
 
+            string geurl = $"{_httpClient.BaseAddress}/ViewBag/GetViewBag?userId&sTableName=tbl_ParameterValueMaster&sValue=pv_parametervalue&id=pv_id&IsActiveColumn=pv_isactive&sCoulmnName=pv_parameterid&sColumnValue=ce8449d3-24fb-49c4-8dd8-6a6093d7607c";
+            HttpResponseMessage geresponseView = _httpClient.GetAsync(geurl).Result;
+            dynamic gedata = geresponseView.Content.ReadAsStringAsync().Result;
+            var gerootObject = JsonConvert.DeserializeObject<List<FillDropdown>>(gedata);
+            ViewBag.year = gerootObject;
+
+
             var sentclientDataList = new List<InboxClientModel>();
             var sentclientList = new List<InboxClientModel>();
             string sentclienturl = $"{_httpClient.BaseAddress}/InboxClient/GetAll?UserId={UserId}&ic_from={email}&ic_type={tab}";
@@ -400,7 +407,7 @@ namespace ibillcraft.Controllers
             }
         }
 
-        public JsonResult Clientchange1(string? clientid, string? tab)
+        public JsonResult Clientchange1(string? clientid, string? tab,string? year)
         {
             GetCookies gk = new GetCookies();
             CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
@@ -410,7 +417,7 @@ namespace ibillcraft.Controllers
 
             var sentclientDataList = new List<InboxClientModel>();
             var sentclientList = new List<InboxClientModel>();
-            string sentclienturl = $"{_httpClient.BaseAddress}/InboxClient/Clientchange1?UserId={UserId}&clientid={clientid}&ic_type={tab}";
+            string sentclienturl = $"{_httpClient.BaseAddress}/InboxClient/Clientchange1?UserId={UserId}&clientid={clientid}&ic_type={tab}&ic_year={year}";
             HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
             if (response.IsSuccessStatusCode)
             {
