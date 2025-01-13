@@ -616,7 +616,7 @@ namespace ibillcraft.Controllers
                 Console.WriteLine($"Error in FetchEmails: {ex.Message}");
             }
 
-            return Ok("Emails fetched successfully!");
+            return RedirectToAction("Index");
         }
 
 
