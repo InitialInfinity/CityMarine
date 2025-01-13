@@ -54,8 +54,9 @@ namespace WindowsService
         protected override void OnStart(string[] args)
         {
             WriteToFile("Service is started at " + DateTime.Now);
+            // timer.Elapsed += new ElapsedEventHandler(OnElapsedTime);
             timer.Elapsed += new ElapsedEventHandler(OnElapsedTime);
-            timer.Interval = 60000; // 5 minutes
+          //  timer.Interval = 60000*60*24; // 5 minutes
             timer.Enabled = true;
         }
 
@@ -67,7 +68,21 @@ namespace WindowsService
 
         private void OnElapsedTime(object source, ElapsedEventArgs e)
         {
+            ScheduleNextRun();
             FetchEmails();
+        }
+        private void ScheduleNextRun()
+        {
+            var now = DateTime.Now;
+            var nextRunTime = DateTime.Today.AddDays(1).AddHours(23).AddMinutes(30); // 11:30 PM tomorrow
+
+            if (now > nextRunTime)
+            {
+                nextRunTime = nextRunTime.AddDays(1); // If the time has passed today, schedule for the next day
+            }
+
+            var interval = nextRunTime - now;
+            timer.Interval = interval.TotalMilliseconds;
         }
 
         //CityMarine

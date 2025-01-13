@@ -90,7 +90,8 @@
                 </button>
             </div>
             <div class="col-auto d-flex flex-wrap toggle">
-                <a class="btn btn-md text-light float-end bg-success mt-3 mt-lg-0 mt-md-0 ml-2" asp-action="Index" asp-controller="InboxEmail"
+            @*     <a class="btn btn-md text-light float-end bg-success mt-3 mt-lg-0 mt-md-0 ml-2" asp-action="Index" asp-controller="InboxEmail" *@
+                <a class="btn btn-md text-light float-end bg-success mt-3 mt-lg-0 mt-md-0 ml-2" onclick="fetchemail()"
                    title="Sync" type="button">
                     <i class="fas fa-sync-alt" style="font-size:18px"></i>
                 </a>
@@ -1096,6 +1097,10 @@
 
     function addorder() {
         window.location.href = "/InboxEmail/Index";
+    }
+
+    function fetchemail() {
+        window.location.href = "/InboxEmail/FetchEmails";
     }
 
 </script>
