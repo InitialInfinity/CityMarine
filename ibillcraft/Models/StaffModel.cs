@@ -49,6 +49,7 @@ namespace ibillcraft.Models
        
         public DateTime? st_updateddate { get; set; }
         public DateTime? st_createddate { get; set; }
+        public string? st_password { get; set; }
 
     }
     public class Staff

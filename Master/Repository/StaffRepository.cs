@@ -140,6 +140,7 @@ namespace Master.Repository
             parameters.Add("@st_rolename", user.st_rolename, DbType.String);
             parameters.Add("@st_category", user.st_category, DbType.String);
             parameters.Add("@st_username", user.st_username, DbType.String);
+            parameters.Add("@@st_password", user.@st_password, DbType.String);
             parameters.Add("@st_staff_code", user.st_staff_code, DbType.String);
             parameters.Add("@st_left_date", user.st_left_date, DbType.DateTime);
             parameters.Add("@st_createddate", user.st_createddate, DbType.DateTime);

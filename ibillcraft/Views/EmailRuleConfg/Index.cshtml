@@ -60,14 +60,15 @@
                             @Localizer[@Html.DisplayNameFor(model => model.E_id)]
                         </th>
                         <th>
+                            @Localizer[@Html.DisplayNameFor(model => model.E_categoryName)]
+                        </th>
+                        <th>
                             @Localizer[@Html.DisplayNameFor(model => model.E_parameterName)]
                         </th>
                         <th>
                             @Localizer[@Html.DisplayNameFor(model => model.E_conditionName)]
                         </th>
-                        <th>
-                            @Localizer[@Html.DisplayNameFor(model => model.E_categoryName)]
-                        </th>
+                       
                         <th width="7%">
                             @Localizer[@Html.DisplayNameFor(model => model.E_value)]
                         </th>
@@ -93,15 +94,16 @@
                             <td style="display:none">
                                 @Html.DisplayFor(modelItem => item.E_id)
                             </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.E_categoryName)
+                            </td>
                             <td >
                                 @Html.DisplayFor(modelItem => item.E_parameterName)
                             </td>
                             <td >
                                 @Html.DisplayFor(modelItem => item.E_conditionName)
                             </td>
-                             <td >
-                                @Html.DisplayFor(modelItem => item.E_categoryName)
-                            </td>
+                            
                             <td>
                                 @Html.DisplayFor(modelItem => item.E_value)
                             </td>
@@ -188,6 +190,18 @@
                         <div class="row">
                             <div class="col-xs-6 col-sm-6 col-md-12 ">
                                 <div class="form-group form-group-sm">
+                                    <label class="control-label fw-bold">@Localizer["Category"] <span class="text-danger">*</span></label>
+
+                                    <select class="form-select" id="E_category" asp-items="@(new SelectList(ViewBag.E_category,"Id","Value", ViewBag.SelectedCat))" placeholder="Select Designation" required>
+                                        <option value="">-- Select --</option>
+                                    </select>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-xs-6 col-sm-6 col-md-12 ">
+                                <div class="form-group form-group-sm">
                                     <label class="control-label fw-bold">@Localizer["Parameter"] <span class="text-danger">*</span></label>
                                     <select class="form-select" id="E_parameter" asp-items="@(new SelectList(ViewBag.E_parameter,"Id","Value", ViewBag.SelectedPara))" placeholder="Select Designation" required>
                                         <option value="">-- Select --</option>
@@ -206,18 +220,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row mt-2">
-                            <div class="col-xs-6 col-sm-6 col-md-12 ">
-                                <div class="form-group form-group-sm">
-                                    <label class="control-label fw-bold">@Localizer["Category"] <span class="text-danger">*</span></label>
-                                   
-                                    <select class="form-select" id="E_category" asp-items="@(new SelectList(ViewBag.E_category,"Id","Value", ViewBag.SelectedCat))" placeholder="Select Designation" required>
-                                        <option value="">-- Select --</option>
-                                    </select>
-
-                                </div>
-                            </div>
-                        </div>
+                       
                         <div class="row mt-2">
                             <div class="col-xs-6 col-sm-6 col-md-12 ">
                                 <div class="form-group form-group-sm">

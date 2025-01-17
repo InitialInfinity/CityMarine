@@ -248,6 +248,7 @@ namespace ibillcraft.Controllers
                     ViewBag.st_staff_name = model.st_staff_name;
                     ViewBag.st_staff_code = model.st_staff_code;
                     ViewBag.st_username = model.st_username;
+                    ViewBag.st_password = model.st_password;
                     ViewBag.st_id = model.st_id;
                     ViewBag.Edit = "Edit";
                     ViewBag.st_email = model.st_email;

@@ -22,6 +22,7 @@ function clrstf() {
     $('#st_rolename').val("");
     $('#st_category').val("");
     $('#st_staff_code').val("");
+    $('#st_password').val("");
 }
 /* Submit Button  */
 function submitStaff() {
@@ -87,6 +88,11 @@ function submitStaff() {
         alert("Please select role!");
         return false;
     }
+    else if ($('#st_password').val() == '') {
+            alert("Please enter password!");
+            return false;
+        }
+    
     var isActive = $('#st_isactive').is(':checked') ? 1 : 0;
     var data = {
         st_id: $('#st_id').val(),
@@ -103,6 +109,7 @@ function submitStaff() {
         st_joining_date: $('#st_joining_date').val(),
         st_city_id: $('#st_city_id').val(),
         st_username: $('#st_username').val(),
+        st_password: $('#st_password').val(),
         st_rolename: $('#st_rolename').val(),
         st_category: $('#st_category').val(),
         st_staff_code: $('#st_staff_code').val(),

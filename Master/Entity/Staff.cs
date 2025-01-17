@@ -24,7 +24,7 @@ namespace Master.Entity
 
         public string? st_rolename { get; set; }
         public string? st_username { get; set; }
-
+        public string? st_password { get; set; }
         public string? st_category { get; set; }
         public string? st_staff_code { get; set; }
         public string? st_bloodgroup { get; set; }
