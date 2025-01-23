@@ -684,12 +684,12 @@ function readURL(input) {
 function CancelModelData() {
 
 
-    $("#c_type").val('');
-    $("#name").val('');
-    $('#idate').val('');
-    $('#vdate').val('');
-    document.querySelector("#attachment").value = "";
-   // $("#createModal").modal("hide");
+    //$("#c_type").val('');
+    //$("#name").val('');
+    //$('#idate').val('');
+    //$('#vdate').val('');
+    //document.querySelector("#attachment").value = "";
+    $("#createModal").modal("hide");
 }
 function CloseData() {
 

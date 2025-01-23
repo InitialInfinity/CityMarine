@@ -23,6 +23,8 @@ using Microsoft.Identity.Client;
 using System.Timers;
 using Timer = System.Timers.Timer;
 using static ibillcraft.Models.GraphApiEmailResponse;
+using Twilio.TwiML.Messaging;
+using System.Globalization;
 
 namespace ibillcraft.Controllers
 {
@@ -41,7 +43,7 @@ namespace ibillcraft.Controllers
             var handler1 = new HttpClientHandler();
             handler.ServerCertificateCustomValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
             _httpClient = new HttpClient(handler);
-           // _httpClient1 = new HttpClient(handler);
+            // _httpClient1 = new HttpClient(handler);
             _httpClient1 = new HttpClient(handler1);
             _httpClient2 = new HttpClient(handler);
 
@@ -527,7 +529,7 @@ namespace ibillcraft.Controllers
                     if (sentFolder == null)
                     {
                         Console.WriteLine("Sent Items folder not found.");
-                       // return;
+                        // return;
                     }
                     var inboxFolder = folders.Value.FirstOrDefault(f => f.DisplayName.Equals("Inbox", StringComparison.OrdinalIgnoreCase));
                     if (inboxFolder == null)
@@ -554,6 +556,7 @@ namespace ibillcraft.Controllers
 
                             // Deserialize the JSON content into GraphApiEmailResponse
                             var inboxEmails = JsonConvert.DeserializeObject<GraphApiEmailResponse>(inboxContent);
+                            string time = "";
 
                             // Check if emails exist
                             if (inboxEmails?.Value?.Any() == true)
@@ -564,12 +567,55 @@ namespace ibillcraft.Controllers
                                 //latest email
                                 //var Emails = inboxEmails.Value.OrderByDescending(email => email.ReceivedDateTime).GroupBy(email => email.ReceivedDateTime).FirstOrDefault();
 
-                                //today's all emails
-                                var today = DateTime.UtcNow.Date; // Get today's date in UTC
-                                var Emails = inboxEmails.Value
-                                    .Where(email => email.ReceivedDateTime.HasValue && email.ReceivedDateTime.Value.Date == today) // Ensure the value is not null
-                                    .OrderByDescending(email => email.ReceivedDateTime); // Order by ReceivedDateTime descending
+                                string connectionString2 = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
 
+                                using (SqlConnection conn = new SqlConnection(connectionString2))
+                                {
+                                    conn.Open();
+                                    string query2 = @"SELECT top 1 e_time from tbl_eventlog order by e_time desc";
+                                    using (SqlCommand cmd = new SqlCommand(query2, conn))
+                                    {
+                                        using (SqlDataReader reader = cmd.ExecuteReader())
+                                        {
+                                            // Loop through each row in the result
+                                            while (reader.Read())
+                                            {
+                                                 time = reader["e_time"].ToString();
+                                            }
+                                        }
+                                    }
+
+                                }
+
+
+
+
+                                //today's all emails
+                                //var today = DateTime.UtcNow.Date; // Get today's date in UTC
+                                //var Emails = inboxEmails.Value
+                                //    .Where(email => email.ReceivedDateTime.HasValue && email.ReceivedDateTime.Value.Date == today) // Ensure the value is not null
+                                //    .OrderByDescending(email => email.ReceivedDateTime); // Order by ReceivedDateTime descending
+
+                                //DateTime startDateTime = DateTime.ParseExact(time, "MM/dd/yy hh:mm:ss tt", CultureInfo.InvariantCulture); // Parse the string to DateTime
+                                //DateTime currentDateTime = DateTime.UtcNow; // Get the current UTC time
+
+                                //var Emails = inboxEmails.Value
+                                //    .Where(email => email.ReceivedDateTime.HasValue &&
+                                //                    email.ReceivedDateTime.Value >= startDateTime &&
+                                //                    email.ReceivedDateTime.Value <= currentDateTime) // Ensure email ReceivedDateTime is within the range
+                                //    .OrderByDescending(email => email.ReceivedDateTime);
+
+                               
+                                DateTime startDateTime = DateTime.ParseExact(time, "MM/dd/yy h:mm:ss tt", CultureInfo.InvariantCulture); // Notice the use of 'h' instead of 'hh' for 12-hour format
+                                DateTime currentDateTime = DateTime.Now.AddHours(-5).AddMinutes(-30);// Get the current UTC time
+
+                                DateTime adjustedDateTime = startDateTime.AddHours(-5).AddMinutes(-30);
+
+                                var Emails = inboxEmails.Value
+                                    .Where(email => email.ReceivedDateTime.HasValue &&
+                                                    email.ReceivedDateTime.Value >= adjustedDateTime &&
+                                                    email.ReceivedDateTime.Value <= currentDateTime) // Ensure email ReceivedDateTime is within the range
+                                    .OrderByDescending(email => email.ReceivedDateTime);
 
                                 if (Emails.Any())
                                 {
@@ -582,12 +628,37 @@ namespace ibillcraft.Controllers
 
                                             // Mark email as read after processing
                                             // await MarkEmailAsRead(httpClient, userId, email.Id);
+
+
+
                                         }
                                         catch (Exception ex)
                                         {
                                             Console.WriteLine($"Error processing email with ID {email.Id}: {ex.Message}");
                                         }
                                     }
+                         //           string connectionString1 = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+
+                         //           using (SqlConnection conn = new SqlConnection(connectionString1))
+                         //           {
+                         //               conn.Open();
+
+                         //               string query = @"INSERT INTO dbo.tbl_eventlog (e_time, e_source, e_status)
+                         //VALUES (@e_time, @e_source, @e_status)";
+
+                         //               using (SqlCommand cmd1 = new SqlCommand(query, conn))
+                         //               {
+                         //                   // Add parameters to the insert query
+                         //                   cmd1.Parameters.AddWithValue("@e_time", System.DateTime.Now);
+                         //                   cmd1.Parameters.AddWithValue("@e_source", "Log");
+                         //                   cmd1.Parameters.AddWithValue("@e_status", "Success");
+
+
+                         //                   // Execute the query to insert the email into the database
+                         //                   cmd1.ExecuteNonQuery();
+                         //               }
+                         //               conn.Close();
+                         //           }
                                 }
                                 else
                                 {
@@ -642,8 +713,36 @@ namespace ibillcraft.Controllers
                                     SentEmail(email, userId);
 
                                     // Mark email as read
-                                  //  await MarkEmailAsRead(httpClient, userId, email.Id);
+                                    //  await MarkEmailAsRead(httpClient, userId, email.Id);                                                         
+
+
                                 }
+
+
+                         //       string connectionString1 = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+
+                         //       using (SqlConnection conn = new SqlConnection(connectionString1))
+                         //       {
+                         //           conn.Open();
+
+                         //           string query = @"INSERT INTO dbo.tbl_eventlog (e_time, e_source, e_status)
+                         //VALUES (@e_time, @e_source, @e_status)";
+
+                         //           using (SqlCommand cmd1 = new SqlCommand(query, conn))
+                         //           {
+                         //               // Add parameters to the insert query
+                         //               cmd1.Parameters.AddWithValue("@e_time", System.DateTime.Now);
+                         //               cmd1.Parameters.AddWithValue("@e_source", "Log");
+                         //               cmd1.Parameters.AddWithValue("@e_status", "Success");
+
+
+                         //               // Execute the query to insert the email into the database
+                         //               cmd1.ExecuteNonQuery();
+                         //           }
+                         //           conn.Close();
+                         //       }
+
+
                             }
                             else
                             {
@@ -661,6 +760,35 @@ namespace ibillcraft.Controllers
                         var sentErrorDetails = await sentResponse.Content.ReadAsStringAsync();
                         Console.WriteLine($"Sent error details: {sentErrorDetails}");
                     }
+
+
+
+                }
+
+
+
+
+                string connectionString1 = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+
+                using (SqlConnection conn = new SqlConnection(connectionString1))
+                {
+                    conn.Open();
+
+                    string query = @"INSERT INTO dbo.tbl_eventlog (e_time, e_source, e_status)
+                         VALUES (@e_time, @e_source, @e_status)";
+
+                    using (SqlCommand cmd1 = new SqlCommand(query, conn))
+                    {
+                        // Add parameters to the insert query
+                        cmd1.Parameters.AddWithValue("@e_time", System.DateTime.Now);
+                        cmd1.Parameters.AddWithValue("@e_source", "Log");
+                        cmd1.Parameters.AddWithValue("@e_status", "Success");
+
+
+                        // Execute the query to insert the email into the database
+                        cmd1.ExecuteNonQuery();
+                    }
+                    conn.Close();
                 }
 
             }
@@ -1167,7 +1295,7 @@ namespace ibillcraft.Controllers
                     if (response.IsSuccessStatusCode)
                     {
                         var content = await response.Content.ReadAsByteArrayAsync();
-                            System.IO.File.WriteAllBytes(filePath, content);
+                        System.IO.File.WriteAllBytes(filePath, content);
                         Console.WriteLine($"Attachment downloaded: {filePath}");
                     }
                     else
