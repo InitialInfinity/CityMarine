@@ -12,6 +12,8 @@
 
 
 }
+
+
 <style>
     * {
         box-sizing: border-box;
@@ -263,8 +265,10 @@
                     }
                 </tbody>
             </table>
+           
+        
         </div>
-
+      
         <div class="card-header py-3" style="display:none" id="detailsgridname">
             <div class="row align-items-center">
                 <div class="col-lg-1 col-md-1 ">
@@ -323,27 +327,68 @@
             </div>
         </div>
 
-        <div id="detailsGrid" class="table-responsive" style="display:none">
+        <div id="detailsGrid"  style="display:none">
             <h5 style="display:none">Details for Year: <span id="selectedYear">2025</span></h5>
-            <table class="table table-bordered" id="dataTable1" width="100%" cellspacing="0">
+            <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable2" width="100%" cellspacing="0">
                 <thead>
                     <tr>
-                        <th>Sr.No</th>
+                            <th width="6%">Sr.No</th>
                         <th style="display:none">Id</th>
-                        <th>From</th>
-                        <th>To</th>
+                            <th width="10%">From</th>
+                            <th width="10%">To</th>
                         <th>Subject</th>
-                        <th>Date</th>
-                        <th style="display:none">Attachment</th>
-                        <td>View</td>
+                            <th width="12%">Date</th>
+                            <th width="20%">Attachment</th>
+                            <td width="6%">View</td>
                     </tr>
                 </thead>
                 <tbody id="detailsTableBody">
                 </tbody>
             </table>
+                <div class="row mt-3">
+                    <div class="col-lg-5 col-md-5 col-12 ">
+                        <div class="row ">
+                            <div class="col-lg-3 col-md-3 col-12 d-flex justify-content-lg-start justify-content-md-start justify-content-center ">
+                                <h6 class="mt-2"> @Localizer["Show"]</h6>&nbsp;&nbsp;
+                                <select name="table_id_length" id="table_length_select2" aria-controls="table_id" class="form-select w-auto">
+                                    <option value="10">10</option>
+                                    <option value="25">25</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                </select>
+                                &nbsp;&nbsp;
+                                <h6 class="mt-2"> @Localizer["entries"]</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-2"></div>
+                    <div class="col-lg-5 col-md-5 col-12 mt-lg-0 mt-md-0 mt-3">
+                        <nav aria-label="Page navigation example">
+                            <div id="table_id_length2">
+
+                                <div id="dataTable2-custom-pagination" class=" d-flex text-center text-lg-end justify-content-end  text-end float-end">
+                                    <ul class="pagination justify-content-lg-end justify-content-md-end justify-content-center">
+
+
+                                        <li class="page-item disabled">
+                                            <button class="page-link" href="#" aria-label="Previous" data-page="0"> <span aria-hidden="true">&laquo;</span></button>
+                                        </li>
+                                        <li class="page-item active"><button class="page-link" href="#" data-page="1">1</button></li>
+
+                                        <li class="page-item "><button class="page-link" href="#" data-page="2" aria-label="Next">  <span aria-hidden="true">&raquo;</span></button></li>
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </nav>
+                    </div>
+                </div>
+        </div>
+          
         </div>
 
-
+      
         @* Start Filter Model*@
         <div class="modal fade" id="addfilter" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
              aria-hidden="true" style="display:none">
@@ -587,58 +632,20 @@
 
         <!-- End Griddata-->
         <!-- start Pagination-->
-        <div class="row mt-3">
-            <div class="col-lg-5 col-md-5 col-12 ">
-                <div class="row ">
-                    <div class="col-lg-3 col-md-3 col-12 d-flex justify-content-lg-start justify-content-md-start justify-content-center ">
-                        <h6 class="mt-2"> @Localizer["Show"]</h6>&nbsp;&nbsp;
-                        <select name="table_id_length" id="table_length_select" aria-controls="table_id" class="form-select w-auto">
-                            <option value="10">10</option>
-                            <option value="25">25</option>
-                            <option value="50">50</option>
-                            <option value="100">100</option>
-                        </select>
-                        &nbsp;&nbsp;
-                        <h6 class="mt-2"> @Localizer["entries"]</h6>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-2 col-md-2"></div>
-            <div class="col-lg-5 col-md-5 col-12 mt-lg-0 mt-md-0 mt-3">
-                <nav aria-label="Page navigation example">
-                    <div id="table_id_length">
-
-                        <div id="custom-pagination" class=" d-flex text-center text-lg-end justify-content-end  text-end float-end">
-                            <ul class="pagination justify-content-lg-end justify-content-md-end justify-content-center">
-                                <li class="page-item disabled">
-                                    <button class="page-link" href="#" aria-label="Previous" data-page="0"> <span aria-hidden="true">&laquo;</span></button>
-                                </li>
-                                <li class="page-item active"><button class="page-link" href="#" data-page="1">1</button></li>
-
-                                <li class="page-item "><button class="page-link" href="#" data-page="2" aria-label="Next">  <span aria-hidden="true">&raquo;</span></button></li>
-
-                            </ul>
-                        </div>
-                    </div>
-                </nav>
-            </div>
-        </div>
+       
         <!-- end Pagination-->
     </div>
 </div>
 
 <script>
-    $(document).ready(function () {
-        $('#dataTable1').DataTable();
+           
+               // initializeDataTable('#dataTable2', 'dataTable2-custom-pagination');
+               //                                  $('#table_length_select2').change();
 
-    
+            $(document).ready(function () {
+                 
 
-    });
-    myFunction();
-    $('#table_length_select').change();
-
-    $(document).ready(function () {
-        // Extract URL parameters
+            // Extract URL parameters
         var urlParams = new URLSearchParams(window.location.search);
         var client = urlParams.get('client');
 
@@ -667,7 +674,25 @@
 
         show(2025, client, email, tab);
     });
+             function downloadFile(filePath) {
+            console.log("Original File Path:", filePath); // Log the input
 
+            try {
+                // Trim and encode the file path
+                const trimmedPath = filePath.trim();
+                const encodedPath = encodeURIComponent(trimmedPath);
+                console.log("Encoded File Path:", encodedPath); // Log the encoded path
+
+                // Construct the URL
+                const url = `/InboxClient/DownloadFile?filePath=${encodedPath}`;
+                console.log("Download URL:", url); // Log the final URL
+
+                // Open the file in a new tab
+                window.open(url, "_blank");
+            } catch (error) {
+                console.error("Error during file download:", error); // Log any errors
+            }
+        }
 
     function show(ic_year, ic_fromname, ic_from, tab) {
 
@@ -711,7 +736,7 @@
                     htmltab += '<td>' + response[i].ic_to + '</td>';
                     htmltab += '<td>' + response[i].ic_subject + '</td>';
                     htmltab += '<td>' + response[i].ic_receiveddate + '</td>';
-                    htmltab += '<td style="display:none">' + response[i].ic_attachment + '</td>';
+                    htmltab += '<td >' + response[i].ic_attachment + '</td>';
                     //htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg('+response[i].sc_toemail+')"></i></td>';
                     htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].ic_id + ')"></i></td>';
 
@@ -952,25 +977,7 @@
 //     window.open(url, "_blank");
 // }
 
-    function downloadfile(filePath) {
-        console.log("Original File Path:", filePath); // Log the input
-
-        try {
-            // Trim and encode the file path
-            const trimmedPath = filePath.trim();
-            const encodedPath = encodeURIComponent(trimmedPath);
-            console.log("Encoded File Path:", encodedPath); // Log the encoded path
-
-            // Construct the URL
-            const url = `/InboxClient/DownloadFile?filePath=${encodedPath}`;
-            console.log("Download URL:", url); // Log the final URL
-
-            // Open the file in a new tab
-            window.open(url, "_blank");
-        } catch (error) {
-            console.error("Error during file download:", error); // Log any errors
-        }
-    }
+   
 
     function viewfile() {
         const filePath = $('#filebuttons1').val();
@@ -1114,7 +1121,7 @@
                     htmltab += '<td>' + response[i].ic_to + '</td>';
                     htmltab += '<td>' + response[i].ic_subject + '</td>';
                     htmltab += '<td>' + response[i].ic_receiveddate + '</td>';
-                    htmltab += '<td style="display:none">' + response[i].ic_attachment + '</td>';
+                    htmltab += '<td >' + response[i].ic_attachment + '</td>';
                     htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].ic_id + ')"></i></td>';
                     htmltab += '</tr>';
                 }
@@ -1212,9 +1219,9 @@
         //var email = $('#clientDropdown1').val();
       //  var year = $('#yearDropdown').val();
         var year = $('#yearDropdown option:selected').text();
-
-        var email = $('#clientDropdown1 option:selected').text();
-
+             var urlParams = new URLSearchParams(window.location.search);
+        //var email = $('#clientDropdown1 option:selected').text();
+    var email = urlParams.get('email');
         var data = {
             ic_from: email,
             tab: tab,
@@ -1271,7 +1278,7 @@
                     htmltab += '<td>' + response[i].ic_to + '</td>';
                     htmltab += '<td>' + response[i].ic_subject + '</td>';
                     htmltab += '<td>' + response[i].ic_receiveddate + '</td>';
-                    htmltab += '<td style="display:none">' + response[i].ic_attachment + '</td>';
+                    htmltab += '<td >' + response[i].ic_attachment + '</td>';
                     //htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg('+response[i].sc_toemail+')"></i></td>';
                     htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].ic_id + ')"></i></td>';
 
@@ -1283,6 +1290,7 @@
 
                 // Example: Update a specific section with the response data
                 $('#content-area').html(response);
+
             },
             error: function (xhr, status, error) {
                 // Handle errors
@@ -1307,7 +1315,9 @@
         // var email = urlParams.get('email');
 
         //var email = $('#clientDropdown1').val();
-        var email = $('#clientDropdown1 option:selected').text();
+        //var email = $('#clientDropdown1 option:selected').text();
+             var urlParams = new URLSearchParams(window.location.search);
+            var email = urlParams.get('email');
         var year=$('#yearDropdown option:selected').text();
 
         var data = {
@@ -1334,7 +1344,7 @@
                     htmltab += '<td>' + response[i].ic_to + '</td>';
                     htmltab += '<td>' + response[i].ic_subject + '</td>';
                     htmltab += '<td>' + response[i].ic_receiveddate + '</td>';
-                    htmltab += '<td style="display:none">' + response[i].ic_attachment + '</td>';
+                    htmltab += '<td >' + response[i].ic_attachment + '</td>';
                     //htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg('+response[i].sc_toemail+')"></i></td>';
                     htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].ic_id + ')"></i></td>';
 
@@ -1346,6 +1356,9 @@
 
                 // Example: Update a specific section with the response data
                 $('#content-area').html(response);
+
+
+      
             },
             error: function (xhr, status, error) {
                 // Handle errors
@@ -1353,6 +1366,105 @@
             }
         });
     }
+
+
+    //     function claimtab() {
+    //     var tab = "claim";
+    //     $('#enquiry-tab').attr('aria-selected', 'false');
+    //     $('#client-tab').attr('aria-selected', 'false');
+    //     $('#claim-tab').attr('aria-selected', 'true');
+    //     $('#general-tab').attr('aria-selected', 'true');
+
+    //     $('#enquiry-tab').attr('class', 'nav-link');
+    //     $('#client-tab').attr('class', 'nav-link');
+    //     $('#claim-tab').attr('class', 'nav-link active');
+    //     $('#general-tab').attr('class', 'nav-link');
+
+    //     var urlParams = new URLSearchParams(window.location.search);
+    //     var email = urlParams.get('email');
+    //     var year = $('#yearDropdown option:selected').text();
+
+    //     var data = {
+    //         ic_from: email,
+    //         tab: tab,
+    //         ic_year: year,
+    //     };
+
+    //     $.ajax({
+    //         url: '/InboxClient/fetchdetails', // Controller action URL
+    //         type: 'POST',             // HTTP method
+    //         data: data,
+    //         success: function (response) {
+    //             console.log('Response:', response);
+    //             $('#detailsTableBody').html('');
+
+    //             var htmltab = '';
+    //             for (var i = 0; i < response.length; i++) {
+    //                 htmltab += '<tr>';
+    //                 htmltab += '<td>' + (i + 1) + '</td>';
+    //                 htmltab += '<td style="display:none">' + response[i].ic_id + '</td>';
+    //                 htmltab += '<td>' + response[i].ic_from + '</td>';
+    //                 htmltab += '<td>' + response[i].ic_to + '</td>';
+    //                 htmltab += '<td>' + response[i].ic_subject + '</td>';
+    //                 htmltab += '<td>' + response[i].ic_receiveddate + '</td>';
+    //                 htmltab += '<td >' + response[i].ic_attachment + '</td>';
+    //                 htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].ic_id + ')"></i></td>';
+    //                 htmltab += '</tr>';
+    //             }
+
+    //             // Add entries selector and pagination
+    //             var controlPanel = `
+    //                 <div class="row mt-3">
+    //                     <div class="col-lg-5 col-md-5 col-12">
+    //                         <div class="row">
+    //                             <div class="col-lg-3 col-md-3 col-12 d-flex justify-content-lg-start justify-content-md-start justify-content-center">
+    //                                 <h6 class="mt-2">Show</h6>&nbsp;&nbsp;
+    //                                 <select name="table_id_length" id="table_length_select2" class="form-select w-auto">
+    //                                     <option value="10">10</option>
+    //                                     <option value="25">25</option>
+    //                                     <option value="50">50</option>
+    //                                     <option value="100">100</option>
+    //                                 </select>
+    //                                 &nbsp;&nbsp;
+    //                                 <h6 class="mt-2">entries</h6>
+    //                             </div>
+    //                         </div>
+    //                     </div>
+    //                     <div class="col-lg-2 col-md-2"></div>
+    //                     <div class="col-lg-5 col-md-5 col-12 mt-lg-0 mt-md-0 mt-3">
+    //                         <nav aria-label="Page navigation example">
+    //                             <div id="table_id_length2">
+    //                                 <div id="dataTable2-custom-pagination" class="d-flex text-center text-lg-end justify-content-end text-end float-end">
+    //                                     <ul class="pagination justify-content-lg-end justify-content-md-end justify-content-center">
+    //                                         <li class="page-item disabled">
+    //                                             <button class="page-link" href="#" data-page="0"><span>&laquo;</span></button>
+    //                                         </li>
+    //                                         <li class="page-item active">
+    //                                             <button class="page-link" href="#" data-page="1">1</button>
+    //                                         </li>
+    //                                         <li class="page-item">
+    //                                             <button class="page-link" href="#" data-page="2"><span>&raquo;</span></button>
+    //                                         </li>
+    //                                     </ul>
+    //                                 </div>
+    //                             </div>
+    //                         </nav>
+    //                     </div>
+    //                 </div>
+    //             `;
+
+    //             // Update table and add control panel before it
+    //                 $('#content-area').html(controlPanel + '<table id="dataTable2" class="table table-striped"><thead><tr><th>#</th><th>From</th><th>To</th><th>Subject</th><th>Received Date</th><th>Attachment</th><th>Actions</th></tr></thead><tbody>' + htmltab + '</tbody></table>');
+
+    //             // Initialize DataTables
+    //                // $('#dataTable2').DataTable();
+    //         },
+    //         error: function (xhr, status, error) {
+    //             console.error('Error:', error);
+    //         }
+    //     });
+    // }
+
 
     function generaltab() {
         var tab = "General";
@@ -1451,7 +1563,7 @@
                     htmltab += '<td>' + response[i].ic_from + '</td>';
                     htmltab += '<td>' + response[i].ic_subject + '</td>';
                     htmltab += '<td>' + response[i].ic_receiveddate + '</td>';
-                    htmltab += '<td style="display:none">' + response[i].ic_attachment + '</td>';
+                    htmltab += '<td >' + response[i].ic_attachment + '</td>';
                     //htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg('+response[i].sc_toemail+')"></i></td>';
                     htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].ic_id + ')"></i></td>';
 
@@ -1470,6 +1582,7 @@
 
 
     }
+       
 
 </script>
 

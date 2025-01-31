@@ -397,13 +397,17 @@
                 </thead>
                 <thead id="tabhead1" style="display:none">
                     <tr>
+                        
+
                         <th width="6%">Sr.No</th>
-                        <th style="display:none">id</th>
-                        <th>From</th>
-                        <th>To</th>
+                        <th style="display:none">Id</th>
+                        <th width="10%">From</th>
+                        <th width="10%">To</th>
                         <th>Subject</th>
-                        <th>Date</th>
-                        <th>View</th>
+                       
+                        <th width="20%">Attachment</th>
+                        <th width="12%">Date</th>
+                        <td width="6%">View</td>
                     </tr>
                 </thead>
                 <tbody id="tabtable">
@@ -471,14 +475,14 @@
 </div>
 <script>
     $(document).ready(function () {
-        $('#dataTable').DataTable();
-
+        // $('#dataTable').DataTable();
+             
         var url = window.location.href;
         var urlParams = new URLSearchParams(window.location.search);
         var tab = urlParams.get('tab');
     });
-    myFunction();
-    $('#table_length_select').change();
+       myFunction();
+            $('#table_length_select').change();
 
     function Cancel(){
         $("#addSubscription").modal("hide");
@@ -512,6 +516,7 @@
                     htmltab += '<td>' + (i + 1) + '</td>';
                     let i_from = response[i].i_from.trim();
                     htmltab += '<td><a href="/InboxClient?email=' + response[i].i_from + '&client=' + response[i].i_fromname + '&tab=' + tab + '">' + response[i].i_fromname + '</a></td>';
+                   
                     htmltab += '<td>' + response[i].i_receiveddate + '</td>';
                     htmltab += '</tr>';
                 }
@@ -555,6 +560,7 @@
                     htmltab += '<td>' + (i + 1) + '</td>'; // Serial number
                     let i_from = response[i].i_from.trim();
                     htmltab += '<td><a href="/InboxClient?email=' + response[i].i_from + '&client=' + response[i].i_fromname + '&tab=' + tab + '">' + response[i].i_fromname + '</a></td>';
+                        htmltab += '<td>' + response[i].i_attachment + '</td>';
                     htmltab += '<td>' + response[i].i_receiveddate + '</td>';
                     htmltab += '</tr>';
                 }
@@ -593,7 +599,9 @@
                     htmltab += '<td>' + (i + 1) + '</td>'; // Serial number
                     let i_from = response[i].i_from.trim();
                     htmltab += '<td><a href="/InboxClient?email=' + response[i].i_from + '&client=' + response[i].i_fromname + '&tab=' + tab + '">' + response[i].i_fromname + '</a></td>';
+                         htmltab += '<td>' + response[i].i_attachment + '</td>';
                     htmltab += '<td>' + response[i].i_receiveddate + '</td>';
+
                     htmltab += '</tr>';
                 }
                 $('#tabtable').html(htmltab);
@@ -633,12 +641,13 @@
                     htmltab += '<td>' + response[i].i_from + '</td>';
                     htmltab += '<td>' + response[i].i_to + '</td>';
                     htmltab += '<td>' + response[i].i_subject + '</td>';
+                         htmltab += '<td>' + response[i].i_attachment + '</td>';
                     htmltab += '<td>' + response[i].i_receiveddate + '</td>';
                     htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].i_id + ')"></i></td>';
                     htmltab += '</tr>';
                 }
                 $('#tabtable').html(htmltab);
-
+                      
                 // Example: Update a specific section with the response data
                 $('#content-area').html(response);
             },

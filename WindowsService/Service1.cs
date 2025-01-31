@@ -84,7 +84,11 @@ namespace WindowsService
             var interval = nextRunTime - now;
             timer.Interval = interval.TotalMilliseconds;
         }
-
+        //private void ScheduleNextRun()
+        //{
+        //    var interval = TimeSpan.FromMinutes(3); // Run after 1 minute
+        //    timer.Interval = interval.TotalMilliseconds;
+        //}
         //CityMarine
         private static string tenantId = "26d892b0-3196-4399-ba55-2f2f17cf30c7"; // Azure AD tenant ID
         private static string clientId = "c84beebd-a48c-4aad-b0c1-814fcb7fba17"; // Application (client) ID
@@ -513,12 +517,12 @@ namespace WindowsService
                 }
 
 
-                string query2 = @"SELECT COUNT(*) FROM [dbo].[tbl_customermaster] WHERE c_email = @Email";
-
+                string query2 = @"SELECT COUNT(*) FROM [dbo].[tbl_customermaster] WHERE SUBSTRING(c_email, CHARINDEX('@', c_email) + 1, LEN(c_email)) = @Email";
+                string domain = from.Substring(from.IndexOf('@') + 1);
 
                 using (SqlCommand cmd2 = new SqlCommand(query2, conn))
                 {
-                    cmd2.Parameters.AddWithValue("@Email", from);
+                    cmd2.Parameters.AddWithValue("@Email", domain);
 
                     // Execute the query and get the count
                     int count = (int)cmd2.ExecuteScalar();
@@ -643,9 +647,9 @@ namespace WindowsService
                 }
 
 
-                string query2 = @"SELECT COUNT(*) FROM [dbo].[tbl_customermaster] WHERE c_email = @Email";
+                string query2 = @"SELECT COUNT(*) FROM [dbo].[tbl_customermaster] WHERE SUBSTRING(c_email, CHARINDEX('@', c_email) + 1, LEN(c_email)) = @Email";
 
-
+               // string domain = from.Substring(from.IndexOf('@') + 1);
                 using (SqlCommand cmd2 = new SqlCommand(query2, conn))
                 {
                     cmd2.Parameters.AddWithValue("@Email", from);
@@ -705,6 +709,68 @@ namespace WindowsService
         public class AttachmentSaver
         {
             //Inbox
+            //public async Task<string> SaveAttachments(GraphApiEmailResponse.GraphApiMessage email, string userId, HttpClient httpClient)
+            //{
+            //    List<string> filePaths = new List<string>();
+            //    string attachmentpath = ConfigurationManager.AppSettings["attachmentpath"];
+
+            //    // Ensure email has attachments
+            //    if (email.Attachments != null && email.Attachments.Count > 0)
+            //    {
+            //        foreach (var attachment in email.Attachments)
+            //        {
+            //            string senderEmail = email.From?.EmailAddress?.Address ?? "UnknownSender";
+            //            string attachmentsFolder = Path.Combine(attachmentpath, senderEmail);
+
+            //            // Ensure the folder exists
+            //            if (!Directory.Exists(attachmentsFolder))
+            //            {
+            //                Directory.CreateDirectory(attachmentsFolder);
+            //            }
+
+            //            string fileName = SanitizeFileName(attachment.Name);
+            //            string filePath = Path.Combine(attachmentsFolder, fileName);
+
+            //            // If the attachment is of type 'GraphApiAttachment'
+            //            if (attachment is GraphApiAttachment fileAttachment)
+            //            {
+            //                try
+            //                {
+            //                    // Check if the attachment has a contentUrl or contentBytes
+            //                    if (!string.IsNullOrEmpty(fileAttachment.ContentUrl))
+            //                    {
+            //                        // Download the attachment using its contentUrl
+            //                        await DownloadAttachmentFromUrl(fileAttachment.ContentUrl, filePath, httpClient);
+            //                    }
+            //                    else if (!string.IsNullOrEmpty(fileAttachment.ContentBytes))
+            //                    {
+            //                        // Decode and save attachment from Base64 contentBytes
+            //                        byte[] content = Convert.FromBase64String(fileAttachment.ContentBytes);
+            //                        File.WriteAllBytes(filePath, content);
+            //                    }
+
+            //                    filePaths.Add(filePath);
+            //                    Console.WriteLine($"Attachment saved: {filePath}");
+            //                }
+            //                catch (Exception ex)
+            //                {
+            //                    Console.WriteLine($"Error downloading attachment {fileAttachment.Name}: {ex.Message}");
+            //                }
+            //            }
+            //            else
+            //            {
+            //                Console.WriteLine($"Attachment {attachment.Name} is not a file attachment.");
+            //            }
+            //        }
+            //    }
+            //    else
+            //    {
+            //        Console.WriteLine("No attachments found.");
+            //        return "No attachments available.";
+            //    }
+
+            //    return string.Join(Environment.NewLine, filePaths);
+            //}
             public async Task<string> SaveAttachments(GraphApiEmailResponse.GraphApiMessage email, string userId, HttpClient httpClient)
             {
                 List<string> filePaths = new List<string>();
@@ -765,7 +831,7 @@ namespace WindowsService
                     return "No attachments available.";
                 }
 
-                return string.Join(Environment.NewLine, filePaths);
+                return string.Join(",", filePaths); // Return comma-separated file paths
             }
 
 

@@ -2,7 +2,9 @@
 function cleardatatable() {
     $('#datatable1').DataTable().clear().destroy();
 }
-
+function cleardatatable2() {
+    $('#datatable2').DataTable().clear().destroy();
+}
 function myFunction() {
 
     //debugger;
@@ -10,7 +12,7 @@ function myFunction() {
     //    $('#datatable1').DataTable().clear().destroy();
     //}
     //catch () { $('#dataTable').DataTable(); }
-    
+  
     if (!$.fn.DataTable.isDataTable('#dataTable1')) {
 
         var table = $('#dataTable1').DataTable({
