@@ -15,6 +15,7 @@ using OfficeOpenXml;
 using DocumentFormat.OpenXml.Wordprocessing;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.IdentityModel.Tokens;
+using System.Net;
 namespace ibillcraft.Controllers
 {
     public class InboxClientController : Controller
@@ -137,7 +138,38 @@ namespace ibillcraft.Controllers
             }
             return Json(sentclientDataList);
         }
+        public JsonResult FetchAttachments( string? tab, string? ic_year)
+        {
+            GetCookies gk = new GetCookies();
+            CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
 
+            ViewBag.Format = CUtility.format;
+            Guid? UserId = new Guid(CUtility.userid);
+
+            var sentclientDataList = new List<InboxClientModel>();
+            var sentclientList = new List<InboxClientModel>();
+            string sentclienturl = $"{_httpClient.BaseAddress}/InboxClient/GetAllAttchment?UserId={UserId}&ic_year={ic_year}&ic_type={tab}";
+            HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                dynamic data = response.Content.ReadAsStringAsync().Result;
+                var dataObject = new { data = new List<InboxClientModel>() };
+                var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
+                sentclientList = response2.data;
+                //ViewBag.sc_to = sentclientList.sc_to;
+
+                if (sentclientList != null)
+                {
+                    return Json(sentclientList);
+                }
+                else
+                {
+                    var sentclientList1 = new List<InboxClientModel>();
+                    return Json(sentclientList1);
+                }
+            }
+            return Json(sentclientDataList);
+        }
         public JsonResult fetchdetails(string? ic_year, string? ic_from, string? tab)
         {
             GetCookies gk = new GetCookies();
@@ -346,9 +378,9 @@ namespace ibillcraft.Controllers
             {
                 return BadRequest("File path cannot be null or empty.");
             }
-
+            string decodedFilePath = WebUtility.UrlDecode(filePath);
             // Ensure the file exists
-            if (!System.IO.File.Exists(filePath))
+            if (!System.IO.File.Exists(decodedFilePath))
             {
                 return NotFound("File not found.");
             }
@@ -356,13 +388,13 @@ namespace ibillcraft.Controllers
             try
             {
                 // Get the file name
-                var fileName = Path.GetFileName(filePath);
+                var fileName = Path.GetFileName(decodedFilePath);
 
                 // Determine the MIME type based on the file extension
-                var contentType = GetMimeType(filePath);
+                var contentType = GetMimeType(decodedFilePath);
 
                 // Read the file into a byte array
-                var fileBytes = System.IO.File.ReadAllBytes(filePath);
+                var fileBytes = System.IO.File.ReadAllBytes(decodedFilePath);
 
                 // Return the file as a download
                 return File(fileBytes, contentType, fileName);

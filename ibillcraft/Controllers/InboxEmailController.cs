@@ -25,6 +25,7 @@ using Timer = System.Timers.Timer;
 using static ibillcraft.Models.GraphApiEmailResponse;
 using Twilio.TwiML.Messaging;
 using System.Globalization;
+using System.Net;
 
 namespace ibillcraft.Controllers
 {
@@ -287,6 +288,42 @@ namespace ibillcraft.Controllers
             };
         }
 
+        //[HttpGet]
+        //public IActionResult DownloadFile(string filePath)
+        //{
+        //    // Check if the file path is provided
+        //    if (string.IsNullOrEmpty(filePath))
+        //    {
+        //        return BadRequest("File path cannot be null or empty.");
+        //    }
+
+        //    // Ensure the file exists
+        //    if (!System.IO.File.Exists(filePath))
+        //    {
+        //        return NotFound("File not found.");
+        //    }
+
+        //    try
+        //    {
+        //        // Get the file name
+        //        var fileName = Path.GetFileName(filePath);
+
+        //        // Determine the MIME type based on the file extension
+        //        var contentType = GetMimeType(filePath);
+
+        //        // Read the file into a byte array
+        //        var fileBytes = System.IO.File.ReadAllBytes(filePath);
+
+        //        // Return the file as a download
+        //        return File(fileBytes, contentType, fileName);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Handle errors (e.g., log the error)
+        //        return StatusCode(500, $"Internal server error: {ex.Message}");
+        //    }
+        //}
+
         [HttpGet]
         public IActionResult DownloadFile(string filePath)
         {
@@ -295,9 +332,9 @@ namespace ibillcraft.Controllers
             {
                 return BadRequest("File path cannot be null or empty.");
             }
-
+            string decodedFilePath = WebUtility.UrlDecode(filePath);
             // Ensure the file exists
-            if (!System.IO.File.Exists(filePath))
+            if (!System.IO.File.Exists(decodedFilePath))
             {
                 return NotFound("File not found.");
             }
@@ -305,13 +342,13 @@ namespace ibillcraft.Controllers
             try
             {
                 // Get the file name
-                var fileName = Path.GetFileName(filePath);
+                var fileName = Path.GetFileName(decodedFilePath);
 
                 // Determine the MIME type based on the file extension
-                var contentType = GetMimeType(filePath);
+                var contentType = GetMimeType(decodedFilePath);
 
                 // Read the file into a byte array
-                var fileBytes = System.IO.File.ReadAllBytes(filePath);
+                var fileBytes = System.IO.File.ReadAllBytes(decodedFilePath);
 
                 // Return the file as a download
                 return File(fileBytes, contentType, fileName);
@@ -322,6 +359,7 @@ namespace ibillcraft.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
 
         [HttpGet]
         public IActionResult ViewFile(string filePath)

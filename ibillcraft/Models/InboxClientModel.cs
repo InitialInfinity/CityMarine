@@ -8,6 +8,7 @@
         public string? ic_year { get; set; }
         public string? ic_to { get; set; }
         public string? ic_attachment { get; set; }
+        public string? icc_attachment { get; set; }
         public string? ic_receiveddate { get; set; }
         public string? ic_subject { get; set; }
         public string? ic_type { get; set; }
