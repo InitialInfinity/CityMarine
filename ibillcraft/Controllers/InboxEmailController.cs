@@ -798,13 +798,7 @@ namespace ibillcraft.Controllers
                         var sentErrorDetails = await sentResponse.Content.ReadAsStringAsync();
                         Console.WriteLine($"Sent error details: {sentErrorDetails}");
                     }
-
-
-
                 }
-
-
-
 
                 string connectionString1 = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
 
@@ -1180,7 +1174,7 @@ namespace ibillcraft.Controllers
             public async Task<string> SaveAttachments(GraphApiEmailResponse.GraphApiMessage email, string userId, HttpClient httpClient)
             {
                 List<string> filePaths = new List<string>();
-                string attachmentpath = "E:\\ServiceLog1\\Attachments";
+                string attachmentpath = "CityMarine_EmailCRM/wwwroot/Email_Attachment";
 
                 // Ensure email has attachments
                 if (email.Attachments != null && email.Attachments.Count > 0)
@@ -1264,7 +1258,7 @@ namespace ibillcraft.Controllers
             public async Task<string> SaveAttachments1(GraphApiEmailResponse.GraphApiMessage email, string userId, HttpClient httpClient)
             {
                 List<string> filePaths = new List<string>();
-                string attachmentpath = "E:\\ServiceLog1\\Attachments";
+                string attachmentpath = "CityMarine_EmailCRM/wwwroot/Email_Attachment";
 
                 // Ensure email has attachments
                 if (email.Attachments != null && email.Attachments.Any())
