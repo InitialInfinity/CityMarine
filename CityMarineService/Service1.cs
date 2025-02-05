@@ -510,12 +510,12 @@ namespace CityMarineService
                 }
 
 
-                string query2 = @"SELECT COUNT(*) FROM [dbo].[tbl_customermaster] WHERE c_email = @Email";
-
+                string query2 = @"SELECT COUNT(*) FROM [dbo].[tbl_customermaster] WHERE SUBSTRING(c_email, CHARINDEX('@', c_email) + 1, LEN(c_email)) = @Email";
+                string domain = from.Substring(from.IndexOf('@') + 1);
 
                 using (SqlCommand cmd2 = new SqlCommand(query2, conn))
                 {
-                    cmd2.Parameters.AddWithValue("@Email", from);
+                    cmd2.Parameters.AddWithValue("@Email", domain);
 
                     // Execute the query and get the count
                     int count = (int)cmd2.ExecuteScalar();
@@ -640,9 +640,9 @@ namespace CityMarineService
                 }
 
 
-                string query2 = @"SELECT COUNT(*) FROM [dbo].[tbl_customermaster] WHERE c_email = @Email";
+                string query2 = @"SELECT COUNT(*) FROM [dbo].[tbl_customermaster] WHERE SUBSTRING(c_email, CHARINDEX('@', c_email) + 1, LEN(c_email)) = @Email";
 
-
+                // string domain = from.Substring(from.IndexOf('@') + 1);
                 using (SqlCommand cmd2 = new SqlCommand(query2, conn))
                 {
                     cmd2.Parameters.AddWithValue("@Email", from);
@@ -702,12 +702,151 @@ namespace CityMarineService
         public class AttachmentSaver
         {
             //Inbox
+            //public async Task<string> SaveAttachments(GraphApiEmailResponse.GraphApiMessage email, string userId, HttpClient httpClient)
+            //{
+            //    List<string> filePaths = new List<string>();
+            //    string attachmentpath = ConfigurationManager.AppSettings["attachmentpath"];
+
+            //    // Ensure email has attachments
+            //    if (email.Attachments != null && email.Attachments.Count > 0)
+            //    {
+            //        foreach (var attachment in email.Attachments)
+            //        {
+            //            string senderEmail = email.From?.EmailAddress?.Address ?? "UnknownSender";
+            //            string attachmentsFolder = Path.Combine(attachmentpath, senderEmail);
+
+            //            // Ensure the folder exists
+            //            if (!Directory.Exists(attachmentsFolder))
+            //            {
+            //                Directory.CreateDirectory(attachmentsFolder);
+            //            }
+
+            //            string fileName = SanitizeFileName(attachment.Name);
+            //            string filePath = Path.Combine(attachmentsFolder, fileName);
+
+            //            // If the attachment is of type 'GraphApiAttachment'
+            //            if (attachment is GraphApiAttachment fileAttachment)
+            //            {
+            //                try
+            //                {
+            //                    // Check if the attachment has a contentUrl or contentBytes
+            //                    if (!string.IsNullOrEmpty(fileAttachment.ContentUrl))
+            //                    {
+            //                        // Download the attachment using its contentUrl
+            //                        await DownloadAttachmentFromUrl(fileAttachment.ContentUrl, filePath, httpClient);
+            //                    }
+            //                    else if (!string.IsNullOrEmpty(fileAttachment.ContentBytes))
+            //                    {
+            //                        // Decode and save attachment from Base64 contentBytes
+            //                        byte[] content = Convert.FromBase64String(fileAttachment.ContentBytes);
+            //                        File.WriteAllBytes(filePath, content);
+            //                    }
+
+            //                    filePaths.Add(filePath);
+            //                    Console.WriteLine($"Attachment saved: {filePath}");
+            //                }
+            //                catch (Exception ex)
+            //                {
+            //                    Console.WriteLine($"Error downloading attachment {fileAttachment.Name}: {ex.Message}");
+            //                }
+            //            }
+            //            else
+            //            {
+            //                Console.WriteLine($"Attachment {attachment.Name} is not a file attachment.");
+            //            }
+            //        }
+            //    }
+            //    else
+            //    {
+            //        Console.WriteLine("No attachments found.");
+            //        return "No attachments available.";
+            //    }
+
+            //    return string.Join(Environment.NewLine, filePaths);
+            //}
+            //public async Task<string> SaveAttachments(GraphApiEmailResponse.GraphApiMessage email, string userId, HttpClient httpClient)
+            //{
+            //    List<string> filePaths = new List<string>();
+            //    string attachmentpath = ConfigurationManager.AppSettings["attachmentpath"];
+
+            //    // Ensure email has attachments
+            //    if (email.Attachments != null && email.Attachments.Count > 0)
+            //    {
+            //        foreach (var attachment in email.Attachments)
+            //        {
+            //            string senderEmail = email.From?.EmailAddress?.Address ?? "UnknownSender";
+            //            string attachmentsFolder = Path.Combine(attachmentpath, senderEmail);
+
+            //            // Ensure the folder exists
+            //            if (!Directory.Exists(attachmentsFolder))
+            //            {
+            //                Directory.CreateDirectory(attachmentsFolder);
+            //            }
+
+            //            string fileName = SanitizeFileName(attachment.Name);
+            //            string filePath = Path.Combine(attachmentsFolder, fileName);
+
+            //            // If the attachment is of type 'GraphApiAttachment'
+            //            if (attachment is GraphApiAttachment fileAttachment)
+            //            {
+            //                try
+            //                {
+            //                    // Check if the attachment has a contentUrl or contentBytes
+            //                    if (!string.IsNullOrEmpty(fileAttachment.ContentUrl))
+            //                    {
+            //                        // Download the attachment using its contentUrl
+            //                        await DownloadAttachmentFromUrl(fileAttachment.ContentUrl, filePath, httpClient);
+            //                    }
+            //                    else if (!string.IsNullOrEmpty(fileAttachment.ContentBytes))
+            //                    {
+            //                        // Decode and save attachment from Base64 contentBytes
+            //                        byte[] content = Convert.FromBase64String(fileAttachment.ContentBytes);
+            //                        File.WriteAllBytes(filePath, content);
+            //                    }
+
+            //                    filePaths.Add(filePath);
+            //                    Console.WriteLine($"Attachment saved: {filePath}");
+            //                }
+            //                catch (Exception ex)
+            //                {
+            //                    Console.WriteLine($"Error downloading attachment {fileAttachment.Name}: {ex.Message}");
+            //                }
+            //            }
+            //            else
+            //            {
+            //                Console.WriteLine($"Attachment {attachment.Name} is not a file attachment.");
+            //            }
+            //        }
+            //    }
+            //    else
+            //    {
+            //        Console.WriteLine("No attachments found.");
+            //        return "No attachments available.";
+            //    }
+
+            //    return string.Join(",", filePaths); // Return comma-separated file paths
+            //}
+
+
+            //private async Task DownloadAttachmentFromUrl(string contentUrl, string filePath, HttpClient httpClient)
+            //{
+            //    var response = await httpClient.GetAsync(contentUrl);
+            //    if (response.IsSuccessStatusCode)
+            //    {
+            //        var content = await response.Content.ReadAsByteArrayAsync();
+            //        File.WriteAllBytes(filePath, content);
+            //    }
+            //    else
+            //    {
+            //        Console.WriteLine($"Failed to download attachment from URL: {contentUrl}");
+            //    }
+            //}
             public async Task<string> SaveAttachments(GraphApiEmailResponse.GraphApiMessage email, string userId, HttpClient httpClient)
             {
                 List<string> filePaths = new List<string>();
+                List<Task> downloadTasks = new List<Task>();
                 string attachmentpath = ConfigurationManager.AppSettings["attachmentpath"];
 
-                // Ensure email has attachments
                 if (email.Attachments != null && email.Attachments.Count > 0)
                 {
                     foreach (var attachment in email.Attachments)
@@ -715,7 +854,6 @@ namespace CityMarineService
                         string senderEmail = email.From?.EmailAddress?.Address ?? "UnknownSender";
                         string attachmentsFolder = Path.Combine(attachmentpath, senderEmail);
 
-                        // Ensure the folder exists
                         if (!Directory.Exists(attachmentsFolder))
                         {
                             Directory.CreateDirectory(attachmentsFolder);
@@ -724,26 +862,23 @@ namespace CityMarineService
                         string fileName = SanitizeFileName(attachment.Name);
                         string filePath = Path.Combine(attachmentsFolder, fileName);
 
-                        // If the attachment is of type 'GraphApiAttachment'
                         if (attachment is GraphApiAttachment fileAttachment)
                         {
                             try
                             {
-                                // Check if the attachment has a contentUrl or contentBytes
                                 if (!string.IsNullOrEmpty(fileAttachment.ContentUrl))
                                 {
-                                    // Download the attachment using its contentUrl
-                                    await DownloadAttachmentFromUrl(fileAttachment.ContentUrl, filePath, httpClient);
+                                    downloadTasks.Add(DownloadAttachmentFromUrl(fileAttachment.ContentUrl, filePath, httpClient));
                                 }
                                 else if (!string.IsNullOrEmpty(fileAttachment.ContentBytes))
                                 {
-                                    // Decode and save attachment from Base64 contentBytes
                                     byte[] content = Convert.FromBase64String(fileAttachment.ContentBytes);
-                                    File.WriteAllBytes(filePath, content);
+                                    await Task.Run(() => File.WriteAllBytes(filePath, content));
+                                    Console.WriteLine($"Attachment saved: {filePath}");
                                 }
 
                                 filePaths.Add(filePath);
-                                Console.WriteLine($"Attachment saved: {filePath}");
+                                Console.WriteLine($"Attachment queued for saving: {filePath}");
                             }
                             catch (Exception ex)
                             {
@@ -755,6 +890,9 @@ namespace CityMarineService
                             Console.WriteLine($"Attachment {attachment.Name} is not a file attachment.");
                         }
                     }
+
+                    // Wait for all downloads and file writes to complete
+                    await Task.WhenAll(downloadTasks);
                 }
                 else
                 {
@@ -762,9 +900,8 @@ namespace CityMarineService
                     return "No attachments available.";
                 }
 
-                return string.Join(Environment.NewLine, filePaths);
+                return string.Join(",", filePaths);
             }
-
 
             private async Task DownloadAttachmentFromUrl(string contentUrl, string filePath, HttpClient httpClient)
             {
@@ -772,13 +909,16 @@ namespace CityMarineService
                 if (response.IsSuccessStatusCode)
                 {
                     var content = await response.Content.ReadAsByteArrayAsync();
-                    File.WriteAllBytes(filePath, content);
+
+                    // Write file asynchronously using Task.Run
+                    await Task.Run(() => File.WriteAllBytes(filePath, content)); // ✅ Fix applied
                 }
                 else
                 {
                     Console.WriteLine($"Failed to download attachment from URL: {contentUrl}");
                 }
             }
+
 
             private string SanitizeFileName(string fileName)
             {
@@ -900,7 +1040,6 @@ namespace CityMarineService
                 Console.WriteLine($"Error in MarkEmailAsRead: {ex.Message}");
             }
         }
-
 
     }
 }

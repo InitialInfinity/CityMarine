@@ -866,9 +866,19 @@
                         $('#ic_subjectlabel').text(response.ic_subject || 'N/A');
 
 
-                        const formattedBody = (response.ic_body || '').replace(/<br\s*\/?>/gi, "\n").replace(/<\/?[^>]+(>|$)/g, "");
+                      // const formattedBody = (response.ic_body || '').replace(/<br\s*\/?>/gi, "\n").replace(/<\/?[^>]+(>|$)/g, "");
+                        
 
-                        $('#ic_bodylabel').val(formattedBody);
+                        //$('#ic_bodylabel').val(formattedBody);
+
+                    // var parsedHTML = $.parseHTML(response.ic_body);
+                    // var bodyContent = $(parsedHTML).find('body').html();  // Get the body content
+
+                    // Display the body content inside the #ic_bodylabel
+                    $('#ic_bodylabel').html(response.ic_body || '');
+
+
+
 
 
                         // Optional: Update a specific content area with additional information

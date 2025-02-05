@@ -26,6 +26,8 @@ using static ibillcraft.Models.GraphApiEmailResponse;
 using Twilio.TwiML.Messaging;
 using System.Globalization;
 using System.Net;
+using System.Configuration;
+using System;
 
 namespace ibillcraft.Controllers
 {
@@ -536,7 +538,6 @@ namespace ibillcraft.Controllers
 
                                 userId = reader["userid"].ToString();
                             }
-
                         }
 
                     }
@@ -610,7 +611,7 @@ namespace ibillcraft.Controllers
                                 using (SqlConnection conn = new SqlConnection(connectionString2))
                                 {
                                     conn.Open();
-                                    string query2 = @"SELECT top 1 e_time from tbl_eventlog order by e_time desc";
+                                    string query2 = @"SELECT top 1 e_actualtime,e_time from tbl_eventlog order by e_actualtime desc";
                                     using (SqlCommand cmd = new SqlCommand(query2, conn))
                                     {
                                         using (SqlDataReader reader = cmd.ExecuteReader())
@@ -618,7 +619,7 @@ namespace ibillcraft.Controllers
                                             // Loop through each row in the result
                                             while (reader.Read())
                                             {
-                                                 time = reader["e_time"].ToString();
+                                                 time = reader["e_time"].ToString();                                               
                                             }
                                         }
                                     }
@@ -643,65 +644,176 @@ namespace ibillcraft.Controllers
                                 //                    email.ReceivedDateTime.Value <= currentDateTime) // Ensure email ReceivedDateTime is within the range
                                 //    .OrderByDescending(email => email.ReceivedDateTime);
 
-                               
-                                DateTime startDateTime = DateTime.ParseExact(time, "MM/dd/yy h:mm:ss tt", CultureInfo.InvariantCulture); // Notice the use of 'h' instead of 'hh' for 12-hour format
-                                DateTime currentDateTime = DateTime.Now.AddHours(-5).AddMinutes(-30);// Get the current UTC time
 
-                                DateTime adjustedDateTime = startDateTime.AddHours(-5).AddMinutes(-30);
 
-                                var Emails = inboxEmails.Value
-                                    .Where(email => email.ReceivedDateTime.HasValue &&
-                                                    email.ReceivedDateTime.Value >= adjustedDateTime &&
-                                                    email.ReceivedDateTime.Value <= currentDateTime) // Ensure email ReceivedDateTime is within the range
-                                    .OrderByDescending(email => email.ReceivedDateTime);
 
-                                if (Emails.Any())
+
+
+                                
+                                DateTime startDateTime = DateTime.ParseExact(time, "MM/dd/yy h:mm:ss tt", CultureInfo.InvariantCulture);
+                                //DateTime currentDateTime = DateTime.UtcNow.AddHours(-5).AddMinutes(-30);// Get the current UTC time
+
+
+                                // Get the current UTC time
+                                DateTime currentUtcTime = DateTime.UtcNow;
+
+                                // Convert the UTC time to UTC+05:30 (Indian Standard Time)
+                                TimeZoneInfo istTimeZone1 = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+                                DateTime currentDateTimeInIst = TimeZoneInfo.ConvertTimeFromUtc(currentUtcTime, istTimeZone1);
+
+                                // Format the converted time to the desired format: "yyyy-MM-dd HH:mm:ss.fff"
+                                string formattedDateTime = currentDateTimeInIst.ToString("yyyy-MM-dd HH:mm:ss.fff");
+
+                                // Convert the formatted string back to DateTime
+                                DateTime currentDateTime = DateTime.ParseExact(formattedDateTime, "yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
+
+                                WriteToFile("start time " + startDateTime);
+                                WriteToFile("current time " + currentDateTime);
+
+
+                                //DateTime adjustedDateTime = startDateTime.AddHours(-5).AddMinutes(-30);
+                                DateTime adjustedDateTime = startDateTime;
+
+
+                                //var Emails = inboxEmails.Value
+                                //    .Where(email => email.ReceivedDateTime.HasValue &&
+                                //                    email.ReceivedDateTime.Value >= adjustedDateTime &&
+                                //                    email.ReceivedDateTime.Value <= currentDateTime) // Ensure email ReceivedDateTime is within the range
+                                //    .OrderByDescending(email => email.ReceivedDateTime);
+
+
+                                var Emails = inboxEmails.Value;
+
+
+                                // Iterate through all emails to adjust the timezone and display the result
+                                // Assuming `email.ReceivedDateTime` is in UTC
+                                foreach (var email1 in Emails)
                                 {
-                                    foreach (var email in Emails)
+                                    // Assuming ReceivedDateTime is in UTC
+                                    if (email1.ReceivedDateTime.HasValue)
                                     {
-                                        try
+                                        DateTime receivedDateTimeUtc = email1.ReceivedDateTime.Value;
+
+                                        // Convert the UTC time to UTC+05:30 (Indian Standard Time)
+                                        TimeZoneInfo istTimeZone = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"); // UTC+05:30
+                                        DateTime receivedDateTimeInIst = TimeZoneInfo.ConvertTimeFromUtc(receivedDateTimeUtc, istTimeZone);
+
+                                        // Compare if the email's ReceivedDateTime in IST is within the specified range
+                                        if (receivedDateTimeInIst >= adjustedDateTime && receivedDateTimeInIst <= currentDateTime)
                                         {
-                                            // Process unread Inbox email
-                                            InboxEmail(email, userId);
+                                            WriteToFile("step 1");
+                                            if (Emails.Any())
+                                            {
+                                                WriteToFile("step 2");
+                                                foreach (var email in Emails)
+                                                {
+                                                    WriteToFile("step 3");
+                                                    try
+                                                    {
+                                                        WriteToFile("step 4");
+                                                        // Process unread Inbox email
+                                                        InboxEmail(email, userId);
 
-                                            // Mark email as read after processing
-                                            // await MarkEmailAsRead(httpClient, userId, email.Id);
+                                                        // Mark email as read after processing
+                                                        // await MarkEmailAsRead(httpClient, userId, email.Id);
 
 
 
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            Console.WriteLine($"Error processing email with ID {email.Id}: {ex.Message}");
+                                                    }
+                                                    catch (Exception ex)
+                                                    {
+                                                        WriteToFile("catch");
+                                                        Console.WriteLine($"Error processing email with ID {email.Id}: {ex.Message}");
+                                                    }
+                                                }
+
+                                            }
+                                            else
+                                            {
+                                                WriteToFile("noemail");
+                                                Console.WriteLine("No unread emails found in Inbox.");
+                                            }
                                         }
                                     }
-                         //           string connectionString1 = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
-
-                         //           using (SqlConnection conn = new SqlConnection(connectionString1))
-                         //           {
-                         //               conn.Open();
-
-                         //               string query = @"INSERT INTO dbo.tbl_eventlog (e_time, e_source, e_status)
-                         //VALUES (@e_time, @e_source, @e_status)";
-
-                         //               using (SqlCommand cmd1 = new SqlCommand(query, conn))
-                         //               {
-                         //                   // Add parameters to the insert query
-                         //                   cmd1.Parameters.AddWithValue("@e_time", System.DateTime.Now);
-                         //                   cmd1.Parameters.AddWithValue("@e_source", "Log");
-                         //                   cmd1.Parameters.AddWithValue("@e_status", "Success");
-
-
-                         //                   // Execute the query to insert the email into the database
-                         //                   cmd1.ExecuteNonQuery();
-                         //               }
-                         //               conn.Close();
-                         //           }
                                 }
-                                else
+
+
+
+
+
+
+                                using (SqlConnection conn = new SqlConnection(connectionString2))
                                 {
-                                    Console.WriteLine("No unread emails found in Inbox.");
+                                    conn.Open();
+
+                                    string query = @"INSERT INTO dbo.tbl_time (startdate, enddate, emaildate)
+                         VALUES (@startdate, @enddate, @emaildate)";
+
+                                    using (SqlCommand cmd1 = new SqlCommand(query, conn))
+                                    {
+                                        // Add parameters to the insert query
+                                        cmd1.Parameters.AddWithValue("@startdate", startDateTime);
+                                        cmd1.Parameters.AddWithValue("@enddate", currentDateTime);
+                                        cmd1.Parameters.AddWithValue("@emaildate", "Success");
+
+
+                                        // Execute the query to insert the email into the database
+                                        cmd1.ExecuteNonQuery();
+                                    }
+                                    conn.Close();
                                 }
+
+
+
+
+
+                         //       if (Emails.Any())
+                         //       {
+                         //           foreach (var email in Emails)
+                         //           {
+                         //               try
+                         //               {
+                         //                   // Process unread Inbox email
+                         //                   InboxEmail(email, userId);
+
+                         //                   // Mark email as read after processing
+                         //                   // await MarkEmailAsRead(httpClient, userId, email.Id);
+
+
+
+                         //               }
+                         //               catch (Exception ex)
+                         //               {
+                         //                   Console.WriteLine($"Error processing email with ID {email.Id}: {ex.Message}");
+                         //               }
+                         //           }
+                         ////           string connectionString1 = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+
+                         ////           using (SqlConnection conn = new SqlConnection(connectionString1))
+                         ////           {
+                         ////               conn.Open();
+
+                         ////               string query = @"INSERT INTO dbo.tbl_eventlog (e_time, e_source, e_status)
+                         ////VALUES (@e_time, @e_source, @e_status)";
+
+                         ////               using (SqlCommand cmd1 = new SqlCommand(query, conn))
+                         ////               {
+                         ////                   // Add parameters to the insert query
+                         ////                   cmd1.Parameters.AddWithValue("@e_time", System.DateTime.Now);
+                         ////                   cmd1.Parameters.AddWithValue("@e_source", "Log");
+                         ////                   cmd1.Parameters.AddWithValue("@e_status", "Success");
+
+
+                         ////                   // Execute the query to insert the email into the database
+                         ////                   cmd1.ExecuteNonQuery();
+                         ////               }
+                         ////               conn.Close();
+                         ////           }
+                         //       }
+                         //       else
+                         //       {
+                         //           Console.WriteLine("No unread emails found in Inbox.");
+                         //       }
                             }
                             else
                             {
@@ -806,13 +918,33 @@ namespace ibillcraft.Controllers
                 {
                     conn.Open();
 
-                    string query = @"INSERT INTO dbo.tbl_eventlog (e_time, e_source, e_status)
-                         VALUES (@e_time, @e_source, @e_status)";
+                    string query = @"INSERT INTO dbo.tbl_eventlog (e_actualtime,e_time, e_source, e_status)
+                         VALUES (@e_actualtime,@e_time, @e_source, @e_status)";
+
+
+
+                    DateTime startUtcTime = DateTime.UtcNow;
+
+                    TimeZoneInfo istTimeZone1 = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+                    DateTime startDateTimeInIst = TimeZoneInfo.ConvertTimeFromUtc(startUtcTime, istTimeZone1);
+
+                    // Format the converted time to the desired format: "yyyy-MM-dd HH:mm:ss.fff"
+                    string formattedDateTime = startDateTimeInIst.ToString("yyyy-MM-dd HH:mm:ss.fff");
+
+                    // Convert the formatted string back to DateTime
+                    DateTime startDateTime = DateTime.ParseExact(formattedDateTime, "yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
+
+
+
+
+
 
                     using (SqlCommand cmd1 = new SqlCommand(query, conn))
                     {
                         // Add parameters to the insert query
-                        cmd1.Parameters.AddWithValue("@e_time", System.DateTime.Now);
+                        cmd1.Parameters.AddWithValue("@e_actualtime", System.DateTime.Now);
+                      //  cmd1.Parameters.AddWithValue("@e_time", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"));
+                        cmd1.Parameters.AddWithValue("@e_time", startDateTime);
                         cmd1.Parameters.AddWithValue("@e_source", "Log");
                         cmd1.Parameters.AddWithValue("@e_status", "Success");
 
@@ -962,12 +1094,12 @@ namespace ibillcraft.Controllers
                 }
 
 
-                string query2 = @"SELECT COUNT(*) FROM [dbo].[tbl_customermaster] WHERE c_email = @Email";
-
+                string query2 = @"SELECT COUNT(*) FROM [dbo].[tbl_customermaster] WHERE SUBSTRING(c_email, CHARINDEX('@', c_email) + 1, LEN(c_email)) = @Email";
+                string domain = from.Substring(from.IndexOf('@') + 1);
 
                 using (SqlCommand cmd2 = new SqlCommand(query2, conn))
                 {
-                    cmd2.Parameters.AddWithValue("@Email", from);
+                    cmd2.Parameters.AddWithValue("@Email", domain);
 
                     // Execute the query and get the count
                     int count = (int)cmd2.ExecuteScalar();
@@ -977,6 +1109,7 @@ namespace ibillcraft.Controllers
                         emailType = "General";
                     }
                 }
+
 
                 // Insert email data into the tbl_InboxEmail table
                 string query = @"INSERT INTO dbo.tbl_InboxEmail (i_subject, i_from, i_to, i_body, i_replyto, i_messageid, i_receiveddate, i_attachment, i_type)
@@ -998,6 +1131,13 @@ namespace ibillcraft.Controllers
                     // Execute the query to insert the email into the database
                     cmd1.ExecuteNonQuery();
                 }
+
+
+
+
+
+
+             
             }
         }
 
@@ -1130,9 +1270,9 @@ namespace ibillcraft.Controllers
                 }
 
 
-                string query2 = @"SELECT COUNT(*) FROM [dbo].[tbl_customermaster] WHERE c_email = @Email";
+                string query2 = @"SELECT COUNT(*) FROM [dbo].[tbl_customermaster] WHERE SUBSTRING(c_email, CHARINDEX('@', c_email) + 1, LEN(c_email)) = @Email";
 
-
+                // string domain = from.Substring(from.IndexOf('@') + 1);
                 using (SqlCommand cmd2 = new SqlCommand(query2, conn))
                 {
                     cmd2.Parameters.AddWithValue("@Email", from);
@@ -1145,6 +1285,7 @@ namespace ibillcraft.Controllers
                         sType = "General";
                     }
                 }
+
 
                 // Insert email into SentEmail table
                 string insertQuery = @"INSERT INTO dbo.tbl_SentEmail (s_subject,s_from,s_to,s_body,s_replyto,s_messageid,s_sentdate,s_attachment,s_type) 
@@ -1167,16 +1308,191 @@ namespace ibillcraft.Controllers
             }
         }
 
+        //public class AttachmentSaver
+        //{
+
+        //    //Inbox
+        //    public async Task<string> SaveAttachments(GraphApiEmailResponse.GraphApiMessage email, string userId, HttpClient httpClient)
+        //    {
+        //        List<string> filePaths = new List<string>();
+        //        string attachmentpath = "CityMarine_EmailCRM/wwwroot/Email_Attachment";
+
+        //        // Ensure email has attachments
+        //        if (email.Attachments != null && email.Attachments.Count > 0)
+        //        {
+        //            foreach (var attachment in email.Attachments)
+        //            {
+        //                string senderEmail = email.From?.EmailAddress?.Address ?? "UnknownSender";
+        //                string attachmentsFolder = Path.Combine(attachmentpath, senderEmail);
+
+        //                // Ensure the folder exists
+        //                if (!Directory.Exists(attachmentsFolder))
+        //                {
+        //                    Directory.CreateDirectory(attachmentsFolder);
+        //                }
+
+        //                string fileName = SanitizeFileName(attachment.Name);
+        //                string filePath = Path.Combine(attachmentsFolder, fileName);
+
+        //                // If the attachment is of type 'GraphApiAttachment'
+        //                if (attachment is GraphApiAttachment fileAttachment)
+        //                {
+        //                    try
+        //                    {
+        //                        // Check if the attachment has a contentUrl or contentBytes
+        //                        if (!string.IsNullOrEmpty(fileAttachment.ContentUrl))
+        //                        {
+        //                            // Download the attachment using its contentUrl
+        //                            await DownloadAttachmentFromUrl(fileAttachment.ContentUrl, filePath, httpClient);
+        //                        }
+        //                        else if (!string.IsNullOrEmpty(fileAttachment.ContentBytes))
+        //                        {
+        //                            // Decode and save attachment from Base64 contentBytes
+        //                            byte[] content = Convert.FromBase64String(fileAttachment.ContentBytes);
+        //                            System.IO.File.WriteAllBytes(filePath, content);
+        //                        }
+
+        //                        filePaths.Add(filePath);
+        //                        Console.WriteLine($"Attachment saved: {filePath}");
+        //                    }
+        //                    catch (Exception ex)
+        //                    {
+        //                        Console.WriteLine($"Error downloading attachment {fileAttachment.Name}: {ex.Message}");
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    Console.WriteLine($"Attachment {attachment.Name} is not a file attachment.");
+        //                }
+        //            }
+        //        }
+        //        else
+        //        {
+        //            Console.WriteLine("No attachments found.");
+        //            return "No attachments available.";
+        //        }
+
+        //        return string.Join(Environment.NewLine, filePaths);
+        //    }
+
+
+        //    private async Task DownloadAttachmentFromUrl(string contentUrl, string filePath, HttpClient httpClient)
+        //    {
+        //        var response = await httpClient.GetAsync(contentUrl);
+        //        if (response.IsSuccessStatusCode)
+        //        {
+        //            var content = await response.Content.ReadAsByteArrayAsync();
+        //            System.IO.File.WriteAllBytes(filePath, content);
+        //        }
+        //        else
+        //        {
+        //            Console.WriteLine($"Failed to download attachment from URL: {contentUrl}");
+        //        }
+        //    }
+
+        //    private string SanitizeFileName(string fileName)
+        //    {
+
+        //        return string.Concat(fileName.Split(Path.GetInvalidFileNameChars()));
+        //    }
+        //    //Send
+        //    public async Task<string> SaveAttachments1(GraphApiEmailResponse.GraphApiMessage email, string userId, HttpClient httpClient)
+        //    {
+        //        List<string> filePaths = new List<string>();
+        //        string attachmentpath = "CityMarine_EmailCRM/wwwroot/Email_Attachment";
+
+        //        // Ensure email has attachments
+        //        if (email.Attachments != null && email.Attachments.Any())
+        //        {
+        //            foreach (var attachment in email.Attachments)
+        //            {
+        //                string senderEmail = email.From?.EmailAddress?.Address ?? "UnknownSender";
+        //                string attachmentsFolder = Path.Combine(attachmentpath, senderEmail);
+
+        //                // Ensure the folder exists
+        //                if (!Directory.Exists(attachmentsFolder))
+        //                {
+        //                    Directory.CreateDirectory(attachmentsFolder);
+        //                }
+
+        //                string fileName = SanitizeFileName(attachment.Name);
+        //                string filePath = Path.Combine(attachmentsFolder, fileName);
+
+        //                try
+        //                {
+        //                    // Check if the attachment is of type 'GraphApiAttachment'
+        //                    if (attachment is GraphApiEmailResponse.GraphApiAttachment graphAttachment)
+        //                    {
+        //                        // If the attachment has contentBytes (Base64 encoded)
+        //                        if (!string.IsNullOrEmpty(graphAttachment.ContentBytes))
+        //                        {
+        //                            byte[] content = Convert.FromBase64String(graphAttachment.ContentBytes);
+        //                            System.IO.File.WriteAllBytes(filePath, content);
+        //                        }
+        //                        // If the attachment has a contentUrl, download the file
+        //                        else if (!string.IsNullOrEmpty(graphAttachment.ContentUrl))
+        //                        {
+        //                            await DownloadAttachmentFromUrl1(graphAttachment.ContentUrl, filePath, httpClient);
+        //                        }
+
+        //                        filePaths.Add(filePath);
+        //                        Console.WriteLine($"Attachment saved: {filePath}");
+        //                    }
+        //                    else
+        //                    {
+        //                        Console.WriteLine($"Attachment {attachment.Name} is not a file attachment.");
+        //                    }
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    Console.WriteLine($"Error processing attachment {attachment.Name}: {ex.Message}");
+        //                }
+        //            }
+        //        }
+        //        else
+        //        {
+        //            Console.WriteLine("No attachments found.");
+        //            return "No attachments available.";
+        //        }
+
+        //        return string.Join(Environment.NewLine, filePaths);
+        //    }
+
+        //    public async Task DownloadAttachmentFromUrl1(string contentUrl, string filePath, HttpClient httpClient)
+        //    {
+        //        try
+        //        {
+        //            // Get the attachment content from the URL
+        //            var response = await httpClient.GetAsync(contentUrl);
+
+        //            if (response.IsSuccessStatusCode)
+        //            {
+        //                var content = await response.Content.ReadAsByteArrayAsync();
+        //                System.IO.File.WriteAllBytes(filePath, content);
+        //                Console.WriteLine($"Attachment downloaded: {filePath}");
+        //            }
+        //            else
+        //            {
+        //                Console.WriteLine($"Failed to download attachment from {contentUrl}");
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Console.WriteLine($"Error downloading attachment: {ex.Message}");
+        //        }
+        //    }
+        //}
+
         public class AttachmentSaver
         {
 
-            //Inbox
             public async Task<string> SaveAttachments(GraphApiEmailResponse.GraphApiMessage email, string userId, HttpClient httpClient)
             {
                 List<string> filePaths = new List<string>();
+                List<Task> downloadTasks = new List<Task>();
                 string attachmentpath = "CityMarine_EmailCRM/wwwroot/Email_Attachment";
+                //string attachmentpath = ConfigurationManager.AppSettings["attachmentpath"];
 
-                // Ensure email has attachments
                 if (email.Attachments != null && email.Attachments.Count > 0)
                 {
                     foreach (var attachment in email.Attachments)
@@ -1184,7 +1500,6 @@ namespace ibillcraft.Controllers
                         string senderEmail = email.From?.EmailAddress?.Address ?? "UnknownSender";
                         string attachmentsFolder = Path.Combine(attachmentpath, senderEmail);
 
-                        // Ensure the folder exists
                         if (!Directory.Exists(attachmentsFolder))
                         {
                             Directory.CreateDirectory(attachmentsFolder);
@@ -1193,26 +1508,23 @@ namespace ibillcraft.Controllers
                         string fileName = SanitizeFileName(attachment.Name);
                         string filePath = Path.Combine(attachmentsFolder, fileName);
 
-                        // If the attachment is of type 'GraphApiAttachment'
                         if (attachment is GraphApiAttachment fileAttachment)
                         {
                             try
                             {
-                                // Check if the attachment has a contentUrl or contentBytes
                                 if (!string.IsNullOrEmpty(fileAttachment.ContentUrl))
                                 {
-                                    // Download the attachment using its contentUrl
-                                    await DownloadAttachmentFromUrl(fileAttachment.ContentUrl, filePath, httpClient);
+                                    downloadTasks.Add(DownloadAttachmentFromUrl(fileAttachment.ContentUrl, filePath, httpClient));
                                 }
                                 else if (!string.IsNullOrEmpty(fileAttachment.ContentBytes))
                                 {
-                                    // Decode and save attachment from Base64 contentBytes
                                     byte[] content = Convert.FromBase64String(fileAttachment.ContentBytes);
-                                    System.IO.File.WriteAllBytes(filePath, content);
+                                    await Task.Run(() => System.IO.File.WriteAllBytes(filePath, content));
+                                    Console.WriteLine($"Attachment saved: {filePath}");
                                 }
 
                                 filePaths.Add(filePath);
-                                Console.WriteLine($"Attachment saved: {filePath}");
+                                Console.WriteLine($"Attachment queued for saving: {filePath}");
                             }
                             catch (Exception ex)
                             {
@@ -1224,6 +1536,9 @@ namespace ibillcraft.Controllers
                             Console.WriteLine($"Attachment {attachment.Name} is not a file attachment.");
                         }
                     }
+
+                    // Wait for all downloads and file writes to complete
+                    await Task.WhenAll(downloadTasks);
                 }
                 else
                 {
@@ -1231,9 +1546,8 @@ namespace ibillcraft.Controllers
                     return "No attachments available.";
                 }
 
-                return string.Join(Environment.NewLine, filePaths);
+                return string.Join(",", filePaths);
             }
-
 
             private async Task DownloadAttachmentFromUrl(string contentUrl, string filePath, HttpClient httpClient)
             {
@@ -1241,13 +1555,16 @@ namespace ibillcraft.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     var content = await response.Content.ReadAsByteArrayAsync();
-                    System.IO.File.WriteAllBytes(filePath, content);
+
+                    // Write file asynchronously using Task.Run
+                    await Task.Run(() => System.IO.File.WriteAllBytes(filePath, content)); // ✅ Fix applied
                 }
                 else
                 {
                     Console.WriteLine($"Failed to download attachment from URL: {contentUrl}");
                 }
             }
+
 
             private string SanitizeFileName(string fileName)
             {
@@ -1258,6 +1575,7 @@ namespace ibillcraft.Controllers
             public async Task<string> SaveAttachments1(GraphApiEmailResponse.GraphApiMessage email, string userId, HttpClient httpClient)
             {
                 List<string> filePaths = new List<string>();
+                //string attachmentpath = ConfigurationManager.AppSettings["attachmentpath"];
                 string attachmentpath = "CityMarine_EmailCRM/wwwroot/Email_Attachment";
 
                 // Ensure email has attachments

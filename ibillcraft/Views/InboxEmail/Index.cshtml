@@ -736,10 +736,10 @@
                     $('#ic_fromlabel').text(response.i_from || 'N/A');
                     $('#ic_subjectlabel').text(response.i_subject || 'N/A');
 
-                    const formattedBody = (response.i_body || '').replace(/<br\s*\/?>/gi, "\n").replace(/<\/?[^>]+(>|$)/g, "");
-                    $('#ic_bodylabel').val(formattedBody);
+                    // const formattedBody = (response.i_body || '').replace(/<br\s*\/?>/gi, "\n").replace(/<\/?[^>]+(>|$)/g, "");
+                    // $('#ic_bodylabel').val(formattedBody);
 
-
+                    $('#ic_bodylabel').html(response.i_body || '');
 
 
 
