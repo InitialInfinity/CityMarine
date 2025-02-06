@@ -90,7 +90,7 @@
                 </button>
             </div>
             <div class="col-auto d-flex flex-wrap toggle">
-            @*     <a class="btn btn-md text-light float-end bg-success mt-3 mt-lg-0 mt-md-0 ml-2" asp-action="Index" asp-controller="InboxEmail" *@
+                @*     <a class="btn btn-md text-light float-end bg-success mt-3 mt-lg-0 mt-md-0 ml-2" asp-action="Index" asp-controller="InboxEmail" *@
                 <a class="btn btn-md text-light float-end bg-success mt-3 mt-lg-0 mt-md-0 ml-2" onclick="fetchemail()"
                    title="Sync" type="button">
                     <i class="fas fa-sync-alt" style="font-size:18px"></i>
@@ -126,9 +126,34 @@
         </li>
     </ul>
 
+    @* <div id="typetab" style="display:none">
+        <div class="col-lg-1 col-md-1">
+            <label for="name" class="form-label float-lg-end">@Localizer["Type"]:</label>
+        </div>
+        <div class="col-lg-2 col-md-2">
+            <select id="typedropdown" class="form-select" placeholder="select type" asp-items="@(new SelectList(ViewBag.type,"Id","Value"))" onchange="return typechange()">
+                <option value="">--Select--</option>
+            </select>
+        </div>
+    </div> *@
+
+
+    <div class="row align-items-center" id="typetab" style="display:none">
+        <div class="col-lg-1 col-md-1 ">
+            <label for="name" class="form-label float-lg-end">@Localizer["Type"]:</label>
+        </div>
+        <div class="col-lg-2 col-md-2">
+            <select id="typedropdown" class="form-select" placeholder="select type" asp-items="@(new SelectList(ViewBag.type,"Id","Value"))" onchange="return typechange()">
+                <option value="">--Select--</option>
+            </select>
+        </div>
+    </div>
+
+
+
 
     <div class="modal fade" id="addfilter" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        style="display:none">
+         style="display:none">
         <div class="modal-dialog modal-md" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -316,7 +341,7 @@
                     <div class="flex-container">
                         <div style="background-color: #4a4747;border: 1px solid #ddd;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);margin-bottom: 15px;padding: 15px;width: 11%;max-width: 800px;">
                             <div class="arrow-container" id="arrow-container">
-                              @*   <div class="arrow-item" id="date1" ></div>
+                                @*   <div class="arrow-item" id="date1" ></div>
                                 <div style="padding:12px"></div>
                                 <div class="arrow-item" id="date2" ></div>
                                 <div style="padding:12px"></div>
@@ -346,16 +371,17 @@
 
                             <div class="form-group">
                                 @*  <label class="control-label fw-bold" for="message" style="display: inline-block; vertical-align: top; margin-right: 10px;font-size: larger;">Message:</label> *@
-                                <textarea rows="20" cols="105" readonly id="ic_bodylabel" style="font-size:medium;border:none"></textarea>
+                                @*   <textarea rows="20" cols="105" readonly id="ic_bodylabel" style="font-size:medium;border:none"></textarea> *@
+                                <div id="ic_bodyhtml" style="font-size:medium;border:none"></div>
                             </div>
 
                             @* <div class="attachments" id="attachdiv">
-                                <button id="viewattachments" style="display: inline-block;">
-                                    <div style="padding: 8px;" id="filename"></div>
-                                </button>
-                                <button style="display: inline-block;height: 42px;width: 40px;">
-                                    <div style="text-align: center; display: inline-block; " id="filebuttons2"></div>
-                                </button>
+                            <button id="viewattachments" style="display: inline-block;">
+                            <div style="padding: 8px;" id="filename"></div>
+                            </button>
+                            <button style="display: inline-block;height: 42px;width: 40px;">
+                            <div style="text-align: center; display: inline-block; " id="filebuttons2"></div>
+                            </button>
                             </div>*@
 
                             <div class="attachments" id="attachdiv" style="display: none;">
@@ -368,14 +394,14 @@
                                 <!-- New buttons will be added here -->
                                 <div id="additionalButtons"></div>
                             </div>
-                          
+
                         </div>
 
 
                     </div>
 
-                   @*  <div class="buttons">
-                        <button class="btn btn-danger" onclick="Cancel()" type="button" data-dismiss="modal">Close</button>
+                    @*  <div class="buttons">
+                    <button class="btn btn-danger" onclick="Cancel()" type="button" data-dismiss="modal">Close</button>
                     </div> *@
                 </div>
             </div>
@@ -397,17 +423,17 @@
                 </thead>
                 <thead id="tabhead1" style="display:none">
                     <tr>
-                        
 
-                        <th width="6%">Sr.No</th>
+
+                        <th style="width:6%">Sr.No</th>
                         <th style="display:none">Id</th>
-                        <th width="10%">From</th>
-                        <th width="10%">To</th>
-                        <th>Subject</th>
-                       
-                        <th width="20%">Attachment</th>
-                        <th width="12%">Date</th>
-                        <td width="6%">View</td>
+                        <th style="width: 12%">From</th>
+                        <th style="width: 12%">To</th>
+                        <th style="width:10%">Subject</th>
+
+                        <th style=" width:4%">Attachment</th>
+                        <th style="width: 12%">Date</th>
+                        <td style="display:none" width="6%">View</td>
                     </tr>
                 </thead>
                 <tbody id="tabtable">
@@ -476,19 +502,20 @@
 <script>
     $(document).ready(function () {
         $('#dataTable').DataTable();
-             
+
         var url = window.location.href;
         var urlParams = new URLSearchParams(window.location.search);
         var tab = urlParams.get('tab');
     });
-       myFunction();
-            $('#table_length_select').change();
+    myFunction();
+    $('#table_length_select').change();
 
-    function Cancel(){
+    function Cancel() {
         $("#addSubscription").modal("hide");
     }
 
     function clienttab() {
+        $('#typetab').css('display', 'none');
         var tab = "Insurance";
         $('#enquiry-tab').attr('aria-selected', 'false');
         $('#client-tab').attr('aria-selected', 'true');
@@ -516,7 +543,7 @@
                     htmltab += '<td>' + (i + 1) + '</td>';
                     let i_from = response[i].i_from.trim();
                     htmltab += '<td><a href="/InboxClient?email=' + response[i].i_from + '&client=' + response[i].i_fromname + '&tab=' + tab + '">' + response[i].i_fromname + '</a></td>';
-                   
+
                     htmltab += '<td>' + response[i].i_receiveddate + '</td>';
                     htmltab += '</tr>';
                 }
@@ -534,6 +561,7 @@
 
     function enquirytab() {
         var tab = "enquiry";
+        $('#typetab').css('display', 'none');
         $('#enquiry-tab').attr('aria-selected', 'true');
         $('#client-tab').attr('aria-selected', 'false');
         $('#claim-tab').attr('aria-selected', 'false');
@@ -560,7 +588,7 @@
                     htmltab += '<td>' + (i + 1) + '</td>'; // Serial number
                     let i_from = response[i].i_from.trim();
                     htmltab += '<td><a href="/InboxClient?email=' + response[i].i_from + '&client=' + response[i].i_fromname + '&tab=' + tab + '">' + response[i].i_fromname + '</a></td>';
-                        htmltab += '<td>' + response[i].i_attachment + '</td>';
+                    htmltab += '<td>' + response[i].i_attachment + '</td>';
                     htmltab += '<td>' + response[i].i_receiveddate + '</td>';
                     htmltab += '</tr>';
                 }
@@ -578,6 +606,8 @@
 
     function claimtab() {
         var tab = "claim";
+        $('#typetab').css('display', 'none');
+
         $('#enquiry-tab').attr('aria-selected', 'false');
         $('#client-tab').attr('aria-selected', 'false');
         $('#claim-tab').attr('aria-selected', 'true');
@@ -599,7 +629,7 @@
                     htmltab += '<td>' + (i + 1) + '</td>'; // Serial number
                     let i_from = response[i].i_from.trim();
                     htmltab += '<td><a href="/InboxClient?email=' + response[i].i_from + '&client=' + response[i].i_fromname + '&tab=' + tab + '">' + response[i].i_fromname + '</a></td>';
-                         htmltab += '<td>' + response[i].i_attachment + '</td>';
+                    htmltab += '<td>' + response[i].i_attachment + '</td>';
                     htmltab += '<td>' + response[i].i_receiveddate + '</td>';
 
                     htmltab += '</tr>';
@@ -618,6 +648,8 @@
 
     function generaltab() {
         var tab = "General";
+
+        $('#typetab').css('display', 'flex');
         $('#enquiry-tab').attr('aria-selected', 'false');
         $('#client-tab').attr('aria-selected', 'false');
         $('#claim-tab').attr('aria-selected', 'false');
@@ -636,18 +668,27 @@
                 var htmltab = '';
                 for (var i = 0; i < response.length; i++) {
                     htmltab += '<tr>';
-                    htmltab += '<td>' + (i + 1) + '</td>';
+                    htmltab += '<td style="width:6%" onclick="inboxmsg(' + response[i].i_id + ')">' + (i + 1) + '</td>';
                     htmltab += '<td style="display:none">' + response[i].i_id + '</td>';
-                    htmltab += '<td>' + response[i].i_from + '</td>';
-                    htmltab += '<td>' + response[i].i_to + '</td>';
-                    htmltab += '<td>' + response[i].i_subject + '</td>';
-                         htmltab += '<td>' + response[i].i_attachment + '</td>';
-                    htmltab += '<td>' + response[i].i_receiveddate + '</td>';
-                    htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].i_id + ')"></i></td>';
+                    htmltab += '<td  style="width:12%" onclick="inboxmsg(' + response[i].i_id + ')">' + response[i].i_from + '</td>';
+                    htmltab += '<td  style="width:12%" onclick="inboxmsg(' + response[i].i_id + ')">' + response[i].i_to + '</td>';
+                    htmltab += '<td style="width:10%" onclick="inboxmsg(' + response[i].i_id + ')">' + response[i].i_subject + '</td>';
+
+
+                    if (response[i].i_attachment != "No attachments available.") {
+                        htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
+                    }
+                    else {
+                        htmltab += '<td style="width:4%"></td>';
+                    }
+
+
+                    htmltab += '<td  style="width:12%" onclick="inboxmsg(' + response[i].i_id + ')">' + response[i].i_receiveddate + '</td>';
+                    htmltab += '<td style="display:none"><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].i_id + ')"></i></td>';
                     htmltab += '</tr>';
                 }
                 $('#tabtable').html(htmltab);
-                      
+
                 // Example: Update a specific section with the response data
                 $('#content-area').html(response);
             },
@@ -676,56 +717,56 @@
                 console.log(response);
 
                 if (response) {
-                              const attachmentsContainer = document.getElementById("attachdiv");
+                    const attachmentsContainer = document.getElementById("attachdiv");
 
-            // Clear previous content before updating
-            attachmentsContainer.innerHTML = '';
+                    // Clear previous content before updating
+                    attachmentsContainer.innerHTML = '';
 
-                        if (response.i_attachment != "No attachments available.") {
+                    if (response.i_attachment != "No attachments available.") {
                         // const fileName = response.i_attachment.split(/[/\\]/).pop();
 
-                            
-                                 const attachments = response.i_attachment;
-                    if (attachments) {
-            // Split attachments using a comma
-            const attachmentArray = attachments.trim().split(',').map(a => a.trim()); // Trim extra spaces
 
-            console.log("Raw Attachments:", attachments);
-            console.log("Split Attachments Array:", attachmentArray); // Debugging
+                        const attachments = response.i_attachment;
+                        if (attachments) {
+                            // Split attachments using a comma
+                            const attachmentArray = attachments.trim().split(',').map(a => a.trim()); // Trim extra spaces
 
-            // Generate the HTML
-            let attachmentHTML = '';
+                            console.log("Raw Attachments:", attachments);
+                            console.log("Split Attachments Array:", attachmentArray); // Debugging
 
-            attachmentArray.forEach((attachmentPath) => {
-                if (!attachmentPath) return; // Ignore empty values
+                            // Generate the HTML
+                            let attachmentHTML = '';
 
-                const fileName = attachmentPath.split(/[/\\]/).pop(); // Extract filename
-                const safeAttachmentPath = encodeURIComponent(attachmentPath); // Encode for safety
+                            attachmentArray.forEach((attachmentPath) => {
+                                if (!attachmentPath) return; // Ignore empty values
 
-                attachmentHTML += `
-                <div class="attachments" style="margin: 8px 0;">
-                    <!-- Button for filename -->
-                    <button style="display: inline-block; padding: 8px; margin-right: 8px;" title="${fileName}">
-                        ${fileName}
-                    </button>
-                    <!-- Button for download -->
-                    <button style="display: inline-block; height: 42px; width: auto;"
-                            onclick="downloadFile('${safeAttachmentPath}')">
-                        <i class="fa-solid fa-chevron-down" style="font-size: 16px; color: black;"></i>
-                    </button>
-                </div>`;
-            });
+                                const fileName = attachmentPath.split(/[/\\]/).pop(); // Extract filename
+                                const safeAttachmentPath = encodeURIComponent(attachmentPath); // Encode for safety
 
-            // Inject into the DOM
-           // document.getElementById("attachments-container").innerHTML = attachmentHTML;
-                document.getElementById('attachdiv').innerHTML = attachmentHTML;
+                                attachmentHTML += `
+                            <div class="attachments" style="margin: 8px 0;">
+                                <!-- Button for filename -->
+                                <button style="display: inline-block; padding: 8px; margin-right: 8px;" title="${fileName}">
+                                    ${fileName}
+                                </button>
+                                <!-- Button for download -->
+                                <button style="display: inline-block; height: 42px; width: auto;"
+                                        onclick="downloadFile('${safeAttachmentPath}')">
+                                    <i class="fa-solid fa-chevron-down" style="font-size: 16px; color: black;"></i>
+                                </button>
+                            </div>`;
+                            });
+
+                            // Inject into the DOM
+                            // document.getElementById("attachments-container").innerHTML = attachmentHTML;
+                            document.getElementById('attachdiv').innerHTML = attachmentHTML;
 
                             // Show the attachment container
                             document.getElementById('attachdiv').style.display = 'block';
-        }
+                        }
 
                         // Insert the generated HTML into a container
-                        
+
 
                     } else {
                         $('#attachdiv').hide();
@@ -739,7 +780,9 @@
                     // const formattedBody = (response.i_body || '').replace(/<br\s*\/?>/gi, "\n").replace(/<\/?[^>]+(>|$)/g, "");
                     // $('#ic_bodylabel').val(formattedBody);
 
-                    $('#ic_bodylabel').html(response.i_body || '');
+                    //$('#ic_bodylabel').html(response.i_body || '');
+                    var bodyh = '' + response.i_body + '';
+                    $('#ic_bodyhtml').html(bodyh || '');
 
 
 
@@ -857,25 +900,27 @@
     //     // Open the file in a new tab or start downloading
     //     window.open(url, "_blank");
     // }
-         function downloadFile(filePath) {
-                console.log("Original File Path:", filePath); // Log the input
 
-                try {
-                    // Trim and encode the file path
-                    const trimmedPath = filePath.trim();
-                    const encodedPath = encodeURIComponent(trimmedPath);
-                    console.log("Encoded File Path:", encodedPath); // Log the encoded path
+    function downloadFile(filePath) {
+        console.log("Original File Path:", filePath); // Log the input
 
-                    // Construct the URL
-                    const url = `/InboxClient/DownloadFile?filePath=${encodedPath}`;
-                    console.log("Download URL:", url); // Log the final URL
+        try {
+            // Trim and encode the file path
+            const trimmedPath = filePath.trim();
+            const encodedPath = encodeURIComponent(trimmedPath);
+            console.log("Encoded File Path:", encodedPath); // Log the encoded path
 
-                    // Open the file in a new tab
-                    window.open(url, "_blank");
-                } catch (error) {
-                    console.error("Error during file download:", error); // Log any errors
-                }
-            }
+            // Construct the URL
+            const url = `/InboxClient/DownloadFile?filePath=${encodedPath}`;
+            console.log("Download URL:", url); // Log the final URL
+
+            // Open the file in a new tab
+            window.open(url, "_blank");
+        } catch (error) {
+            console.error("Error during file download:", error); // Log any errors
+        }
+    }
+
     // function downloadfile(filePath) {
     //     console.log("Original File Path:", filePath); // Log the input
 
@@ -926,10 +971,6 @@
     //     }
     // }
 
-
-
-
-
     function viewfile() {
         const filePath = $('#filebuttons1').val();
 
@@ -943,7 +984,7 @@
         window.open(url, "_blank");
     }
 
-   // function downloadfile(filename) {
+    // function downloadfile(filename) {
     // // Remove any unwanted whitespace or line breaks from the filePath
     // const cleanedFilePath = filePath.trim();
 
@@ -958,14 +999,13 @@
 
     // console.log("Download URL:", url); // Debugging
 
-     //   alert("hello");
-//}
-
-
+    //   alert("hello");
+    //}
 
     function filter() {
         $("#addfilter").modal("show");
     }
+
     function submitfilter() {
         $("#addfilter").modal("hide");
         var from = $('#i_from').val();
@@ -1059,13 +1099,25 @@
                     var htmltab = '';
                     for (var i = 0; i < response.length; i++) {
                         htmltab += '<tr>';
-                        htmltab += '<td>' + (i + 1) + '</td>'; // Serial number
+                        htmltab += '<td style="width:6%"  onclick="inboxmsg(' + response[i].i_id + ')">' + (i + 1) + '</td>'; // Serial number
                         let i_from = response[i].i_from.trim();
-                        htmltab += '<td>' + response[i].i_fromname + '</a></td>';
-                        htmltab += '<td>' + response[i].i_to + '</a></td>';
-                        htmltab += '<td>' + response[i].i_subject + '</td>';
-                        htmltab += '<td>' + response[i].i_receiveddate + '</td>';
-                        htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].i_id + ')"></i></td>';
+                        htmltab += '<td  style="width:12%" onclick="inboxmsg(' + response[i].i_id + ')">' + response[i].i_fromname + '</a></td>';
+                        htmltab += '<td style="width:12%"  onclick="inboxmsg(' + response[i].i_id + ')">' + response[i].i_to + '</a></td>';
+                        htmltab += '<td style="width:10%" onclick="inboxmsg(' + response[i].i_id + ')">' + response[i].i_subject + '</td>';
+                        // htmltab += '<td style="width:20px" >' + response[i].i_attachment + '</td>';
+
+
+
+                        if (response[i].i_attachment != "No attachments available.") {
+                            htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
+                        }
+                        else {
+                            htmltab += '<td style="width:4%"></td>';
+                        }
+
+
+                        htmltab += '<td  style="width:12%" onclick="inboxmsg(' + response[i].i_id + ')">' + response[i].i_receiveddate + '</td>';
+                        htmltab += '<td style="display:none"><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].i_id + ')"></i></td>';
                         htmltab += '</tr>';
                     }
                     $('#tabtable').html(htmltab);
@@ -1088,6 +1140,55 @@
 
     function fetchemail() {
         window.location.href = "/InboxEmail/FetchEmails";
+    }
+
+    function typechange() {
+
+        var type = $('#typedropdown option:selected').text();
+
+        $.ajax({
+            url: '/InboxEmail/generaltype?type=' + type, // Controller action URL
+            type: 'POST',             // HTTP method
+            data: { type: type },      // Data to send (query parameter)
+            success: function (response) {
+                // Handle success - update the page dynamically
+                console.log('Response:', response);
+                $('#tabhead').css('display', 'none');
+                $('#tabhead1').css('display', 'contents');
+                $('#tabtable').html('');
+                var htmltab = '';
+                for (var i = 0; i < response.length; i++) {
+                    htmltab += '<tr>';
+                    htmltab += '<td style="width:6%" onclick="inboxmsg(' + response[i].i_id + ')">' + (i + 1) + '</td>';
+                    htmltab += '<td style="display:none">' + response[i].i_id + '</td>';
+                    htmltab += '<td  style="width:12%" onclick="inboxmsg(' + response[i].i_id + ')">' + response[i].i_from + '</td>';
+                    htmltab += '<td  style="width:12%" onclick="inboxmsg(' + response[i].i_id + ')">' + response[i].i_to + '</td>';
+                    htmltab += '<td style="width:10%" onclick="inboxmsg(' + response[i].i_id + ')">' + response[i].i_subject + '</td>';
+
+
+                    if (response[i].i_attachment != "No attachments available.") {
+                        htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
+                    }
+                    else {
+                        htmltab += '<td style="width:4%"></td>';
+                    }
+
+
+                    htmltab += '<td  style="width:12%" onclick="inboxmsg(' + response[i].i_id + ')">' + response[i].i_receiveddate + '</td>';
+                    htmltab += '<td style="display:none"><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].i_id + ')"></i></td>';
+                    htmltab += '</tr>';
+                }
+                $('#tabtable').html(htmltab);
+
+                // Example: Update a specific section with the response data
+                $('#content-area').html(response);
+            },
+            error: function (xhr, status, error) {
+                // Handle errors
+                console.error('Error:', error);
+            }
+        });
+
     }
 
 </script>

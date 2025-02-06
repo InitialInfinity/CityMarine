@@ -77,6 +77,21 @@ namespace ibillcraft.Controllers
             Guid? UserId = new Guid(CUtility.userid);
             var sentemailDataList = new List<InboxEmailModel>();
             var sentemailList = new List<InboxEmailModel>();
+
+
+            //string geurl = $"{_httpClient.BaseAddress}/ViewBag/GetViewBag?userId&sTableName=tbl_ParameterValueMaster&sValue=pv_parametervalue&id=pv_id&IsActiveColumn=pv_isactive&sCoulmnName=pv_parameterid&sColumnValue=3a6b099f-4045-4eac-891a-c2f701c45d86";
+            //HttpResponseMessage geresponseView = _httpClient.GetAsync(geurl).Result;
+            //dynamic gedata = geresponseView.Content.ReadAsStringAsync().Result;
+            //var gerootObject = JsonConvert.DeserializeObject<List<FillDropdown>>(gedata);
+            //ViewBag.type = gerootObject;
+
+            string geurl = $"{_httpClient.BaseAddress}/ViewBag/GetViewBag?userId&sTableName=tbl_EmailRuleConfg&sValue=E_value&id=E_id&IsActiveColumn=E_isactive&sCoulmnName=E_category&sColumnValue=b98e01a4-adf6-4c31-a41b-3572c8ea6cd3";
+            HttpResponseMessage geresponseView = _httpClient.GetAsync(geurl).Result;
+            dynamic gedata = geresponseView.Content.ReadAsStringAsync().Result;
+            var gerootObject = JsonConvert.DeserializeObject<List<FillDropdown>>(gedata);
+            ViewBag.type = gerootObject;
+
+
             string sentemailurl = $"{_httpClient.BaseAddress}/InboxEmail/GetAll?UserId={UserId}&type={tab}";
             HttpResponseMessage response = _httpClient.GetAsync(sentemailurl).Result;
             if (response.IsSuccessStatusCode)
@@ -269,6 +284,48 @@ namespace ibillcraft.Controllers
             return Json(sentclientDataList);
         }
 
+
+
+        public JsonResult Generaltype(string type)
+        {
+            //if (tab == null)
+            //{
+            //    tab = "General";
+            //}
+
+            GetCookies gk = new GetCookies();
+            CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
+
+            ViewBag.Format = CUtility.format;
+
+            Guid? UserId = new Guid(CUtility.userid);
+            var sentemailDataList = new List<InboxEmailModel>();
+            var sentemailList = new List<InboxEmailModel>();
+
+            string encodedType = Uri.EscapeDataString(type);
+            string sentemailurl = $"{_httpClient.BaseAddress}/InboxEmail/Generaltype?UserId={UserId}&i_generaltype={encodedType}&tab=general";
+            HttpResponseMessage response = _httpClient.GetAsync(sentemailurl).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                dynamic data = response.Content.ReadAsStringAsync().Result;
+                var dataObject = new { data = new List<InboxEmailModel>() };
+                var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
+                sentemailList = response2.data;
+
+                if (sentemailList != null)
+                {
+                    return Json(sentemailList);
+                }
+                else
+                {
+                    var sentemailList1 = new List<InboxEmailModel>();
+                    return Json(sentemailList1);
+                }
+            }
+            return Json(sentemailDataList);
+        }
+
+
         private string GetMimeType(string filePath)
         {
             var extension = Path.GetExtension(filePath)?.ToLowerInvariant();
@@ -430,8 +487,6 @@ namespace ibillcraft.Controllers
         }
 
 
-
-
         //protected override void OnStart(string[] args)
         //{
         //    WriteToFile("Service is started at " + DateTime.Now);
@@ -581,6 +636,7 @@ namespace ibillcraft.Controllers
                     string inboxUrl = $"https://graph.microsoft.com/v1.0/users/{userId}/mailFolders/{inboxfolderid}/messages?$expand=attachments";
                     string sentUrl = $"https://graph.microsoft.com/v1.0/users/{userId}/mailFolders/{sentFolderId}/messages?$expand=attachments";
 
+                    httpClient.DefaultRequestHeaders.Add("Prefer", "outlook.timezone=\"Asia/Kolkata\"");
 
                     //INBOX
                     // Fetch and process emails from Inbox
@@ -611,7 +667,7 @@ namespace ibillcraft.Controllers
                                 using (SqlConnection conn = new SqlConnection(connectionString2))
                                 {
                                     conn.Open();
-                                    string query2 = @"SELECT top 1 e_actualtime,e_time from tbl_eventlog order by e_actualtime desc";
+                                    string query2 = @"SELECT top 1 e_time from tbl_eventlog order by e_time desc";
                                     using (SqlCommand cmd = new SqlCommand(query2, conn))
                                     {
                                         using (SqlDataReader reader = cmd.ExecuteReader())
@@ -649,8 +705,11 @@ namespace ibillcraft.Controllers
 
 
 
-                                
+
                                 DateTime startDateTime = DateTime.ParseExact(time, "MM/dd/yy h:mm:ss tt", CultureInfo.InvariantCulture);
+
+                              //  DateTime startDateTime = DateTime.ParseExact(time, "M/d/yyyy h:mm:ss tt", CultureInfo.InvariantCulture);
+
                                 //DateTime currentDateTime = DateTime.UtcNow.AddHours(-5).AddMinutes(-30);// Get the current UTC time
 
 
@@ -675,18 +734,14 @@ namespace ibillcraft.Controllers
                                 DateTime adjustedDateTime = startDateTime;
 
 
-                                //var Emails = inboxEmails.Value
-                                //    .Where(email => email.ReceivedDateTime.HasValue &&
-                                //                    email.ReceivedDateTime.Value >= adjustedDateTime &&
-                                //                    email.ReceivedDateTime.Value <= currentDateTime) // Ensure email ReceivedDateTime is within the range
-                                //    .OrderByDescending(email => email.ReceivedDateTime);
+                                var Emails = inboxEmails.Value
+                                    .Where(email => email.ReceivedDateTime.HasValue &&
+                                                    email.ReceivedDateTime.Value >= adjustedDateTime &&
+                                                    email.ReceivedDateTime.Value <= currentDateTime) // Ensure email ReceivedDateTime is within the range
+                                    .OrderByDescending(email => email.ReceivedDateTime);
 
 
-                                var Emails = inboxEmails.Value;
 
-
-                                // Iterate through all emails to adjust the timezone and display the result
-                                // Assuming `email.ReceivedDateTime` is in UTC
                                 foreach (var email1 in Emails)
                                 {
                                     // Assuming ReceivedDateTime is in UTC
@@ -701,28 +756,27 @@ namespace ibillcraft.Controllers
                                         // Compare if the email's ReceivedDateTime in IST is within the specified range
                                         if (receivedDateTimeInIst >= adjustedDateTime && receivedDateTimeInIst <= currentDateTime)
                                         {
-                                            WriteToFile("step 1");
                                             if (Emails.Any())
                                             {
-                                                WriteToFile("step 2");
                                                 foreach (var email in Emails)
                                                 {
-                                                    WriteToFile("step 3");
                                                     try
                                                     {
-                                                        WriteToFile("step 4");
+                                                        DateTime receivedDateTimeUtc1 = email.ReceivedDateTime.Value;
+
+                                                        // Convert the UTC time to UTC+05:30 (Indian Standard Time)
+                                                        //TimeZoneInfo istTimeZone1 = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"); // UTC+05:30
+                                                        DateTime receivedDateTimeInIst1 = TimeZoneInfo.ConvertTimeFromUtc(receivedDateTimeUtc1, istTimeZone1);
+                                                        email.ReceivedDateTime = receivedDateTimeInIst1;
                                                         // Process unread Inbox email
                                                         InboxEmail(email, userId);
 
                                                         // Mark email as read after processing
                                                         // await MarkEmailAsRead(httpClient, userId, email.Id);
 
-
-
                                                     }
                                                     catch (Exception ex)
                                                     {
-                                                        WriteToFile("catch");
                                                         Console.WriteLine($"Error processing email with ID {email.Id}: {ex.Message}");
                                                     }
                                                 }
@@ -730,12 +784,70 @@ namespace ibillcraft.Controllers
                                             }
                                             else
                                             {
-                                                WriteToFile("noemail");
                                                 Console.WriteLine("No unread emails found in Inbox.");
                                             }
                                         }
                                     }
                                 }
+
+
+
+
+
+
+
+                                // var Emails = inboxEmails.Value;
+
+
+                                //foreach (var email1 in Emails)
+                                //{
+                                //    // Assuming ReceivedDateTime is in UTC
+                                //    if (email1.ReceivedDateTime.HasValue)
+                                //    {
+                                //        DateTime receivedDateTimeUtc = email1.ReceivedDateTime.Value;
+
+                                //        // Convert the UTC time to UTC+05:30 (Indian Standard Time)
+                                //        TimeZoneInfo istTimeZone = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"); // UTC+05:30
+                                //        DateTime receivedDateTimeInIst = TimeZoneInfo.ConvertTimeFromUtc(receivedDateTimeUtc, istTimeZone);
+
+                                //        // Compare if the email's ReceivedDateTime in IST is within the specified range
+                                //        if (receivedDateTimeInIst >= adjustedDateTime && receivedDateTimeInIst <= currentDateTime)
+                                //        {
+                                //            if (Emails.Any())
+                                //            {
+                                //                foreach (var email in Emails)
+                                //                {
+                                //                    try
+                                //                    {
+                                //                        DateTime receivedDateTimeUtc1 = email.ReceivedDateTime.Value;
+
+                                //                        // Convert the UTC time to UTC+05:30 (Indian Standard Time)
+                                //                        //TimeZoneInfo istTimeZone1 = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"); // UTC+05:30
+                                //                        DateTime receivedDateTimeInIst1 = TimeZoneInfo.ConvertTimeFromUtc(receivedDateTimeUtc1, istTimeZone1);
+                                //                        email.ReceivedDateTime = receivedDateTimeInIst1;
+                                //                        // Process unread Inbox email
+                                //                        InboxEmail(email, userId);
+
+                                //                        // Mark email as read after processing
+                                //                        // await MarkEmailAsRead(httpClient, userId, email.Id);
+
+                                //                    }
+                                //                    catch (Exception ex)
+                                //                    {
+                                //                        WriteToFile("catch");
+                                //                        Console.WriteLine($"Error processing email with ID {email.Id}: {ex.Message}");
+                                //                    }
+                                //                }
+
+                                //            }
+                                //            else
+                                //            {
+                                //                WriteToFile("noemail");
+                                //                Console.WriteLine("No unread emails found in Inbox.");
+                                //            }
+                                //        }
+                                //    }
+                                //}
 
 
 
