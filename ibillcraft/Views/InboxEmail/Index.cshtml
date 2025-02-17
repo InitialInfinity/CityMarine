@@ -80,7 +80,7 @@
             <div class="col">
                 <h2 class="m-0 font-weight-bold text-primary">@Localizer["Inbox"]</h2>
             </div>
-            <div class="col-md-2 justify-content-lg-end justify-content-md-end justify-content-center mt-lg-0 mt-md-0 mt-3">
+            <div class="col-md-2 justify-content-lg-end justify-content-md-end justify-content-center mt-lg-0 mt-md-0 mt-3" style="display:none">
                 <input type="text" id="custom-search" class="form-control" placeholder="@Localizer["Search"]" />
             </div>
             <div class="col-auto d-flex flex-wrap toggle">
@@ -506,6 +506,7 @@
         var url = window.location.href;
         var urlParams = new URLSearchParams(window.location.search);
         var tab = urlParams.get('tab');
+
     });
     myFunction();
     $('#table_length_select').change();
