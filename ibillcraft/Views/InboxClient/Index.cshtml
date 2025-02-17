@@ -511,7 +511,7 @@
         @* Start view model *@
         <div class="modal fade" id="addSubscription" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
             <div class="modal-dialog modal-xl" role="document">
-                <div class="modal-content">
+                <div class="modal-content" style="width:106%">
                     <div class="modal-header">
                         <h5 class="modal-title text-dark fw-bold" style="font-size: larger;" id="exampleModalLabel">Email</h5>
                         <button type="button"
@@ -530,7 +530,7 @@
                                     <div class="arrow-item" id="date3" ></div> *@
                                 </div>
                             </div>
-                            <div class="box" style="background-color: #ffffff;border: 1px solid #ddd;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);">
+                            <div class="box" style="background-color: #ffffff;border: 1px solid #ddd;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);width:85%">
                                 <div class="form-group">
                                     <h3>
                                         <label class="control-label fw-bold" style="font-size: larger;" for="subject">Subject :</label>
@@ -888,6 +888,9 @@
                     // $('#ic_bodylabel').html(response.ic_body || '');
 
                     var bodyh = '' + response.ic_body + '';
+
+                    
+
                     $('#ic_bodyhtml').html(bodyh || '');
 
 

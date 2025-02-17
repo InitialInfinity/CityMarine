@@ -53,6 +53,7 @@ namespace ibillcraft.Controllers
             _httpClient.BaseAddress = new Uri(configuration.GetSection("Server:Master").Value);
             //_httpClient1.BaseAddress = new Uri(configuration.GetSection("Server:Sql").Value);
             //_httpClient2.BaseAddress = new Uri(configuration.GetSection("Server:SavePath").Value);
+           
             _logger = logger;
             _localizer = localizer;
         }
@@ -284,15 +285,14 @@ namespace ibillcraft.Controllers
             return Json(sentclientDataList);
         }
 
-
-
         public JsonResult Generaltype(string type)
         {
             //if (tab == null)
             //{
             //    tab = "General";
             //}
-
+           //  string connectionString = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+            
             GetCookies gk = new GetCookies();
             CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
 
@@ -303,6 +303,29 @@ namespace ibillcraft.Controllers
             var sentemailList = new List<InboxEmailModel>();
 
             string encodedType = Uri.EscapeDataString(type);
+
+
+
+            //using (SqlConnection conn = new SqlConnection(connectionString))
+            //{
+            //    conn.Open();
+
+            //    string query = @"INSERT INTO dbo.tbl_testvalues (labelname,value)
+            //             VALUES (@labelname,@value)";
+
+            //    using (SqlCommand cmd1 = new SqlCommand(query, conn))
+            //    {
+            //        // Add parameters to the insert query
+            //        cmd1.Parameters.AddWithValue("@labelname", encodedType);
+            //        cmd1.Parameters.AddWithValue("@value", type);
+
+            //        // Execute the query to insert the email into the database
+            //        cmd1.ExecuteNonQuery();
+            //    }
+            //    conn.Close();
+            //}
+
+
             string sentemailurl = $"{_httpClient.BaseAddress}/InboxEmail/Generaltype?UserId={UserId}&i_generaltype={encodedType}&tab=general";
             HttpResponseMessage response = _httpClient.GetAsync(sentemailurl).Result;
             if (response.IsSuccessStatusCode)
@@ -633,8 +656,8 @@ namespace ibillcraft.Controllers
                     }
                     string inboxfolderid = inboxFolder.Id;
                     string sentFolderId = sentFolder.Id;
-                    string inboxUrl = $"https://graph.microsoft.com/v1.0/users/{userId}/mailFolders/{inboxfolderid}/messages?$expand=attachments";
-                    string sentUrl = $"https://graph.microsoft.com/v1.0/users/{userId}/mailFolders/{sentFolderId}/messages?$expand=attachments";
+                    string inboxUrl = $"https://graph.microsoft.com/v1.0/users/{userId}/mailFolders/{inboxfolderid}/messages?$expand=attachments&$top=200";
+                    string sentUrl = $"https://graph.microsoft.com/v1.0/users/{userId}/mailFolders/{sentFolderId}/messages?$expand=attachments&$top=200";
 
                     httpClient.DefaultRequestHeaders.Add("Prefer", "outlook.timezone=\"Asia/Kolkata\"");
 
@@ -675,7 +698,7 @@ namespace ibillcraft.Controllers
                                             // Loop through each row in the result
                                             while (reader.Read())
                                             {
-                                                 time = reader["e_time"].ToString();                                               
+                                                time = reader["e_time"].ToString();
                                             }
                                         }
                                     }
@@ -706,9 +729,9 @@ namespace ibillcraft.Controllers
 
 
 
-                                DateTime startDateTime = DateTime.ParseExact(time, "MM/dd/yy h:mm:ss tt", CultureInfo.InvariantCulture);
+                              //  DateTime startDateTime = DateTime.ParseExact(time, "MM/dd/yy h:mm:ss tt", CultureInfo.InvariantCulture);
 
-                              //  DateTime startDateTime = DateTime.ParseExact(time, "M/d/yyyy h:mm:ss tt", CultureInfo.InvariantCulture);
+                                  DateTime startDateTime = DateTime.ParseExact(time, "M/d/yyyy h:mm:ss tt", CultureInfo.InvariantCulture);
 
                                 //DateTime currentDateTime = DateTime.UtcNow.AddHours(-5).AddMinutes(-30);// Get the current UTC time
 
@@ -726,36 +749,33 @@ namespace ibillcraft.Controllers
                                 // Convert the formatted string back to DateTime
                                 DateTime currentDateTime = DateTime.ParseExact(formattedDateTime, "yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
 
-                                WriteToFile("start time " + startDateTime);
-                                WriteToFile("current time " + currentDateTime);
-
-
                                 //DateTime adjustedDateTime = startDateTime.AddHours(-5).AddMinutes(-30);
                                 DateTime adjustedDateTime = startDateTime;
 
 
-                                var Emails = inboxEmails.Value
-                                    .Where(email => email.ReceivedDateTime.HasValue &&
-                                                    email.ReceivedDateTime.Value >= adjustedDateTime &&
-                                                    email.ReceivedDateTime.Value <= currentDateTime) // Ensure email ReceivedDateTime is within the range
-                                    .OrderByDescending(email => email.ReceivedDateTime);
+                                //var Emails = inboxEmails.Value
+                                //    .Where(email => email.ReceivedDateTime.HasValue &&
+                                //                    email.ReceivedDateTime.Value >= adjustedDateTime &&
+                                //                    email.ReceivedDateTime.Value <= currentDateTime) // Ensure email ReceivedDateTime is within the range
+                                //    .OrderByDescending(email => email.ReceivedDateTime);
 
 
+                                var Emails = inboxEmails.Value;
 
-                                foreach (var email1 in Emails)
-                                {
-                                    // Assuming ReceivedDateTime is in UTC
-                                    if (email1.ReceivedDateTime.HasValue)
-                                    {
-                                        DateTime receivedDateTimeUtc = email1.ReceivedDateTime.Value;
+                                //foreach (var email1 in Emails)
+                                //{
+                                //    // Assuming ReceivedDateTime is in UTC
+                                //    if (email1.ReceivedDateTime.HasValue)
+                                //    {
+                                //        DateTime receivedDateTimeUtc = email1.ReceivedDateTime.Value;
 
-                                        // Convert the UTC time to UTC+05:30 (Indian Standard Time)
-                                        TimeZoneInfo istTimeZone = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"); // UTC+05:30
-                                        DateTime receivedDateTimeInIst = TimeZoneInfo.ConvertTimeFromUtc(receivedDateTimeUtc, istTimeZone);
+                                //        // Convert the UTC time to UTC+05:30 (Indian Standard Time)
+                                //        TimeZoneInfo istTimeZone = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"); // UTC+05:30
+                                //        DateTime receivedDateTimeInIst = TimeZoneInfo.ConvertTimeFromUtc(receivedDateTimeUtc, istTimeZone);
 
-                                        // Compare if the email's ReceivedDateTime in IST is within the specified range
-                                        if (receivedDateTimeInIst >= adjustedDateTime && receivedDateTimeInIst <= currentDateTime)
-                                        {
+                                //        // Compare if the email's ReceivedDateTime in IST is within the specified range
+                                //        if (receivedDateTimeInIst >= adjustedDateTime && receivedDateTimeInIst <= currentDateTime)
+                                //        {
                                             if (Emails.Any())
                                             {
                                                 foreach (var email in Emails)
@@ -768,8 +788,13 @@ namespace ibillcraft.Controllers
                                                         //TimeZoneInfo istTimeZone1 = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"); // UTC+05:30
                                                         DateTime receivedDateTimeInIst1 = TimeZoneInfo.ConvertTimeFromUtc(receivedDateTimeUtc1, istTimeZone1);
                                                         email.ReceivedDateTime = receivedDateTimeInIst1;
-                                                        // Process unread Inbox email
-                                                        InboxEmail(email, userId);
+
+                                                        if (receivedDateTimeInIst1 >= adjustedDateTime && receivedDateTimeInIst1 <= currentDateTime)
+                                                        {
+                                                            InboxEmail(email, userId);
+                                                        }
+
+                                                           
 
                                                         // Mark email as read after processing
                                                         // await MarkEmailAsRead(httpClient, userId, email.Id);
@@ -786,9 +811,9 @@ namespace ibillcraft.Controllers
                                             {
                                                 Console.WriteLine("No unread emails found in Inbox.");
                                             }
-                                        }
-                                    }
-                                }
+                                //        }
+                                //    }
+                                //}
 
 
 
@@ -879,53 +904,53 @@ namespace ibillcraft.Controllers
 
 
 
-                         //       if (Emails.Any())
-                         //       {
-                         //           foreach (var email in Emails)
-                         //           {
-                         //               try
-                         //               {
-                         //                   // Process unread Inbox email
-                         //                   InboxEmail(email, userId);
+                                //       if (Emails.Any())
+                                //       {
+                                //           foreach (var email in Emails)
+                                //           {
+                                //               try
+                                //               {
+                                //                   // Process unread Inbox email
+                                //                   InboxEmail(email, userId);
 
-                         //                   // Mark email as read after processing
-                         //                   // await MarkEmailAsRead(httpClient, userId, email.Id);
-
-
-
-                         //               }
-                         //               catch (Exception ex)
-                         //               {
-                         //                   Console.WriteLine($"Error processing email with ID {email.Id}: {ex.Message}");
-                         //               }
-                         //           }
-                         ////           string connectionString1 = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
-
-                         ////           using (SqlConnection conn = new SqlConnection(connectionString1))
-                         ////           {
-                         ////               conn.Open();
-
-                         ////               string query = @"INSERT INTO dbo.tbl_eventlog (e_time, e_source, e_status)
-                         ////VALUES (@e_time, @e_source, @e_status)";
-
-                         ////               using (SqlCommand cmd1 = new SqlCommand(query, conn))
-                         ////               {
-                         ////                   // Add parameters to the insert query
-                         ////                   cmd1.Parameters.AddWithValue("@e_time", System.DateTime.Now);
-                         ////                   cmd1.Parameters.AddWithValue("@e_source", "Log");
-                         ////                   cmd1.Parameters.AddWithValue("@e_status", "Success");
+                                //                   // Mark email as read after processing
+                                //                   // await MarkEmailAsRead(httpClient, userId, email.Id);
 
 
-                         ////                   // Execute the query to insert the email into the database
-                         ////                   cmd1.ExecuteNonQuery();
-                         ////               }
-                         ////               conn.Close();
-                         ////           }
-                         //       }
-                         //       else
-                         //       {
-                         //           Console.WriteLine("No unread emails found in Inbox.");
-                         //       }
+
+                                //               }
+                                //               catch (Exception ex)
+                                //               {
+                                //                   Console.WriteLine($"Error processing email with ID {email.Id}: {ex.Message}");
+                                //               }
+                                //           }
+                                ////           string connectionString1 = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+
+                                ////           using (SqlConnection conn = new SqlConnection(connectionString1))
+                                ////           {
+                                ////               conn.Open();
+
+                                ////               string query = @"INSERT INTO dbo.tbl_eventlog (e_time, e_source, e_status)
+                                ////VALUES (@e_time, @e_source, @e_status)";
+
+                                ////               using (SqlCommand cmd1 = new SqlCommand(query, conn))
+                                ////               {
+                                ////                   // Add parameters to the insert query
+                                ////                   cmd1.Parameters.AddWithValue("@e_time", System.DateTime.Now);
+                                ////                   cmd1.Parameters.AddWithValue("@e_source", "Log");
+                                ////                   cmd1.Parameters.AddWithValue("@e_status", "Success");
+
+
+                                ////                   // Execute the query to insert the email into the database
+                                ////                   cmd1.ExecuteNonQuery();
+                                ////               }
+                                ////               conn.Close();
+                                ////           }
+                                //       }
+                                //       else
+                                //       {
+                                //           Console.WriteLine("No unread emails found in Inbox.");
+                                //       }
                             }
                             else
                             {
@@ -981,28 +1006,28 @@ namespace ibillcraft.Controllers
                                 }
 
 
-                         //       string connectionString1 = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+                                //       string connectionString1 = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
 
-                         //       using (SqlConnection conn = new SqlConnection(connectionString1))
-                         //       {
-                         //           conn.Open();
+                                //       using (SqlConnection conn = new SqlConnection(connectionString1))
+                                //       {
+                                //           conn.Open();
 
-                         //           string query = @"INSERT INTO dbo.tbl_eventlog (e_time, e_source, e_status)
-                         //VALUES (@e_time, @e_source, @e_status)";
+                                //           string query = @"INSERT INTO dbo.tbl_eventlog (e_time, e_source, e_status)
+                                //VALUES (@e_time, @e_source, @e_status)";
 
-                         //           using (SqlCommand cmd1 = new SqlCommand(query, conn))
-                         //           {
-                         //               // Add parameters to the insert query
-                         //               cmd1.Parameters.AddWithValue("@e_time", System.DateTime.Now);
-                         //               cmd1.Parameters.AddWithValue("@e_source", "Log");
-                         //               cmd1.Parameters.AddWithValue("@e_status", "Success");
+                                //           using (SqlCommand cmd1 = new SqlCommand(query, conn))
+                                //           {
+                                //               // Add parameters to the insert query
+                                //               cmd1.Parameters.AddWithValue("@e_time", System.DateTime.Now);
+                                //               cmd1.Parameters.AddWithValue("@e_source", "Log");
+                                //               cmd1.Parameters.AddWithValue("@e_status", "Success");
 
 
-                         //               // Execute the query to insert the email into the database
-                         //               cmd1.ExecuteNonQuery();
-                         //           }
-                         //           conn.Close();
-                         //       }
+                                //               // Execute the query to insert the email into the database
+                                //               cmd1.ExecuteNonQuery();
+                                //           }
+                                //           conn.Close();
+                                //       }
 
 
                             }
@@ -1055,7 +1080,7 @@ namespace ibillcraft.Controllers
                     {
                         // Add parameters to the insert query
                         cmd1.Parameters.AddWithValue("@e_actualtime", System.DateTime.Now);
-                      //  cmd1.Parameters.AddWithValue("@e_time", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"));
+                        //  cmd1.Parameters.AddWithValue("@e_time", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"));
                         cmd1.Parameters.AddWithValue("@e_time", startDateTime);
                         cmd1.Parameters.AddWithValue("@e_source", "Log");
                         cmd1.Parameters.AddWithValue("@e_status", "Success");
@@ -1249,7 +1274,7 @@ namespace ibillcraft.Controllers
 
 
 
-             
+
             }
         }
 

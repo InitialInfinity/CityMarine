@@ -207,9 +207,10 @@ namespace CityMarineService
                     }
                     string inboxfolderid = inboxFolder.Id;
                     string sentFolderId = sentFolder.Id;
-                    string inboxUrl = $"https://graph.microsoft.com/v1.0/users/{userId}/mailFolders/{inboxfolderid}/messages?$expand=attachments";
-                    string sentUrl = $"https://graph.microsoft.com/v1.0/users/{userId}/mailFolders/{sentFolderId}/messages?$expand=attachments";
+                    string inboxUrl = $"https://graph.microsoft.com/v1.0/users/{userId}/mailFolders/{inboxfolderid}/messages?$expand=attachments&$top=200";
+                    string sentUrl = $"https://graph.microsoft.com/v1.0/users/{userId}/mailFolders/{sentFolderId}/messages?$expand=attachments&$top=200";
 
+                    httpClient.DefaultRequestHeaders.Add("Prefer", "outlook.timezone=\"Asia/Kolkata\"");
 
                     //INBOX
                     // Fetch and process emails from Inbox
@@ -247,6 +248,13 @@ namespace CityMarineService
                                     {
                                         try
                                         {
+
+                                            DateTime receivedDateTimeUtc1 = email.ReceivedDateTime.Value;
+
+                                            // Convert the UTC time to UTC+05:30 (Indian Standard Time)
+                                            TimeZoneInfo istTimeZone1 = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"); // UTC+05:30
+                                            DateTime receivedDateTimeInIst1 = TimeZoneInfo.ConvertTimeFromUtc(receivedDateTimeUtc1, istTimeZone1);
+                                            email.ReceivedDateTime = receivedDateTimeInIst1;
                                             // Process unread Inbox email
                                             InboxEmail(email, userId);
 

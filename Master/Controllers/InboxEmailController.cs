@@ -99,15 +99,17 @@ namespace Master.Controllers
         {
             try
             {
+
                 InboxEmailModel user = new InboxEmailModel();
                 user.UserId = UserId;
+
                 user.i_generaltype = i_generaltype;
                 user.i_type = "General";    
                 if (user.BaseModel == null)
                 {
                     user.BaseModel = new BaseModel();
                 }
-                user.BaseModel.OperationType = "Generaltype";
+                user.BaseModel.OperationType = "Generaltypes";
                 var createduser = await _sentemail.InboxEmail(user);
                 var data = ((Microsoft.AspNetCore.Mvc.ObjectResult)createduser).Value;
                 return Ok(data);
