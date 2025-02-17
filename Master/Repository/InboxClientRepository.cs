@@ -113,7 +113,8 @@ namespace Master.Repository
             parameters.Add("@clientid", user.clientid, DbType.String);
             parameters.Add("@ic_type", user.ic_type, DbType.String);
             parameters.Add("@ic_attachment", user.ic_attachment, DbType.String);
-            parameters.Add("@ic_receiveddate", user.ic_receiveddate, DbType.String);
+            parameters.Add("@ic_receiveddate", user.ic_receiveddate, DbType.String);            
+            parameters.Add("@ic_claimno", user.ic_claimno, DbType.String);            
             parameters.Add("@OutcomeId", dbType: DbType.Int32, direction: ParameterDirection.Output);
             parameters.Add("@OutcomeDetail", dbType: DbType.String, size: 4000, direction: ParameterDirection.Output);
             return parameters;

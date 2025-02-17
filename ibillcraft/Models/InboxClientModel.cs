@@ -18,5 +18,6 @@
         public string? ic_email { get; set; }
         public string? clientid { get; set; }
         public string? ic_fromname { get; set; }
+        public string? ic_claimno { get; set; }
     }
 }

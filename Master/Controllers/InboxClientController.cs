@@ -119,6 +119,7 @@ namespace Master.Controllers
                 throw;
             }
         }
+
         [HttpGet("Clientchange")]
         public async Task<IActionResult> Clientchange(Guid UserId, string clientid, string ic_type)
         {
@@ -208,6 +209,32 @@ namespace Master.Controllers
                     user.BaseModel = new BaseModel();
                 }
                 user.BaseModel.OperationType = "Generalcount";
+                var createduser = await _sentclient.InboxClient(user);
+                var data = ((Microsoft.AspNetCore.Mvc.ObjectResult)createduser).Value;
+                return Ok(data);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [HttpGet("ClaimNo")]
+        public async Task<IActionResult> ClaimNo(Guid UserId, string clientid, string ic_type, string ic_year,string? ic_claimno)
+        {
+            try
+            {
+                InboxClientModel user = new InboxClientModel();
+                user.UserId = UserId;
+                user.clientid = clientid;
+                user.ic_type = ic_type;
+                user.ic_year = ic_year;
+                user.ic_claimno = ic_claimno;
+                if (user.BaseModel == null)
+                {
+                    user.BaseModel = new BaseModel();
+                }
+                user.BaseModel.OperationType = "ClaimNo";
                 var createduser = await _sentclient.InboxClient(user);
                 var data = ((Microsoft.AspNetCore.Mvc.ObjectResult)createduser).Value;
                 return Ok(data);

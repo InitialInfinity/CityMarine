@@ -18,5 +18,6 @@ namespace Master.Entity
         public string? ic_subject { get; set; }
         public string? ic_type { get; set; }
         public string? clientid { get; set; }
+        public string? ic_claimno { get; set; }
     }
 }

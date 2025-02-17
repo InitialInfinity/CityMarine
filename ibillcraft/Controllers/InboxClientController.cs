@@ -64,9 +64,16 @@ namespace ibillcraft.Controllers
             var gerootObject = JsonConvert.DeserializeObject<List<FillDropdown>>(gedata);
             ViewBag.year = gerootObject;
 
+            string claimnourl = $"{_httpClient.BaseAddress}/ViewBag/GetViewBag4?userId&sTableName=tbl_inboxemail&sValue=i_subject&id=i_id";
+            HttpResponseMessage claimnoresponseView = _httpClient.GetAsync(claimnourl).Result;
+            dynamic claimnodata = claimnoresponseView.Content.ReadAsStringAsync().Result;
+            var claimnorootObject = JsonConvert.DeserializeObject<List<FillDropdown>>(claimnodata);
+            ViewBag.claimno = claimnorootObject;
 
             var sentclientDataList = new List<InboxClientModel>();
-            var sentclientList = new List<InboxClientModel>();
+            var sentclientList = new List<InboxClientModel>();          
+
+
             string sentclienturl = $"{_httpClient.BaseAddress}/InboxClient/GetAll?UserId={UserId}&ic_from={email}&ic_type={tab}";
             HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
             if (response.IsSuccessStatusCode)
@@ -79,6 +86,7 @@ namespace ibillcraft.Controllers
                 //ViewBag.sc_email = sentclientList[0].sc_email;
                 //ViewBag.sc_toemail = sentclientList[0].sc_toemail;
 
+              
                 if (sentclientList != null)
                 {
                     return View(sentclientList);
@@ -450,6 +458,39 @@ namespace ibillcraft.Controllers
             var sentclientDataList = new List<InboxClientModel>();
             var sentclientList = new List<InboxClientModel>();
             string sentclienturl = $"{_httpClient.BaseAddress}/InboxClient/Clientchange1?UserId={UserId}&clientid={clientid}&ic_type={tab}&ic_year={year}";
+            HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                dynamic data = response.Content.ReadAsStringAsync().Result;
+                var dataObject = new { data = new List<InboxClientModel>() };
+                var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
+                sentclientList = response2.data;
+
+                if (sentclientList != null)
+                {
+                    return Json(sentclientList);
+                }
+                else
+                {
+                    var sentclientList1 = new List<InboxClientModel>();
+                    return Json(sentclientList1);
+                }
+            }
+            return Json(sentclientDataList);
+        }
+
+
+        public JsonResult ClaimNo(string? clientid, string? tab, string? year,string? claim)
+        {
+            GetCookies gk = new GetCookies();
+            CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
+
+            ViewBag.Format = CUtility.format;
+            Guid? UserId = new Guid(CUtility.userid);
+
+            var sentclientDataList = new List<InboxClientModel>();
+            var sentclientList = new List<InboxClientModel>();
+            string sentclienturl = $"{_httpClient.BaseAddress}/InboxClient/ClaimNo?UserId={UserId}&clientid={clientid}&ic_type={tab}&ic_year={year}&ic_claimno={claim}";
             HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
             if (response.IsSuccessStatusCode)
             {

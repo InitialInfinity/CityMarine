@@ -49,5 +49,36 @@ namespace Master.Controllers
             }
         }
 
+
+        [HttpGet("GetViewBag4")]
+        public Task<IActionResult> GetViewBag4(string sTableName, string id, string sValue, string? sCoulmnName, string? sColumnValue, string? sCompanyCode)
+        {
+            try
+            {
+                FillDropdown user = new FillDropdown();
+
+
+                IList<SelectListDto> selectListDtos = new List<SelectListDto>();
+
+                FillDropdown fillDropdownModel = new FillDropdown();
+                fillDropdownModel.sTableName = sTableName;
+                fillDropdownModel.Id = id;
+                fillDropdownModel.Value = sValue;
+                fillDropdownModel.sColumnName = sCoulmnName;
+                fillDropdownModel.sColumnValue = sColumnValue;
+                FillDropdownRepository _dropdown = new FillDropdownRepository(dapper);
+
+
+
+                var createduser = _dropdown.GetFillDropDown4(fillDropdownModel);
+                //var data = ((Microsoft.AspNetCore.Mvc.ObjectResult)createduser).Value;
+                return createduser;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
     }
 }
