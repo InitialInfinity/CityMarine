@@ -153,6 +153,44 @@ namespace Common
             }
         }
 
+
+        public async Task<IActionResult> GetFillDropDown4(FillDropdown input)
+        {
+            string? connectionString = input.Server_Value;
+            dynamic? connectionstr = null;
+            if (connectionString == null)
+            {
+                connectionstr = _context.CreateConnection();
+            }
+            else
+            {
+                connectionstr = _context.CreateConnection(connectionString);
+            }
+
+            using (IDbConnection connection = connectionstr)
+            {
+                //Guid? userIdValue = (Guid)user.UserId;
+                try
+                {
+
+                    var sqlConnection = (Microsoft.Data.SqlClient.SqlConnection)connection;
+                    await sqlConnection.OpenAsync();
+
+                    var queryResult = await connection.QueryAsync("Proc_SearchTableData4", SetParameter(input), commandType: CommandType.StoredProcedure);
+                    var Model = queryResult.ToList();
+                    return new ObjectResult(Model)
+                    {
+                        StatusCode = 200
+                    };
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            }
+
+        }
+
         public DynamicParameters SetParameter(FillDropdown user)
         {
             DynamicParameters parameters = new DynamicParameters();

@@ -64,7 +64,7 @@ namespace ibillcraft.Controllers
             var gerootObject = JsonConvert.DeserializeObject<List<FillDropdown>>(gedata);
             ViewBag.year = gerootObject;
 
-            string claimnourl = $"{_httpClient.BaseAddress}/ViewBag/GetViewBag4?userId&sTableName=tbl_inboxemail&sValue=i_subject&id=i_id";
+            string claimnourl = $"{_httpClient.BaseAddress}/ViewBag/GetViewBag4?userId&sTableName=tbl_inboxemail&sValue=i_subject&id=i_subject";
             HttpResponseMessage claimnoresponseView = _httpClient.GetAsync(claimnourl).Result;
             dynamic claimnodata = claimnoresponseView.Content.ReadAsStringAsync().Result;
             var claimnorootObject = JsonConvert.DeserializeObject<List<FillDropdown>>(claimnodata);
@@ -482,6 +482,7 @@ namespace ibillcraft.Controllers
 
         public JsonResult ClaimNo(string? clientid, string? tab, string? year,string? claim)
         {
+            
             GetCookies gk = new GetCookies();
             CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
 

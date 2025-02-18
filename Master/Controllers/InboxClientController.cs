@@ -220,7 +220,7 @@ namespace Master.Controllers
         }
 
         [HttpGet("ClaimNo")]
-        public async Task<IActionResult> ClaimNo(Guid UserId, string clientid, string ic_type, string ic_year,string? ic_claimno)
+        public async Task<IActionResult> ClaimNo(Guid UserId, string clientid, string ic_type, string ic_year,string ic_claimno)
         {
             try
             {
@@ -229,6 +229,10 @@ namespace Master.Controllers
                 user.clientid = clientid;
                 user.ic_type = ic_type;
                 user.ic_year = ic_year;
+                if(ic_claimno== "--Select Claim No--")
+                {
+                    ic_claimno = "";
+                }
                 user.ic_claimno = ic_claimno;
                 if (user.BaseModel == null)
                 {

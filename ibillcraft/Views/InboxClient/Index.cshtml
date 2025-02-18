@@ -291,16 +291,18 @@
                         <!-- You can dynamically add more options here if needed -->
                     </select>
                 </div>
-
-                <div class="col-lg-1 col-md-1 ">
-                    <label for="name" class="form-label float-lg-end">@Localizer["Claim No"]:</label>
+                <div id="claimnodiv" style="display:none;">
+                    <div class="col-lg-1 col-md-1">
+                        <label for="name" class="form-label float-lg-end">@Localizer["Claim No"]:</label>
+                    </div>
+                    <div class="col-md-2 justify-content-lg-end justify-content-md-end justify-content-center mt-lg-0 mt-md-0 mt-3">
+                        <select id="claimdropdown" class="form-select" asp-items="@(new SelectList(ViewBag.claimno,"Id","Value"))" onchange="return claimdropdown()">
+                            <option value="">--Select Claim No--</option>
+                            <!-- You can dynamically add more options here if needed -->
+                        </select>
+                    </div>
                 </div>
-                <div class="col-md-2 justify-content-lg-end justify-content-md-end justify-content-center mt-lg-0 mt-md-0 mt-3">
-                    <select id="claimdropdown" class="form-select" asp-items="@(new SelectList(ViewBag.claimno,"Id","Value"))" onchange="return claimdropdown()">
-                        <option value="">--Select Claim No--</option>
-                        <!-- You can dynamically add more options here if needed -->
-                    </select>
-                </div>
+                
 
 
                 <div class="col-lg-1 col-md-1 " style="padding-left:10%">
@@ -1170,7 +1172,7 @@
 
             $('#dataTable4').hide();
 
-
+            $('#claimnodiv').css('display', 'none');
             $.ajax({
                 url: '/InboxClient/Clientchange1', // Controller action URL
                 type: 'POST',             // HTTP method
@@ -1228,6 +1230,7 @@
         {
             tab = "Claim";
             $('#dataTable4').show();
+            $('#claimnodiv').css('display', 'contents');
 
             $.ajax({
                 url: '/InboxClient/Clientchange1', // Controller action URL
@@ -1363,6 +1366,8 @@
         $('#dataTable3').hide();
         $('#dataTable4').hide();
 
+        $('#claimnodiv').css('display', 'none');
+
         var tab = "enquiry";
 
         $('#enquiry-tab').attr('aria-selected', 'true');
@@ -1476,6 +1481,9 @@
         $('#dataTable4').show();
         $('#dataTable2').hide();
         $('#dataTable3').hide();
+
+        $('#claimnodiv').css('display', 'contents');
+
         var tab = "claim";
         $('#enquiry-tab').attr('aria-selected', 'false');
         $('#client-tab').attr('aria-selected', 'false');
@@ -1579,7 +1587,7 @@
         $('#enquiry-atttab').attr('class', 'nav-link active');
         $('#dataTable2').hide();
 
-
+        $('#claimnodiv').css('display', 'none');
 
         // var urlParams = new URLSearchParams(window.location.search);
         // var email = urlParams.get('email');
@@ -1659,6 +1667,7 @@
         $('#enquiry-atttab').attr('class', 'nav-link ');
         $('#dataTable2').hide();
 
+        $('#claimnodiv').css('display', 'none');
 
 
         // var urlParams = new URLSearchParams(window.location.search);
