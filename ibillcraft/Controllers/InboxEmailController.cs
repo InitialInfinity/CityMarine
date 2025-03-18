@@ -972,80 +972,132 @@ namespace ibillcraft.Controllers
                     var sentResponse = await httpClient.GetAsync(sentUrl);
                     if (sentResponse.IsSuccessStatusCode)
                     {
-                        var sentContent = await sentResponse.Content.ReadAsStringAsync();
-                        var sentEmails = JsonConvert.DeserializeObject<GraphApiEmailResponse>(sentContent);
-
-                        if (sentEmails?.Value?.Any() == true)
+                        try
                         {
-                            // Filter for unread emails
-                            //var unreadEmails = sentEmails.Value.Where(email => email.IsRead == false).ToList();
-                            //var unreadEmails = sentEmails.Value.ToList(); // Simply take all emails
+                            var sentContent = await sentResponse.Content.ReadAsStringAsync();
+                            var sentEmails = JsonConvert.DeserializeObject<GraphApiEmailResponse>(sentContent);
 
+                            string time = "";
 
-                            //latest email
-                            //var Emails = sentEmails.Value.OrderByDescending(email => email.ReceivedDateTime).GroupBy(email => email.ReceivedDateTime).FirstOrDefault();
-
-                            //today's all emails
-                            var today = DateTime.UtcNow.Date; // Get today's date in UTC
-                            var Emails = sentEmails.Value
-                                .Where(email => email.ReceivedDateTime.HasValue && email.ReceivedDateTime.Value.Date == today) // Ensure the value is not null
-                                .OrderByDescending(email => email.ReceivedDateTime); // Order by ReceivedDateTime descending
-
-
-                            if (Emails.Any())
+                            if (sentEmails?.Value?.Any() == true)
                             {
-                                foreach (var email in Emails)
+                                // Filter for unread emails
+                                //var unreadEmails = sentEmails.Value.Where(email => email.IsRead == false).ToList();
+                                //var unreadEmails = sentEmails.Value.ToList(); // Simply take all emails
+
+
+                                //latest email
+                                //var Emails = sentEmails.Value.OrderByDescending(email => email.ReceivedDateTime).GroupBy(email => email.ReceivedDateTime).FirstOrDefault();
+
+                                //today's all emails
+                                //var today = DateTime.UtcNow.Date; // Get today's date in UTC
+                                //var Emails = sentEmails.Value
+                                //    .Where(email => email.ReceivedDateTime.HasValue && email.ReceivedDateTime.Value.Date == today) // Ensure the value is not null
+                                //    .OrderByDescending(email => email.ReceivedDateTime); // Order by ReceivedDateTime descending
+                                string connectionString2 = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+
+                                using (SqlConnection conn = new SqlConnection(connectionString2))
                                 {
-                                    // Process unread email
-                                    SentEmail(email, userId);
-
-                                    // Mark email as read
-                                    //  await MarkEmailAsRead(httpClient, userId, email.Id);                                                         
-
+                                    conn.Open();
+                                    string query2 = @"SELECT top 1 e_time from tbl_eventlog order by e_time desc";
+                                    using (SqlCommand cmd = new SqlCommand(query2, conn))
+                                    {
+                                        using (SqlDataReader reader = cmd.ExecuteReader())
+                                        {
+                                            // Loop through each row in the result
+                                            while (reader.Read())
+                                            {
+                                                time = reader["e_time"].ToString();
+                                            }
+                                        }
+                                    }
 
                                 }
 
+                                DateTime startDateTime = DateTime.ParseExact(time, "M/d/yyyy h:mm:ss tt", CultureInfo.InvariantCulture);
 
-                                //       string connectionString1 = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
-
-                                //       using (SqlConnection conn = new SqlConnection(connectionString1))
-                                //       {
-                                //           conn.Open();
-
-                                //           string query = @"INSERT INTO dbo.tbl_eventlog (e_time, e_source, e_status)
-                                //VALUES (@e_time, @e_source, @e_status)";
-
-                                //           using (SqlCommand cmd1 = new SqlCommand(query, conn))
-                                //           {
-                                //               // Add parameters to the insert query
-                                //               cmd1.Parameters.AddWithValue("@e_time", System.DateTime.Now);
-                                //               cmd1.Parameters.AddWithValue("@e_source", "Log");
-                                //               cmd1.Parameters.AddWithValue("@e_status", "Success");
+                                //DateTime currentDateTime = DateTime.UtcNow.AddHours(-5).AddMinutes(-30);// Get the current UTC time
 
 
-                                //               // Execute the query to insert the email into the database
-                                //               cmd1.ExecuteNonQuery();
-                                //           }
-                                //           conn.Close();
-                                //       }
+                                // Get the current UTC time
+                                DateTime currentUtcTime = DateTime.UtcNow;
+
+                                // Convert the UTC time to UTC+05:30 (Indian Standard Time)
+                                TimeZoneInfo istTimeZone1 = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+                                DateTime currentDateTimeInIst = TimeZoneInfo.ConvertTimeFromUtc(currentUtcTime, istTimeZone1);
+
+                                // Format the converted time to the desired format: "yyyy-MM-dd HH:mm:ss.fff"
+                                string formattedDateTime = currentDateTimeInIst.ToString("yyyy-MM-dd HH:mm:ss.fff");
+
+                                // Convert the formatted string back to DateTime
+                                DateTime currentDateTime = DateTime.ParseExact(formattedDateTime, "yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
+
+                                //DateTime adjustedDateTime = startDateTime.AddHours(-5).AddMinutes(-30);
+                                DateTime adjustedDateTime = startDateTime;
 
 
+                                //var Emails = inboxEmails.Value
+                                //    .Where(email => email.ReceivedDateTime.HasValue &&
+                                //                    email.ReceivedDateTime.Value >= adjustedDateTime &&
+                                //                    email.ReceivedDateTime.Value <= currentDateTime) // Ensure email ReceivedDateTime is within the range
+                                //    .OrderByDescending(email => email.ReceivedDateTime);
+
+
+                                var Emails = sentEmails.Value;
+
+
+                                if (Emails.Any())
+                                {
+                                    foreach (var email in Emails)
+                                    {
+                                        try
+                                        {
+                                            DateTime receivedDateTimeUtc1 = email.ReceivedDateTime.Value;
+
+                                            // Convert the UTC time to UTC+05:30 (Indian Standard Time)
+                                            //TimeZoneInfo istTimeZone1 = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"); // UTC+05:30
+                                            DateTime receivedDateTimeInIst1 = TimeZoneInfo.ConvertTimeFromUtc(receivedDateTimeUtc1, istTimeZone1);
+                                            email.ReceivedDateTime = receivedDateTimeInIst1;
+
+                                            if (receivedDateTimeInIst1 >= adjustedDateTime && receivedDateTimeInIst1 <= currentDateTime)
+                                            {
+                                                SentEmail(email, userId);
+                                            }
+
+
+
+                                            // Mark email as read after processing
+                                            // await MarkEmailAsRead(httpClient, userId, email.Id);
+
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            Console.WriteLine($"Error processing email with ID {email.Id}: {ex.Message}");
+                                        }
+
+
+                                    }
+
+
+                                }
+                                else
+                                {
+                                    Console.WriteLine("No unread emails found in Sent Items.");
+                                }
                             }
                             else
                             {
-                                Console.WriteLine("No unread emails found in Sent Items.");
+                                Console.WriteLine("No emails found in Sent Items.");
                             }
                         }
-                        else
+                        catch (Exception ex)
                         {
-                            Console.WriteLine("No emails found in Sent Items.");
+                            Console.WriteLine($"Error processing inbox response: {ex.Message}");
                         }
                     }
                     else
                     {
-                        Console.WriteLine($"Error fetching Sent emails: {sentResponse.StatusCode}");
-                        var sentErrorDetails = await sentResponse.Content.ReadAsStringAsync();
-                        Console.WriteLine($"Sent error details: {sentErrorDetails}");
+                        Console.WriteLine($"Failed to retrieve inbox emails. Status Code: {sentResponse.StatusCode}");
                     }
                 }
 
@@ -1311,8 +1363,8 @@ namespace ibillcraft.Controllers
             catch (Exception ex)
             {
                 // Log the error with details
-                string emailId = email?.Id ?? "Unknown";
-                WriteToFile($"Error processing sent email (ID: {emailId}): {ex.Message}");
+               // string emailId = email?.Id ?? "Unknown";
+                WriteToFile($"Error processing sent email (ID: {email}): {ex.Message}");
             }
         }
 

@@ -97,6 +97,32 @@ namespace Master.Controllers
             }
         }
 
+        [HttpGet("Generaltype")]
+        public async Task<IActionResult> Generaltype(Guid UserId, string s_generaltype)
+        {
+            try
+            {
+
+                SentEmailModel user = new SentEmailModel();
+                user.UserId = UserId;
+
+                user.s_generaltype = s_generaltype;
+                user.s_type = "General";
+                if (user.BaseModel == null)
+                {
+                    user.BaseModel = new BaseModel();
+                }
+                user.BaseModel.OperationType = "Generaltypes";
+                var createduser = await _sentemail.SentEmail(user);
+                var data = ((Microsoft.AspNetCore.Mvc.ObjectResult)createduser).Value;
+                return Ok(data);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         [HttpGet("Generalfilter")]
         public async Task<IActionResult> Generalfilter(Guid UserId, string? from, string? to, string? subject, string? hasthewords, string type)
         {

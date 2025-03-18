@@ -16,6 +16,11 @@ using DocumentFormat.OpenXml.Wordprocessing;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Microsoft.IdentityModel.Tokens;
 using System.Net;
+using System.Web.Helpers;
+using System.Security.Claims;
+
+
+
 namespace ibillcraft.Controllers
 {
     public class InboxClientController : Controller
@@ -64,14 +69,24 @@ namespace ibillcraft.Controllers
             var gerootObject = JsonConvert.DeserializeObject<List<FillDropdown>>(gedata);
             ViewBag.year = gerootObject;
 
-            string claimnourl = $"{_httpClient.BaseAddress}/ViewBag/GetViewBag4?userId&sTableName=tbl_inboxemail&sValue=i_subject&id=i_subject";
-            HttpResponseMessage claimnoresponseView = _httpClient.GetAsync(claimnourl).Result;
-            dynamic claimnodata = claimnoresponseView.Content.ReadAsStringAsync().Result;
-            var claimnorootObject = JsonConvert.DeserializeObject<List<FillDropdown>>(claimnodata);
-            ViewBag.claimno = claimnorootObject;
+
+
+            if (tab == "claim")
+            {
+                string claimnourl = $"{_httpClient.BaseAddress}/InboxClient/dropdownclaimno?UserId={UserId}&ic_from={email}&ic_type={tab}";
+                HttpResponseMessage claimnoresponseView = _httpClient.GetAsync(claimnourl).Result;
+                dynamic claimnodata = claimnoresponseView.Content.ReadAsStringAsync().Result;
+                var claimResponse = JsonConvert.DeserializeObject<InboxClientModel>(claimnodata);
+                ViewBag.claimno = claimResponse.Data;
+            }
+            else
+            {
+                ViewBag.claimno = "";
+            }
+
 
             var sentclientDataList = new List<InboxClientModel>();
-            var sentclientList = new List<InboxClientModel>();          
+            var sentclientList = new List<InboxClientModel>();
 
 
             string sentclienturl = $"{_httpClient.BaseAddress}/InboxClient/GetAll?UserId={UserId}&ic_from={email}&ic_type={tab}";
@@ -86,7 +101,7 @@ namespace ibillcraft.Controllers
                 //ViewBag.sc_email = sentclientList[0].sc_email;
                 //ViewBag.sc_toemail = sentclientList[0].sc_toemail;
 
-              
+
                 if (sentclientList != null)
                 {
                     return View(sentclientList);
@@ -119,6 +134,19 @@ namespace ibillcraft.Controllers
             var rootObject = JsonConvert.DeserializeObject<List<FillDropdown>>(data1);
             ViewBag.customer = rootObject;
 
+            ViewBag.claimno = "";
+            if (tab == "claim")
+            {
+                string claimnourl = $"{_httpClient.BaseAddress}/InboxClient/dropdownclaimno?UserId={UserId}&ic_from={email}&ic_type={tab}";
+                HttpResponseMessage claimnoresponseView = _httpClient.GetAsync(claimnourl).Result;
+                dynamic claimnodata = claimnoresponseView.Content.ReadAsStringAsync().Result;
+                var claimResponse = JsonConvert.DeserializeObject<InboxClientModel>(claimnodata);
+                ViewBag.claimno = claimResponse.Data;
+            }
+            else
+            {
+                ViewBag.claimno = "";
+            }
 
             var sentclientDataList = new List<InboxClientModel>();
             var sentclientList = new List<InboxClientModel>();
@@ -146,7 +174,7 @@ namespace ibillcraft.Controllers
             }
             return Json(sentclientDataList);
         }
-        public JsonResult FetchAttachments( string? tab, string? ic_year)
+        public JsonResult FetchAttachments(string? tab, string? ic_year, string ic_from)
         {
             GetCookies gk = new GetCookies();
             CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
@@ -154,9 +182,10 @@ namespace ibillcraft.Controllers
             ViewBag.Format = CUtility.format;
             Guid? UserId = new Guid(CUtility.userid);
 
+
             var sentclientDataList = new List<InboxClientModel>();
             var sentclientList = new List<InboxClientModel>();
-            string sentclienturl = $"{_httpClient.BaseAddress}/InboxClient/GetAllAttchment?UserId={UserId}&ic_year={ic_year}&ic_type={tab}";
+            string sentclienturl = $"{_httpClient.BaseAddress}/InboxClient/GetAllAttchment?UserId={UserId}&ic_year={ic_year}&ic_type={tab}&ic_from={ic_from}";
             HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
             if (response.IsSuccessStatusCode)
             {
@@ -178,38 +207,132 @@ namespace ibillcraft.Controllers
             }
             return Json(sentclientDataList);
         }
+        //public JsonResult fetchdetails(string? ic_year, string? ic_from, string? tab)
+        //{
+        //    GetCookies gk = new GetCookies();
+        //    CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
+
+        //    ViewBag.Format = CUtility.format;
+        //    Guid? UserId = new Guid(CUtility.userid);
+
+        //    ViewBag.claimno = "";
+
+        //    if (tab == "claim")
+        //    {
+        //        string claimnourl = $"{_httpClient.BaseAddress}/InboxClient/dropdownclaimno?UserId={UserId}&ic_from={ic_from}&ic_type={tab}";
+        //        HttpResponseMessage claimnoresponseView = _httpClient.GetAsync(claimnourl).Result;
+        //        dynamic claimnodata = claimnoresponseView.Content.ReadAsStringAsync().Result;
+        //        var claimResponse = JsonConvert.DeserializeObject<InboxClientModel>(claimnodata);
+        //        ViewBag.claimno = claimResponse.Data;
+        //    }
+        //    else
+        //    {
+        //        //string claimnourl = $"{_httpClient.BaseAddress}/ViewBag/GetViewBag4?userId&sTableName=tbl_inboxemail&sValue=i_subject&id=i_subject";
+        //        //HttpResponseMessage claimnoresponseView = _httpClient.GetAsync(claimnourl).Result;
+        //        //dynamic claimnodata = claimnoresponseView.Content.ReadAsStringAsync().Result;
+        //        //var claimnorootObject = JsonConvert.DeserializeObject<List<FillDropdown>>(claimnodata);
+        //        //ViewBag.claimno = claimnorootObject;
+        //        ViewBag.claimno = "";
+        //    }
+
+        //    var sentclientDataList = new List<InboxClientModel>();
+        //    var sentclientList = new List<InboxClientModel>();
+        //    string sentclienturl = $"{_httpClient.BaseAddress}/InboxClient/GetDetails?UserId={UserId}&ic_year={ic_year}&ic_from={ic_from}&ic_type={tab}";
+        //    HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        dynamic data = response.Content.ReadAsStringAsync().Result;
+        //        var dataObject = new { data = new List<InboxClientModel>() };
+        //        var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
+        //        sentclientList = response2.data;
+        //        //ViewBag.sc_to = sentclientList.sc_to;
+
+        //        if (sentclientList != null)
+        //        {
+        //            //  return Json(sentclientList);
+        //            return Json(new
+        //            {
+        //                sentclientList = sentclientList,
+        //                claimno = ViewBag.claimno
+        //            });
+        //        }
+        //        else
+        //        {
+        //            var sentclientList1 = new List<InboxClientModel>();
+        //            return Json(sentclientList1);
+        //        }
+        //    }
+        //    return Json(sentclientDataList);
+        //}
+
+
         public JsonResult fetchdetails(string? ic_year, string? ic_from, string? tab)
         {
+            // Initialize cookies and user data
             GetCookies gk = new GetCookies();
             CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
-
             ViewBag.Format = CUtility.format;
             Guid? UserId = new Guid(CUtility.userid);
 
+            ViewBag.claimno = "";
+
+
+            // Handle the case when tab is 'claim'
+            if (tab == "claim")
+            {
+                string claimnourl = $"{_httpClient.BaseAddress}/InboxClient/dropdownclaimno?UserId={UserId}&ic_from={ic_from}&ic_type={tab}";
+                HttpResponseMessage claimnoresponseView = _httpClient.GetAsync(claimnourl).Result;
+                dynamic claimnodata = claimnoresponseView.Content.ReadAsStringAsync().Result;
+                var claimResponse = JsonConvert.DeserializeObject<InboxClientModel>(claimnodata);
+                ViewBag.claimno = claimResponse.Data;
+            }
+
             var sentclientDataList = new List<InboxClientModel>();
             var sentclientList = new List<InboxClientModel>();
+
             string sentclienturl = $"{_httpClient.BaseAddress}/InboxClient/GetDetails?UserId={UserId}&ic_year={ic_year}&ic_from={ic_from}&ic_type={tab}";
-            HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
+            HttpResponseMessage response =  _httpClient.GetAsync(sentclienturl).Result;
+
             if (response.IsSuccessStatusCode)
             {
                 dynamic data = response.Content.ReadAsStringAsync().Result;
                 var dataObject = new { data = new List<InboxClientModel>() };
                 var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
                 sentclientList = response2.data;
-                //ViewBag.sc_to = sentclientList.sc_to;
 
-                if (sentclientList != null)
+                // return Json(sentclientList);
+                return Json(new
                 {
-                    return Json(sentclientList);
-                }
-                else
-                {
-                    var sentclientList1 = new List<InboxClientModel>();
-                    return Json(sentclientList1);
-                }
+                    sentclientList = sentclientList,
+                    claimno = ViewBag.claimno
+                });
             }
-            return Json(sentclientDataList);
+
+
+            return Json(new
+            {
+                sentclientList = sentclientList,
+                claimno = ViewBag.claimno
+            });
+
         }
+
+        public async Task <IActionResult> Claimnoassign(string? ic_year, string? ic_from, string? tab)
+        {
+            GetCookies gk = new GetCookies();
+            CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
+            ViewBag.Format = CUtility.format;
+            Guid? UserId = new Guid(CUtility.userid);
+
+            string claimnourl = $"{_httpClient.BaseAddress}/InboxClient/dropdownclaimno?UserId={UserId}&ic_from={ic_from}&ic_type={tab}";
+            HttpResponseMessage claimnoresponseView = await _httpClient.GetAsync(claimnourl);
+
+            dynamic claimnodata = await claimnoresponseView.Content.ReadAsStringAsync();
+            var claimResponse = JsonConvert.DeserializeObject<InboxClientModel>(claimnodata);
+            ViewBag.claimno = claimResponse.Data; // Get claim data to return
+            return View();
+        }
+
 
         // public JsonResult showdetails(string id)
         public async Task<JsonResult> showdetails(string id)
@@ -447,7 +570,7 @@ namespace ibillcraft.Controllers
             }
         }
 
-        public JsonResult Clientchange1(string? clientid, string? tab,string? year)
+        public JsonResult Clientchange1(string? clientid, string? tab, string? year)
         {
             GetCookies gk = new GetCookies();
             CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
@@ -480,9 +603,9 @@ namespace ibillcraft.Controllers
         }
 
 
-        public JsonResult ClaimNo(string? clientid, string? tab, string? year,string? claim)
+        public JsonResult ClaimNo(string? clientid, string? tab, string? year, string? claim)
         {
-            
+
             GetCookies gk = new GetCookies();
             CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
 

@@ -112,6 +112,7 @@ namespace Master.Repository
             parameters.Add("@s_replyto", user.s_replyto, DbType.String);
             parameters.Add("@s_type", user.s_type, DbType.String);
             parameters.Add("@s_sentdate", user.s_sentdate, DbType.String);
+            parameters.Add("@s_generaltype", user.s_generaltype, DbType.String);
             parameters.Add("@OutcomeId", dbType: DbType.Int32, direction: ParameterDirection.Output);
             parameters.Add("@OutcomeDetail", dbType: DbType.String, size: 4000, direction: ParameterDirection.Output);
             return parameters;

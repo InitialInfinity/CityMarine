@@ -1,4 +1,6 @@
-﻿namespace ibillcraft.Models
+﻿using Common;
+
+namespace ibillcraft.Models
 {
     public class InboxClientModel
     {
@@ -19,5 +21,8 @@
         public string? clientid { get; set; }
         public string? ic_fromname { get; set; }
         public string? ic_claimno { get; set; }
+        public List<FillDropdown> Data { get; set; }
+        public string? id {  get; set; }
+        public string? value {  get; set; }
     }
 }

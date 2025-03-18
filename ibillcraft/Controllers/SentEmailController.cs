@@ -56,6 +56,14 @@ namespace ibillcraft.Controllers
             Guid? UserId = new Guid(CUtility.userid);
             var sentemailDataList = new List<SentEmailModel>(); 
             var sentemailList = new List<SentEmailModel>();
+
+            string geurl = $"{_httpClient.BaseAddress}/ViewBag/GetViewBag?userId&sTableName=tbl_EmailRuleConfg&sValue=E_value&id=E_id&IsActiveColumn=E_isactive&sCoulmnName=E_category&sColumnValue=b98e01a4-adf6-4c31-a41b-3572c8ea6cd3";
+            HttpResponseMessage geresponseView = _httpClient.GetAsync(geurl).Result;
+            dynamic gedata = geresponseView.Content.ReadAsStringAsync().Result;
+            var gerootObject = JsonConvert.DeserializeObject<List<FillDropdown>>(gedata);
+            ViewBag.type = gerootObject;
+
+
             string sentemailurl = $"{_httpClient.BaseAddress}/SentEmail/GetAll?UserId={UserId}&type={tab}";
             HttpResponseMessage response = _httpClient.GetAsync(sentemailurl).Result;
             if (response.IsSuccessStatusCode)
@@ -246,6 +254,49 @@ namespace ibillcraft.Controllers
                 }
             }
             return Json(sentclientDataList);
+        }
+
+
+        public JsonResult Generaltype(string type)
+        {
+            //if (tab == null)
+            //{
+            //    tab = "General";
+            //}
+            //  string connectionString = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+
+            GetCookies gk = new GetCookies();
+            CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
+
+            ViewBag.Format = CUtility.format;
+
+            Guid? UserId = new Guid(CUtility.userid);
+            var sentemailDataList = new List<SentEmailModel>();
+            var sentemailList = new List<SentEmailModel>();
+
+            string encodedType = Uri.EscapeDataString(type);
+
+
+            string sentemailurl = $"{_httpClient.BaseAddress}/SentEmail/Generaltype?UserId={UserId}&s_generaltype={encodedType}&tab=general";
+            HttpResponseMessage response = _httpClient.GetAsync(sentemailurl).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                dynamic data = response.Content.ReadAsStringAsync().Result;
+                var dataObject = new { data = new List<SentEmailModel>() };
+                var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
+                sentemailList = response2.data;
+
+                if (sentemailList != null)
+                {
+                    return Json(sentemailList);
+                }
+                else
+                {
+                    var sentemailList1 = new List<SentEmailModel>();
+                    return Json(sentemailList1);
+                }
+            }
+            return Json(sentemailDataList);
         }
 
         private string GetMimeType(string filePath)

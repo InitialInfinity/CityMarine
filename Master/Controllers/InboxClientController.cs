@@ -47,14 +47,14 @@ namespace Master.Controllers
         }
 
         [HttpGet("GetAllAttchment")]
-        public async Task<IActionResult> GetAllAttchment(Guid UserId,string ic_type, string ic_year)
+        public async Task<IActionResult> GetAllAttchment(Guid UserId,string ic_type, string ic_year,string ic_from)
         {
             try
             {
                 InboxClientModel user = new InboxClientModel();
                 user.UserId = UserId;
                 user.ic_year = ic_year;
-               
+               user.ic_from=ic_from;
                 user.ic_type = ic_type;
                 if (user.BaseModel == null)
                 {
@@ -239,6 +239,30 @@ namespace Master.Controllers
                     user.BaseModel = new BaseModel();
                 }
                 user.BaseModel.OperationType = "ClaimNo";
+                var createduser = await _sentclient.InboxClient(user);
+                var data = ((Microsoft.AspNetCore.Mvc.ObjectResult)createduser).Value;
+                return Ok(data);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [HttpGet("dropdownclaimno")]
+        public async Task<IActionResult> dropdownclaimno(Guid UserId, string ic_from, string ic_type)
+        {
+            try
+            {
+                InboxClientModel user = new InboxClientModel();
+                user.UserId = UserId;
+                user.ic_from = ic_from;
+                user.ic_type = ic_type;
+                if (user.BaseModel == null)
+                {
+                    user.BaseModel = new BaseModel();
+                }
+                user.BaseModel.OperationType = "dropdownClaimNo";
                 var createduser = await _sentclient.InboxClient(user);
                 var data = ((Microsoft.AspNetCore.Mvc.ObjectResult)createduser).Value;
                 return Ok(data);

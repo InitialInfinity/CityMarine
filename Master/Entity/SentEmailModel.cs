@@ -1,4 +1,5 @@
-﻿using Tokens;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using Tokens;
 
 namespace Master.Entity
 {
@@ -16,5 +17,6 @@ namespace Master.Entity
         public string? s_replyto { get; set; }
         public string? s_attachment { get; set; }
         public string? s_type { get; set; }
+        public string? s_generaltype  { get; set; }
     }
 }
