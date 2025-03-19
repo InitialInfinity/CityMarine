@@ -883,17 +883,17 @@
                             const safeAttachmentPath = encodeURIComponent(attachmentPath); // Encode for safety
 
                             attachmentHTML += `
-                                <div class="attachments" style="margin: 8px 0;">
-                                    <!-- Button for filename -->
-                                    <button style="display: inline-block; padding: 8px; margin-right: 8px;" title="${fileName}">
-                                        ${fileName}
-                                    </button>
-                                    <!-- Button for download -->
-                                    <button style="display: inline-block; height: 42px; width: auto;"
-                                            onclick="downloadFile('${safeAttachmentPath}')">
-                                        <i class="fa-solid fa-chevron-down" style="font-size: 16px; color: black;"></i>
-                                    </button>
-                                </div>`;
+                                    <div class="attachments" style="margin: 8px 0;">
+                                        <!-- Button for filename -->
+                                        <button style="display: inline-block; padding: 8px; margin-right: 8px;" title="${fileName}">
+                                            ${fileName}
+                                        </button>
+                                        <!-- Button for download -->
+                                        <button style="display: inline-block; height: 42px; width: auto;"
+                                                onclick="downloadFile('${safeAttachmentPath}')">
+                                            <i class="fa-solid fa-chevron-down" style="font-size: 16px; color: black;"></i>
+                                        </button>
+                                    </div>`;
                         });
 
                         // Inject into the DOM
@@ -1369,6 +1369,8 @@
         $('#dataTable2').show();
         $('#dataTable3').hide();
         $('#dataTable4').hide();
+        $('#detailsTableBody').css('display', 'contents');
+        $('#detailsTableBody1').css('display', 'none');
 
         $('#claimnodiv').css('display', 'none');
 
@@ -1486,6 +1488,10 @@
         $('#dataTable2').hide();
         $('#dataTable3').hide();
 
+        $('#detailsTableBody1').css('display', 'contents');
+        $('#detailsTableBody').css('display', 'none');
+
+
         $('#claimnodiv').css('display', 'contents');
 
         var tab = "claim";
@@ -1553,7 +1559,7 @@
 
 
 
-                    
+
                     const claimDropdown = document.getElementById('claimdropdown');
 
                     $('#claimdropdown').html('<option>--Select--</option>');
@@ -1892,13 +1898,6 @@
         $("#addfilter").modal("show");
     }
     function submitfilter() {
-        $("#addfilter").modal("hide");
-        var from = $('#i_from').val();
-        var to = $('#i_to').val();
-        var subject = $('#i_subject').val();
-        var hasthewords = $('#i_hasthewords').val();
-        var tab = $('#i_tab').val();
-        var year = $('#yearDropdown1').val();
 
 
         $('#enquiry-tab').attr('aria-selected', 'false');
@@ -1920,6 +1919,14 @@
             tab = "insurance";
         }
 
+        $("#addfilter").modal("hide");
+        var from = $('#i_from').val() || "";
+        var to = $('#i_to').val() || "";
+        var subject = $('#i_subject').val() || "";
+        var hasthewords = $('#i_hasthewords').val() || "";
+        var tab = $('#i_tab').val() || "";
+        var year = $('#yearDropdown1 option:selected').text() || "";
+
 
         var data = {
             from: from,
@@ -1931,49 +1938,122 @@
 
         };
 
-        $.ajax({
-            url: '/InboxClient/filter?from=' + from + 'to=' + to + 'subject' + subject + 'hasthewords=' + hasthewords + 'year=' + year + 'tab=' + tab, // Controller action URL
-            type: 'POST',             // HTTP method
-            data: data,      // Data to send (query parameter)
-            success: function (response) {
-                // Handle success - update the page dynamically
-                console.log('Response:', response);
-                $('#detailsTableBody').html('');
-                var htmltab = '';
-                for (var i = 0; i < response.length; i++) {
+        if (tab == "enquiry" || tab == "insurance") {
+            $('#detailsGrid').css('display', 'block');
+            $('#attachGrid').css('display', 'none');
+            $('#dataTable2').show();
+            $('#dataTable3').hide();
+            $('#dataTable4').hide();
+            $('#detailsTableBody').css('display', 'contents');
+            $('#detailsTableBody1').css('display', 'none');
 
-                    htmltab += '<tr>';
-                    htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + (i + 1) + '</td>';
-                    htmltab += '<td style="display:none">' + response[i].ic_id + '</td>';
-                    htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + response[i].ic_from + '</td>';
-                    htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + response[i].ic_subject + '</td>';
-                    htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + response[i].ic_receiveddate + '</td>';
-                    // htmltab += '<td >' + response[i].ic_attachment + '</td>';
 
-                    if (response[i].ic_attachment != "No attachments available.") {
-                        htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
+            $('#claimnodiv').css('display', 'none');
+
+            $('#enquiry-tab').attr('aria-selected', 'true');
+            $('#enquiry-tab').attr('class', 'nav-link active');
+
+            $.ajax({
+                url: '/InboxClient/filter?from=' + from + 'to=' + to + 'subject' + subject + 'hasthewords=' + hasthewords + 'year=' + year + 'tab=' + tab, // Controller action URL
+                type: 'POST',             // HTTP method
+                data: data,      // Data to send (query parameter)
+                success: function (response) {
+                    // Handle success - update the page dynamically
+                    console.log('Response:', response);
+                    $('#detailsTableBody').html('');
+                    var htmltab = '';
+                    for (var i = 0; i < response.length; i++) {
+
+                        htmltab += '<tr>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + (i + 1) + '</td>';
+                        htmltab += '<td style="display:none">' + response[i].ic_id + '</td>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + response[i].ic_from + '</td>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + response[i].ic_to + '</td>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + response[i].ic_subject + '</td>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + response[i].ic_receiveddate + '</td>';
+                        // htmltab += '<td >' + response[i].ic_attachment + '</td>';
+
+                        if (response[i].ic_attachment != "No attachments available.") {
+                            htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
+                        }
+                        else {
+                            htmltab += '<td style="width:4%"></td>';
+                        }
+
+                        //htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg('+response[i].sc_toemail+')"></i></td>';
+                        htmltab += '<td style="display:none"><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].ic_id + ')"></i></td>';
+
+                        htmltab += '</tr>';
                     }
-                    else {
-                        htmltab += '<td style="width:4%"></td>';
-                    }
+                    $('#detailsTableBody').html(htmltab);
 
-                    //htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg('+response[i].sc_toemail+')"></i></td>';
-                    htmltab += '<td style="display:none"><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].ic_id + ')"></i></td>';
-
-                    htmltab += '</tr>';
+                    // Example: Update a specific section with the response data
+                    $('#content-area').html(response);
+                },
+                error: function (xhr, status, error) {
+                    // Handle errors
+                    console.error('Error:', error);
                 }
-                $('#detailsTableBody').html(htmltab);
+            });
 
-                // Example: Update a specific section with the response data
-                $('#content-area').html(response);
-            },
-            error: function (xhr, status, error) {
-                // Handle errors
-                console.error('Error:', error);
-            }
-        });
+        }
+        else {
+            $('#claim-tab').attr('aria-selected', 'true');
+            $('#claim-tab').attr('class', 'nav-link active');
+            $('#detailsTableBody').css('display', 'none');
+            $('#detailsGrid').css('display', 'block');
+            $('#attachGrid').css('display', 'none');
+            $('#dataTable4').show();
+            $('#dataTable2').hide();
+            $('#dataTable3').hide();
+            $('#detailsTableBody1').css('display', 'contents');
 
+            $('#claimnodiv').css('display', 'contents');
 
+            $.ajax({
+                url: '/InboxClient/filter?from=' + from + 'to=' + to + 'subject' + subject + 'hasthewords=' + hasthewords + 'year=' + year + 'tab=' + tab, // Controller action URL
+                type: 'POST',             // HTTP method
+                data: data,      // Data to send (query parameter)
+                success: function (response) {
+                    // Handle success - update the page dynamically
+                    console.log('Response:', response);
+                    $('#detailsTableBody1').html('');
+                    var htmltab = '';
+                    for (var i = 0; i < response.length; i++) {
+
+                        htmltab += '<tr>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + (i + 1) + '</td>';
+                        htmltab += '<td style="display:none">' + response[i].ic_id + '</td>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + response[i].ic_claimno + '</td>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + response[i].ic_from + '</td>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + response[i].ic_to + '</td>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + response[i].ic_subject + '</td>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + response[i].ic_receiveddate + '</td>';
+                        // htmltab += '<td >' + response[i].ic_attachment + '</td>';
+
+                        if (response[i].ic_attachment != "No attachments available.") {
+                            htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
+                        }
+                        else {
+                            htmltab += '<td style="width:4%"></td>';
+                        }
+
+                        //htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg('+response[i].sc_toemail+')"></i></td>';
+                        htmltab += '<td style="display:none"><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].ic_id + ')"></i></td>';
+
+                        htmltab += '</tr>';
+                    }
+                    $('#detailsTableBody1').html(htmltab);
+
+                    // Example: Update a specific section with the response data
+                    $('#content-area').html(response);
+                },
+                error: function (xhr, status, error) {
+                    // Handle errors
+                    console.error('Error:', error);
+                }
+            });
+        }
     }
 
 

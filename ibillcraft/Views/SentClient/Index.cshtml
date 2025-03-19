@@ -212,7 +212,15 @@
                     <option value="">--Select--</option>
                 </select>
             </div>
-            <div class="col-md-2 justify-content-lg-end justify-content-md-end justify-content-center mt-lg-0 mt-md-0 mt-3">
+            <div class="col-lg-2 col-md-2">
+                @*     <a class="btn btn-md text-light float-end bg-success mt-3 mt-lg-0 mt-md-0 ml-2" asp-action="Index" asp-controller="InboxEmail" *@
+                <a class="btn btn-md text-light float-end bg-success mt-3 mt-lg-0 mt-md-0 ml-2" asp-action="Index" asp-controller="SentEmail"
+                   title="Back" type="button">
+                    <i class="fa fa-angle-left" style="font-size:24px"></i>
+                </a>
+
+            </div>
+            <div class="col-md-2 justify-content-lg-end justify-content-md-end justify-content-center mt-lg-0 mt-md-0 mt-3" style="display:none">
                 <input type="text" id="custom-search" class="form-control" placeholder="@Localizer["Search"]" />
             </div>
 
@@ -279,6 +287,17 @@
                         <!-- You can dynamically add more options here if needed -->
                     </select>
                 </div>
+                <div id="claimnodiv" style="display:none;">
+                    <div class="col-lg-1 col-md-1">
+                        <label for="name" class="form-label float-lg-end">@Localizer["Claim No"]:</label>
+                    </div>
+                    <div class="col-md-2 justify-content-lg-end justify-content-md-end justify-content-center mt-lg-0 mt-md-0 mt-3">
+                        <select id="claimdropdown" class="form-select" asp-items="@(new SelectList(ViewBag.claimno,"Id","Value"))" onchange="return claimdropdown()">
+                            <option value="">--Select Claim No--</option>
+                            <!-- You can dynamically add more options here if needed -->
+                        </select>
+                    </div>
+                </div>
                 <div class="col-lg-1 col-md-1 " style="padding-left:10%">
                     <button class="btn btn-md text-light bg-primary mt-3 mt-lg-0 mt-md-0 ml-2" onclick="return filter()"
                             type="button" title="Filter">
@@ -304,6 +323,17 @@
                             Claim
                         </button>
                     </li>
+                    <li class="nav-item">
+                        <button class="nav-link" id="enquiry-atttab" data-bs-toggle="tab" data-bs-target="#enquiryatt" type="button" role="tab" aria-controls="enquiryatt" onclick="return enquiryatttab()">
+                            Enquiry Attachment
+                        </button>
+                    </li>
+
+                    <li class="nav-item">
+                        <button class="nav-link" id="claim-atttab" data-bs-toggle="tab" data-bs-target="#claimatt" type="button" role="tab" aria-controls="claimatt" onclick="return claimatttab()">
+                            Claim Attachment
+                        </button>
+                    </li>
                     @*     <li class="nav-item">
                     <button class="nav-link" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab" aria-controls="general" onclick="return generaltab()">
                     General
@@ -313,24 +343,102 @@
             </div>
         </div>
 
+        <div id="attachGrid">
+
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable3" width="100%" cellspacing="0">
+                    <thead style="display:none" id="datatable3head">
+                        <tr>
+                            <th style="width:0%">Sr.No</th>
+                            <th style="display:none">Id</th>
+                            <th style="width: 4%">Attachment</th>
+                            <td style="width: 6%">Download</td>
+                        </tr>
+                    </thead>
+                    <tbody id="attachTableBody">
+                    </tbody>
+                </table>
+
+            </div>
+
+        </div>
+
         <div id="detailsGrid" class="table-responsive" style="display:none">
             <h5 style="display:none">Details for Year: <span id="selectedYear">2025</span></h5>
-            <table class="table table-bordered" id="dataTable1" width="100%" cellspacing="0">
+            <table class="table table-bordered" id="dataTable2" width="100%" cellspacing="0">
                 <thead>
                     <tr>
-                        <th>Sr.No</th>
+                        <th style="width:6%">Sr.No</th>
                         <th style="display:none">Id</th>
-                        <th>To</th>
-                        <th>From</th>
-                        <th>Subject</th>
-                        <th>Date</th>
-                        <th style="display:none">Attachment</th>
-                        <td>View</td>
+                        <th style="width:12%">From</th>
+                        <th style="width:12%">To</th>
+                        <th style="width:10%">Subject</th>
+                        <th style="width:12%">Date</th>
+                        <th style="width:4%">Attachment</th>
+                        <td style="display:none" width="6%">View</td>
                     </tr>
                 </thead>
                 <tbody id="detailsTableBody">
                 </tbody>
             </table>
+
+            <table class="table table-bordered" id="dataTable4" width="100%" cellspacing="0" style="display:none;">
+                <thead>
+                    <tr>
+                        <th style="width:6%">Sr.No</th>
+                        <th style="width:6%">Claim No</th>
+                        <th style="display:none">Id</th>
+                        <th style="width:12%">From</th>
+                        <th style="width:12%">To</th>
+                        <th style="width:10%">Subject</th>
+                        <th style="width:12%">Date</th>
+                        <th style="width:4%">Attachment</th>
+                        <td style="display:none" width="6%">View</td>
+                    </tr>
+                </thead>
+                <tbody id="detailsTableBody1">
+                </tbody>
+            </table>
+
+            <!-- start Pagination-->
+            <div class="row mt-3">
+                <div class="col-lg-5 col-md-5 col-12 ">
+                    <div class="row ">
+                        <div class="col-lg-3 col-md-3 col-12 d-flex justify-content-lg-start justify-content-md-start justify-content-center ">
+                            <h6 class="mt-2"> @Localizer["Show"]</h6>&nbsp;&nbsp;
+                            <select name="table_id_length" id="table_length_select" aria-controls="table_id" class="form-select w-auto">
+                                <option value="10">10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                            &nbsp;&nbsp;
+                            <h6 class="mt-2"> @Localizer["entries"]</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-2"></div>
+                <div class="col-lg-5 col-md-5 col-12 mt-lg-0 mt-md-0 mt-3">
+                    <nav aria-label="Page navigation example">
+                        <div id="table_id_length">
+
+                            <div id="custom-pagination" class=" d-flex text-center text-lg-end justify-content-end  text-end float-end">
+                                <ul class="pagination justify-content-lg-end justify-content-md-end justify-content-center">
+                                    <li class="page-item disabled">
+                                        <button class="page-link" href="#" aria-label="Previous" data-page="0"> <span aria-hidden="true">&laquo;</span></button>
+                                    </li>
+                                    <li class="page-item active"><button class="page-link" href="#" data-page="1">1</button></li>
+
+                                    <li class="page-item "><button class="page-link" href="#" data-page="2" aria-label="Next">  <span aria-hidden="true">&raquo;</span></button></li>
+
+                                </ul>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+            <!-- end Pagination-->
+
         </div>
 
 
@@ -434,7 +542,7 @@
                     <div class="modal-body text-dark" style=" background-color: #f8f9fa;padding: 15px;border-radius: 8px;">
                         <div class="flex-container">
                             <div style="background-color: #4a4747;border: 1px solid #ddd;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);margin-bottom: 15px;padding: 15px;width: 11%;max-width: 800px;">
-                              <div class="arrow-container" id="arrow-container"></div>
+                                <div class="arrow-container" id="arrow-container"></div>
                                 @*  <div class="arrow-item" id="date1"></div>
                                 <div style="padding:12px"></div>
                                 <div class="arrow-item" id="date2"></div>
@@ -464,7 +572,8 @@
 
                                 <div class="form-group">
                                     @*  <label class="control-label fw-bold" for="message" style="display: inline-block; vertical-align: top; margin-right: 10px;font-size: larger;">Message:</label> *@
-                                    <textarea rows="20" cols="85" readonly id="sc_bodylabel" style="font-size:medium;border:none"></textarea>
+                                    @*<textarea rows="20" cols="85" readonly id="sc_bodylabel" style="font-size:medium;border:none"></textarea>*@
+                                    <div id="sc_bodyhtml" style="font-size:medium;border:none"></div>
                                 </div>
                                 <div id="attachments-container">
                                     <div class="attachments" id="attachdiv">
@@ -575,56 +684,20 @@
         @* End view model *@
 
         <!-- End Griddata-->
-        <!-- start Pagination-->
-        <div class="row mt-3">
-            <div class="col-lg-5 col-md-5 col-12 ">
-                <div class="row ">
-                    <div class="col-lg-3 col-md-3 col-12 d-flex justify-content-lg-start justify-content-md-start justify-content-center ">
-                        <h6 class="mt-2"> @Localizer["Show"]</h6>&nbsp;&nbsp;
-                        <select name="table_id_length" id="table_length_select" aria-controls="table_id" class="form-select w-auto">
-                            <option value="10">10</option>
-                            <option value="25">25</option>
-                            <option value="50">50</option>
-                            <option value="100">100</option>
-                        </select>
-                        &nbsp;&nbsp;
-                        <h6 class="mt-2"> @Localizer["entries"]</h6>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-2 col-md-2"></div>
-            <div class="col-lg-5 col-md-5 col-12 mt-lg-0 mt-md-0 mt-3">
-                <nav aria-label="Page navigation example">
-                    <div id="table_id_length">
 
-                        <div id="custom-pagination" class=" d-flex text-center text-lg-end justify-content-end  text-end float-end">
-                            <ul class="pagination justify-content-lg-end justify-content-md-end justify-content-center">
-                                <li class="page-item disabled">
-                                    <button class="page-link" href="#" aria-label="Previous" data-page="0"> <span aria-hidden="true">&laquo;</span></button>
-                                </li>
-                                <li class="page-item active"><button class="page-link" href="#" data-page="1">1</button></li>
-
-                                <li class="page-item "><button class="page-link" href="#" data-page="2" aria-label="Next">  <span aria-hidden="true">&raquo;</span></button></li>
-
-                            </ul>
-                        </div>
-                    </div>
-                </nav>
-            </div>
-        </div>
-        <!-- end Pagination-->
     </div>
 </div>
 
 <script>
-    $(document).ready(function () {
-        $('#dataTable1').DataTable();
+
+    // $(document).ready(function () {
+    //     $('#dataTable1').DataTable();
 
 
 
-    });
-    myFunction();
-    $('#table_length_select').change();
+    // });
+    // myFunction();
+    // $('#table_length_select').change();
 
     $(document).ready(function () {
         // Extract URL parameters
@@ -658,8 +731,27 @@
         show(2025, client, email, tab);
     });
 
+    function downloadfile(filePath) {
+        console.log("Original File Path:", filePath); // Log the input
 
-    function show(sc_year, sc_fromname, sc_from, tab) {
+        try {
+            // Trim and encode the file path
+            const trimmedPath = filePath.trim();
+            const encodedPath = encodeURIComponent(trimmedPath);
+            console.log("Encoded File Path:", encodedPath); // Log the encoded path
+
+            // Construct the URL
+            const url = `/SentClient/DownloadFile?filePath=${encodedPath}`;
+            console.log("Download URL:", url); // Log the final URL
+
+            // Open the file in a new tab
+            window.open(url, "_blank");
+        } catch (error) {
+            console.error("Error during file download:", error); // Log any errors
+        }
+    }
+
+    function show(sc_year, sc_toname, sc_to, tab) {
 
         $('#enquiry-tab').attr('class', 'nav-link active');
 
@@ -677,8 +769,8 @@
         sc_year = $('#yearDropdown option:selected').text();
         var data = {
             sc_year: sc_year, // Use the provided `sc_year` parameter
-            sc_fromname: sc_fromname,
-            sc_from: sc_from,
+            sc_toname: sc_toname,
+            sc_to: sc_to,
             tab: tab,
 
         };
@@ -693,17 +785,25 @@
                 console.log('Response:', response);
                 $('#detailsTableBody').html('');
                 var htmltab = '';
-                for (var i = 0; i < response.length; i++) {
+                for (var i = 0; i < response.sentclientList.length; i++) {
                     htmltab += '<tr>';
-                    htmltab += '<td>' + (i + 1) + '</td>';
-                    htmltab += '<td style="display:none">' + response[i].sc_id + '</td>';
-                    htmltab += '<td>' + response[i].sc_from + '</td>';
-                    htmltab += '<td>' + response[i].sc_to + '</td>';
-                    htmltab += '<td>' + response[i].sc_subject + '</td>';
-                    htmltab += '<td>' + response[i].sc_sentdate + '</td>';
-                    htmltab += '<td style="display:none">' + response[i].sc_attachment + '</td>';
+                    htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].sc_id + ')">' + (i + 1) + '</td>';
+                    htmltab += '<td style="display:none">' + response.sentclientList[i].sc_id + '</td>';
+                    htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].sc_id + ')">' + response.sentclientList[i].sc_from + '</td>';
+                    htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].sc_id + ')">' + response.sentclientList[i].sc_to + '</td>';
+                    htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].sc_id + ')">' + response.sentclientList[i].sc_subject + '</td>';
+                    htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].sc_id + ')">' + response.sentclientList[i].sc_sentdate + '</td>';
+                    //   htmltab += '<td style="display:none">' + response[i].sc_attachment + '</td>';
+
+                    if (response.sentclientList[i].sc_attachment != "No attachments available.") {
+                        htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
+                    }
+                    else {
+                        htmltab += '<td style="width:4%"></td>';
+                    }
+
                     //htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg('+response[i].sc_toemail+')"></i></td>';
-                    htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].sc_id + ')"></i></td>';
+                    htmltab += '<td style="display:none"><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response.sentclientList[i].sc_id + ')"></i></td>';
 
                     htmltab += '</tr>';
 
@@ -743,8 +843,14 @@
 
                 if (response) {
 
+                    const attachmentsContainer = document.getElementById("attachments-container");
+
+                    // Clear previous content before updating
+                    attachmentsContainer.innerHTML = '';
+
+
                     //if (response.sc_attachment != "" ) {
-                    if (response.sc_attachment != "No attachments available.") {
+                    if (response.sc_attachment != "No attachments available." || response.sc_attachment != null) {
                         // const fileName = response.sc_attachment.split(/[/\\]/).pop();
                         // $('#filename').text(fileName);
 
@@ -783,34 +889,42 @@
                         const attachments = response.sc_attachment;
 
                         // Split and process each attachment path
-                        const attachmentArray = attachments.trim().split('\n');
+                        const attachmentArray = attachments.trim().split(',').map(a => a.trim()); // Trim extra spaces
+
+                        console.log("Raw Attachments:", attachments);
+                        console.log("Split Attachments Array:", attachmentArray); // Debugging
 
                         // Generate the HTML
                         let attachmentHTML = '';
+
                         attachmentArray.forEach((attachmentPath) => {
-                            const fileName = attachmentPath.split(/[/\\]/).pop(); // Extract the filename
-                            const trimmedpath = attachmentPath.trim();
-                            const safeAttachmentPath = trimmedpath.replace(/\\/g, '/');
+                            if (!attachmentPath) return; // Ignore empty values
+
+                            const fileName = attachmentPath.split(/[/\\]/).pop(); // Extract filename
+                            const safeAttachmentPath = encodeURIComponent(attachmentPath); // Encode for safety
 
                             attachmentHTML += `
-        <div class="attachments" style="margin: 8px 0;">
-            <!-- Button for filename -->
-            <button style="display: inline-block; padding: 8px; margin-right: 8px;" title="${fileName}">
-                ${fileName}
-            </button>
-            <!-- Button for download -->
-            <button style="display: inline-block; height: 42px; width: auto;"
-                    onclick="downloadFile('${safeAttachmentPath}')">
-                <i class="fa-solid fa-chevron-down" style="font-size: 16px; color: black;"></i>
-            </button>
-        </div>`;
+                                            <div class="attachments" style="margin: 8px 0;">
+                                                <!-- Button for filename -->
+                                                <button style="display: inline-block; padding: 8px; margin-right: 8px;" title="${fileName}">
+                                                    ${fileName}
+                                                </button>
+                                                <!-- Button for download -->
+                                                <button style="display: inline-block; height: 42px; width: auto;"
+                                                        onclick="downloadFile('${safeAttachmentPath}')">
+                                                    <i class="fa-solid fa-chevron-down" style="font-size: 16px; color: black;"></i>
+                                                </button>
+                                            </div>`;
                         });
 
-                        // Append the generated HTML to the container
-                        document.getElementById('attachdiv').innerHTML = attachmentHTML;
-                        document.getElementById('attachdiv').style.display = 'block';
-                        // $('#attachdiv').show();
-                    } else {
+                        // Inject into the DOM
+
+                        document.getElementById("attachments-container").innerHTML = attachmentHTML;
+
+                        $('#attachdiv').show();
+                    }
+
+                    else {
                         $('#attachdiv').hide();
 
                     }
@@ -819,9 +933,15 @@
                     $('#sc_subjectlabel').text(response.sc_subject || 'N/A');
 
 
-                    const formattedBody = (response.sc_body || '').replace(/<br\s*\/?>/gi, "\n").replace(/<\/?[^>]+(>|$)/g, "");
+                    // const formattedBody = (response.sc_body || '').replace(/<br\s*\/?>/gi, "\n").replace(/<\/?[^>]+(>|$)/g, "");
 
-                    $('#sc_bodylabel').val(formattedBody);
+                    // $('#sc_bodylabel').val(formattedBody);
+
+                    var bodyh = '' + response.sc_body + '';
+
+
+
+                    $('#sc_bodyhtml').html(bodyh || '');
 
 
                     // Optional: Update a specific content area with additional information
@@ -932,25 +1052,7 @@
     //     window.open(url, "_blank");
     // }
 
-    function downloadfile(filePath) {
-        console.log("Original File Path:", filePath); // Log the input
 
-        try {
-            // Trim and encode the file path
-            const trimmedPath = filePath.trim();
-            const encodedPath = encodeURIComponent(trimmedPath);
-            console.log("Encoded File Path:", encodedPath); // Log the encoded path
-
-            // Construct the URL
-            const url = `/SentClient/DownloadFile?filePath=${encodedPath}`;
-            console.log("Download URL:", url); // Log the final URL
-
-            // Open the file in a new tab
-            window.open(url, "_blank");
-        } catch (error) {
-            console.error("Error during file download:", error); // Log any errors
-        }
-    }
 
     function viewfile() {
         const filePath = $('#filebuttons1').val();
@@ -1067,49 +1169,123 @@
             year: year,
         };
 
-        $.ajax({
-            url: '/SentClient/Clientchange1', // Controller action URL
-            type: 'POST',             // HTTP method
-            data: data,
-            success: function (response) {
-                console.log(response);
+        if ($('#enquiry-tab').hasClass('active')) {
+            tab = "Enquiry";
 
-                // If the response length is 0, do not update the table or URL
-                if (response.length === 0) {
-                    // alert("no data");
-                    $('#detailsTableBody').html('');
-                    return; // Exit the function early
+            $('#dataTable4').hide();
+
+            $('#claimnodiv').css('display', 'none');
+
+            $.ajax({
+                url: '/SentClient/Clientchange1', // Controller action URL
+                type: 'POST',             // HTTP method
+                data: data,
+                success: function (response) {
+                    console.log(response);
+
+                    // If the response length is 0, do not update the table or URL
+                    if (response.length === 0) {
+                        // alert("no data");
+                        $('#detailsTableBody').html('');
+                        return; // Exit the function early
+                    }
+
+                    // Make details grid visible when there is data
+
+                    $('#detailsTableBody').html('');  // Clear previous table content
+
+                    var htmltab = '';
+                    for (var i = 0; i < response.length; i++) {
+                        htmltab += '<tr>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + (i + 1) + '</td>';
+                        htmltab += '<td style="display:none">' + response[i].sc_id + '</td>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + response[i].sc_from + '</td>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + response[i].sc_to + '</td>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + response[i].sc_subject + '</td>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + response[i].sc_sentdate + '</td>';
+                        //  htmltab += '<td style="display:none">' + response[i].sc_attachment + '</td>';
+
+                        if (response[i].sc_attachment != "No attachments available." || response[i].sc_attachment != null) {
+                            htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
+                        }
+                        else {
+                            htmltab += '<td style="width:4%"></td>';
+                        }
+                        htmltab += '<td style="display:none"><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].sc_id + ')"></i></td>';
+                        htmltab += '</tr>';
+                    }
+
+                    // Update the table body with new data
+                    $('#detailsTableBody').html(htmltab);
+
+                    // Example: Update a specific section with the response data (if any)
+                    $('#content-area').html(response);
+                },
+                error: function (xhr, status, error) {
+                    // Handle errors
+                    console.error('Error:', error);
                 }
+            });
+        } else {
 
-                // Make details grid visible when there is data
+            tab = "Claim";
 
-                $('#detailsTableBody').html('');  // Clear previous table content
+            $('#dataTable4').show();
 
-                var htmltab = '';
-                for (var i = 0; i < response.length; i++) {
-                    htmltab += '<tr>';
-                    htmltab += '<td>' + (i + 1) + '</td>';
-                    htmltab += '<td style="display:none">' + response[i].sc_id + '</td>';
-                    htmltab += '<td>' + response[i].sc_from + '</td>';
-                    htmltab += '<td>' + response[i].sc_to + '</td>';
-                    htmltab += '<td>' + response[i].sc_subject + '</td>';
-                    htmltab += '<td>' + response[i].sc_sentdate + '</td>';
-                    htmltab += '<td style="display:none">' + response[i].sc_attachment + '</td>';
-                    htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].sc_id + ')"></i></td>';
-                    htmltab += '</tr>';
+            $('#claimnodiv').css('display', 'contents');
+
+            $.ajax({
+                url: '/SentClient/Clientchange1', // Controller action URL
+                type: 'POST',             // HTTP method
+                data: data,
+                success: function (response) {
+                    console.log(response);
+
+                    // If the response length is 0, do not update the table or URL
+                    if (response.length === 0) {
+                        // alert("no data");
+                        $('#detailsTableBody1').html('');
+                        return; // Exit the function early
+                    }
+
+                    // Make details grid visible when there is data
+
+                    $('#detailsTableBody1').html('');  // Clear previous table content
+
+                    var htmltab = '';
+                    for (var i = 0; i < response.length; i++) {
+                        htmltab += '<tr>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + (i + 1) + '</td>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + response[i].sc_claimno + '</td>';
+                        htmltab += '<td style="display:none">' + response[i].sc_id + '</td>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + response[i].sc_from + '</td>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + response[i].sc_to + '</td>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + response[i].sc_subject + '</td>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + response[i].sc_sentdate + '</td>';
+                        //  htmltab += '<td style="display:none">' + response[i].sc_attachment + '</td>';
+
+                        if (response[i].sc_attachment != "No attachments available." || response[i].sc_attachment != null) {
+                            htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
+                        }
+                        else {
+                            htmltab += '<td style="width:4%"></td>';
+                        }
+                        htmltab += '<td style="display:none"><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].sc_id + ')"></i></td>';
+                        htmltab += '</tr>';
+                    }
+
+                    // Update the table body with new data
+                    $('#detailsTableBody1').html(htmltab);
+
+                    // Example: Update a specific section with the response data (if any)
+                    $('#content-area').html(response);
+                },
+                error: function (xhr, status, error) {
+                    // Handle errors
+                    console.error('Error:', error);
                 }
-
-                // Update the table body with new data
-                $('#detailsTableBody').html(htmltab);
-
-                // Example: Update a specific section with the response data (if any)
-                $('#content-area').html(response);
-            },
-            error: function (xhr, status, error) {
-                // Handle errors
-                console.error('Error:', error);
-            }
-        });
+            });
+        }
 
         var client = $('#clientDropdown1').val();
 
@@ -1126,6 +1302,15 @@
 
 
     function clienttab() {
+        $('#dataTable3').show();
+        $('#dataTable2').hide();
+        $('#dataTable4').hide();
+        $('#datatable3head').show();
+
+        $('#detailsGrid').css('display', 'block');
+
+        $('#attachGrid').css('display', 'none');
+
         var tab = "Insurance";
 
         $('#client-tab').attr('aria-selected', 'true');
@@ -1158,9 +1343,9 @@
                 for (var i = 0; i < response.length; i++) {
                     htmltab += '<tr>';
                     htmltab += '<td>' + (i + 1) + '</td>';
-                    htmltab += '<td style=display:none>' + response[i].sc_from + '</td>';
-                    htmltab += '<td style=display:none>' + response[i].sc_fromname + '</td>';
-                    htmltab += '<td onclick="show(\'' + response[i].sc_year + '\', \'' + response[i].sc_fromname + '\', \'' + response[i].sc_from + '\')">' + response[i].sc_year + '</td>';
+                    htmltab += '<td style=display:none>' + response[i].sc_to + '</td>';
+                    htmltab += '<td style=display:none>' + response[i].sc_toname + '</td>';
+                    htmltab += '<td onclick="show(\'' + response[i].sc_year + '\', \'' + response[i].sc_toname + '\', \'' + response[i].sc_to + '\')">' + response[i].sc_year + '</td>';
                     htmltab += '<td>' + response[i].sc_count + '</td>';
                     htmltab += '</tr>';
 
@@ -1177,26 +1362,46 @@
     }
 
     function enquirytab() {
+
+        $('#detailsGrid').css('display', 'block');
+        $('#attachGrid').css('display', 'none');
+        $('#dataTable2').show();
+        $('#dataTable3').hide();
+        $('#dataTable4').hide();
+
+        $('#detailsTableBody').css('display', 'contents');
+        $('#detailsTableBody1').css('display', 'none');
+
+        $('#claimnodiv').css('display', 'none');
+
         var tab = "enquiry";
 
         $('#enquiry-tab').attr('aria-selected', 'true');
         $('#client-tab').attr('aria-selected', 'false');
         $('#claim-tab').attr('aria-selected', 'false');
         $('#general-tab').attr('aria-selected', 'false');
+        $('#enquiry-atttab').attr('aria-selected', 'false');
+        $('#claim-atttab').attr('aria-selected', 'false');
 
         $('#enquiry-tab').attr('class', 'nav-link active');
         $('#client-tab').attr('class', 'nav-link');
         $('#claim-tab').attr('class', 'nav-link');
         $('#general-tab').attr('class', 'nav-link');
+        $('#enquiry-atttab').attr('class', 'nav-link ');
+        $('#claim-atttab').attr('class', 'nav-link ');
 
         //var email = $('#clientDropdown1').val();
         //  var year = $('#yearDropdown').val();
         var year = $('#yearDropdown option:selected').text();
 
-        var email = $('#clientDropdown1 option:selected').text();
+        //var email = $('#clientDropdown1 option:selected').text();
+
+        var urlParams = new URLSearchParams(window.location.search);
+        //var email = $('#clientDropdown1 option:selected').text();
+        var email = urlParams.get('email');
 
         var data = {
-            sc_from: email,
+            sc_to: email,
             tab: tab,
             sc_year: year,
         };
@@ -1243,17 +1448,23 @@
                 console.log('Response:', response);
                 $('#detailsTableBody').html('');
                 var htmltab = '';
-                for (var i = 0; i < response.length; i++) {
+                for (var i = 0; i < response.sentclientList.length; i++) {
                     htmltab += '<tr>';
-                    htmltab += '<td>' + (i + 1) + '</td>';
-                    htmltab += '<td style="display:none">' + response[i].sc_id + '</td>';
-                    htmltab += '<td>' + response[i].sc_from + '</td>';
-                    htmltab += '<td>' + response[i].sc_to + '</td>';
-                    htmltab += '<td>' + response[i].sc_subject + '</td>';
-                    htmltab += '<td>' + response[i].sc_sentdate + '</td>';
-                    htmltab += '<td style="display:none">' + response[i].sc_attachment + '</td>';
+                    htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].sc_id + ')">' + (i + 1) + '</td>';
+                    htmltab += '<td style="display:none">' + response.sentclientList[i].sc_id + '</td>';
+                    htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].sc_id + ')">' + response.sentclientList[i].sc_from + '</td>';
+                    htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].sc_id + ')">' + response.sentclientList[i].sc_to + '</td>';
+                    htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].sc_id + ')">' + response.sentclientList[i].sc_subject + '</td>';
+                    htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].sc_id + ')">' + response.sentclientList[i].sc_sentdate + '</td>';
+                    //htmltab += '<td style="display:none">' + response[i].sc_attachment + '</td>';
+                    if (response.sentclientList[i].sc_attachment != "No attachments available." || response.sentclientList[i].sc_attachment != null) {
+                        htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
+                    }
+                    else {
+                        htmltab += '<td style="width:4%"></td>';
+                    }
                     //htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg('+response[i].sc_toemail+')"></i></td>';
-                    htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].sc_id + ')"></i></td>';
+                    htmltab += '<td style="display:none"><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response.sentclientList[i].sc_id + ')"></i></td>';
 
                     htmltab += '</tr>';
 
@@ -1272,26 +1483,41 @@
     }
 
     function claimtab() {
+        $('#detailsGrid').css('display', 'block');
+        $('#attachGrid').css('display', 'none');
+        $('#dataTable4').show();
+        $('#dataTable2').hide();
+        $('#dataTable3').hide();
+
+        $('#detailsTableBody1').css('display', 'contents');
+        $('#detailsTableBody').css('display', 'none');
+
+        $('#claimnodiv').css('display', 'contents');
+
         var tab = "claim";
         $('#enquiry-tab').attr('aria-selected', 'false');
         $('#client-tab').attr('aria-selected', 'false');
         $('#claim-tab').attr('aria-selected', 'true');
         $('#general-tab').attr('aria-selected', 'true');
+        $('#enquiry-atttab').attr('aria-selected', 'false');
+        $('#claim-atttab').attr('aria-selected', 'false');
 
         $('#enquiry-tab').attr('class', 'nav-link');
         $('#client-tab').attr('class', 'nav-link');
         $('#claim-tab').attr('class', 'nav-link active');
         $('#general-tab').attr('class', 'nav-link');
+        $('#enquiry-atttab').attr('class', 'nav-link ');
+        $('#claim-atttab').attr('class', 'nav-link ');
 
-        // var urlParams = new URLSearchParams(window.location.search);
+        var urlParams = new URLSearchParams(window.location.search);
         // var email = urlParams.get('email');
 
-        //var email = $('#clientDropdown1').val();
-        var email = $('#clientDropdown1 option:selected').text();
+        var email = urlParams.get('email');
+        //  var email = $('#clientDropdown1 option:selected').text();
         var year = $('#yearDropdown option:selected').text();
 
         var data = {
-            sc_from: email,
+            sc_to: email,
             tab: tab,
             sc_year: year,
         };
@@ -1304,28 +1530,217 @@
             success: function (response) {
                 // Handle success - update the page dynamically
                 console.log('Response:', response);
-                $('#detailsTableBody').html('');
+                $('#detailsTableBody1').html('');
+                var htmltab = '';
+                for (var i = 0; i < response.sentclientList.length; i++) {
+                    htmltab += '<tr>';
+                    htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].sc_id + ')">' + (i + 1) + '</td>';
+                    htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].sc_id + ')">' + response.sentclientList[i].sc_claimno + '</td>';
+                    htmltab += '<td style="display:none">' + response.sentclientList[i].sc_id + '</td>';
+                    htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].sc_id + ')">' + response.sentclientList[i].sc_from + '</td>';
+                    htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].sc_id + ')">' + response.sentclientList[i].sc_to + '</td>';
+                    htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].sc_id + ')">' + response.sentclientList[i].sc_subject + '</td>';
+                    htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].sc_id + ')">' + response.sentclientList[i].sc_sentdate + '</td>';
+                    ///  htmltab += '<td style="display:none">' + response[i].sc_attachment + '</td>';
+                    if (response.sentclientList[i].sc_attachment != "No attachments available." || response.sentclientList[i].sc_attachment != null) {
+                        htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
+                    }
+                    else {
+                        htmltab += '<td style="width:4%"></td>';
+                    }
+                    //htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg('+response[i].sc_toemail+')"></i></td>';
+                    htmltab += '<td style="display:none"><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response.sentclientList[i].sc_id + ')"></i></td>';
+
+                    htmltab += '</tr>';
+
+                    const claimDropdown = document.getElementById('claimdropdown');
+
+                    $('#claimdropdown').html('<option>--Select--</option>');
+
+
+                    // Loop through the claimno array and add each as an option to the dropdown
+                    response.claimno.forEach(claim => {
+                        const option = document.createElement('option');
+
+                        option.value = claim.id;  // Set the id as the value of the option
+                        option.text = claim.value;  // Set the value as the display text
+                        claimDropdown.appendChild(option);
+                    });
+
+                }
+                $('#detailsTableBody1').html(htmltab);
+
+                // Example: Update a specific section with the response data
+                $('#content-area').html(response);
+            },
+            error: function (xhr, status, error) {
+                // Handle errors
+                console.error('Error:', error);
+            }
+        });
+    }
+
+    function enquiryatttab() {
+        $('#dataTable3').show();
+        $('#dataTable2').hide();
+        $('#datatable3head').show();
+
+        $('#detailsGrid').css('display', 'none');
+        $('#attachGrid').css('display', 'block');
+        var tab = "enquiry";
+        $('#enquiry-tab').attr('aria-selected', 'false');
+        $('#client-tab').attr('aria-selected', 'false');
+        $('#claim-tab').attr('aria-selected', 'false');
+        $('#general-tab').attr('aria-selected', 'false');
+        $('#enquiry-atttab').attr('aria-selected', 'true');
+        $('#claim-atttab').attr('aria-selected', 'false');
+
+        $('#enquiry-tab').attr('class', 'nav-link');
+        $('#client-tab').attr('class', 'nav-link');
+        $('#claim-tab').attr('class', 'nav-link');
+        $('#general-tab').attr('class', 'nav-link');
+        $('#claim-atttab').attr('class', 'nav-link');
+        $('#enquiry-atttab').attr('class', 'nav-link active');
+        $('#dataTable2').hide();
+
+        $('#claimnodiv').css('display', 'none');
+
+        // var urlParams = new URLSearchParams(window.location.search);
+        // var email = urlParams.get('email');
+
+        //var email = $('#clientDropdown1').val();
+        var email = $('#clientDropdown1 option:selected').text();
+        var urlParams = new URLSearchParams(window.location.search);
+        var email = urlParams.get('email');
+        var year = $('#yearDropdown option:selected').text();
+
+        var data = {
+
+            tab: tab,
+            sc_year: year,
+            sc_from: email
+        };
+
+        $.ajax({
+            url: '/SentClient/FetchAttachments', // Controller action URL
+            type: 'POST',             // HTTP method
+            data: data,
+            // Data to send (query parameter)
+            success: function (response) {
+                // Handle success - update the page dynamically
+                console.log('Response:', response);
+                $('#attachTableBody').html('');
                 var htmltab = '';
                 for (var i = 0; i < response.length; i++) {
                     htmltab += '<tr>';
                     htmltab += '<td>' + (i + 1) + '</td>';
                     htmltab += '<td style="display:none">' + response[i].sc_id + '</td>';
-                    htmltab += '<td>' + response[i].sc_from + '</td>';
-                    htmltab += '<td>' + response[i].sc_to + '</td>';
-                    htmltab += '<td>' + response[i].sc_subject + '</td>';
-                    htmltab += '<td>' + response[i].sc_sentdate + '</td>';
-                    htmltab += '<td style="display:none">' + response[i].sc_attachment + '</td>';
-                    //htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg('+response[i].sc_toemail+')"></i></td>';
-                    htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].sc_id + ')"></i></td>';
 
+                    htmltab += '<td >' + response[i].sc_attachment + '</td>';
+
+                    //htmltab += '<td><i class="fas fa-download text-primary" onclick="downloadFile(' + response[i].icc_attachment + ')" ></i></td>';
+
+                    var filePath = response[i].scc_attachment.replace(/\\/g, '\\\\'); // Escape backslashes
+                    htmltab += '<td><i class="fas fa-download text-primary" onclick="downloadFile(\'' + filePath + '\')"></i></td>';
                     htmltab += '</tr>';
 
 
                 }
-                $('#detailsTableBody').html(htmltab);
+                $('#attachTableBody').html(htmltab);
 
                 // Example: Update a specific section with the response data
                 $('#content-area').html(response);
+
+
+
+            },
+            error: function (xhr, status, error) {
+                // Handle errors
+                console.error('Error:', error);
+            }
+        });
+    }
+
+    function claimatttab() {
+        $('#dataTable3').show();
+        $('#dataTable2').hide();
+        $('#datatable3head').show();
+
+        $('#detailsGrid').css('display', 'none');
+        $('#attachGrid').css('display', 'block');
+        var tab = "claim";
+        $('#enquiry-tab').attr('aria-selected', 'false');
+        $('#client-tab').attr('aria-selected', 'false');
+        $('#claim-tab').attr('aria-selected', 'false');
+        $('#general-tab').attr('aria-selected', 'false');
+        $('#enquiry-atttab').attr('aria-selected', 'false');
+        $('#claim-atttab').attr('aria-selected', 'true');
+
+        $('#enquiry-tab').attr('class', 'nav-link');
+        $('#client-tab').attr('class', 'nav-link');
+        $('#claim-tab').attr('class', 'nav-link');
+        $('#general-tab').attr('class', 'nav-link');
+        $('#claim-atttab').attr('class', 'nav-link active');
+        $('#enquiry-atttab').attr('class', 'nav-link ');
+        $('#dataTable2').hide();
+
+        $('#claimnodiv').css('display', 'none');
+
+
+        // var urlParams = new URLSearchParams(window.location.search);
+        // var email = urlParams.get('email');
+
+        //var email = $('#clientDropdown1').val();
+        //var email = $('#clientDropdown1 option:selected').text();
+
+
+        var email = $('#clientDropdown1 option:selected').text();
+
+
+
+        var urlParams = new URLSearchParams(window.location.search);
+        var email = urlParams.get('email');
+        var year = $('#yearDropdown option:selected').text();
+
+        var data = {
+
+            tab: tab,
+            sc_year: year,
+            sc_from: email
+        };
+
+        $.ajax({
+            url: '/SentClient/FetchAttachments', // Controller action URL
+            type: 'POST',             // HTTP method
+            data: data,
+            // Data to send (query parameter)
+            success: function (response) {
+                // Handle success - update the page dynamically
+                console.log('Response:', response);
+                $('#attachTableBody').html('');
+                var htmltab = '';
+                for (var i = 0; i < response.length; i++) {
+                    htmltab += '<tr>';
+                    htmltab += '<td>' + (i + 1) + '</td>';
+                    htmltab += '<td style="display:none">' + response[i].sc_id + '</td>';
+
+                    htmltab += '<td >' + response[i].sc_attachment + '</td>';
+
+                    //htmltab += '<td><i class="fas fa-download text-primary" onclick="downloadFile(' + response[i].icc_attachment + ')" ></i></td>';
+
+                    var filePath = response[i].scc_attachment.replace(/\\/g, '\\\\'); // Escape backslashes
+                    htmltab += '<td><i class="fas fa-download text-primary" onclick="downloadFile(\'' + filePath + '\')"></i></td>';
+                    htmltab += '</tr>';
+
+
+                }
+                $('#attachTableBody').html(htmltab);
+
+                // Example: Update a specific section with the response data
+                $('#content-area').html(response);
+
+
+
             },
             error: function (xhr, status, error) {
                 // Handle errors
@@ -1375,13 +1790,7 @@
         $("#addfilter").modal("show");
     }
     function submitfilter() {
-        $("#addfilter").modal("hide");
-        var from = $('#s_from').val();
-        var to = $('#s_to').val();
-        var subject = $('#s_subject').val();
-        var hasthewords = $('#s_hasthewords').val();
-        var tab = $('#s_tab').val();
-        var year = $('#yearDropdown1').val();
+
 
 
         $('#enquiry-tab').attr('aria-selected', 'false');
@@ -1403,6 +1812,13 @@
             tab = "insurance";
         }
 
+        $("#addfilter").modal("hide");
+        var from = $('#s_from').val();
+        var to = $('#s_to').val();
+        var subject = $('#s_subject').val();
+        var hasthewords = $('#s_hasthewords').val();
+        var tab = $('#s_tab').val();
+        var year = $('#yearDropdown1 option:selected').text();
 
         var data = {
             from: from,
@@ -1413,42 +1829,278 @@
             year: year,
 
         };
+        if (tab == "enquiry" || tab == "insurance") {
+            $('#detailsGrid').css('display', 'block');
+            $('#attachGrid').css('display', 'none');
+            $('#dataTable2').show();
+            $('#dataTable3').hide();
+            $('#dataTable4').hide();
+            $('#detailsTableBody').css('display', 'contents');
+            $('#detailsTableBody1').css('display', 'none');
 
-        $.ajax({
-            url: '/SentClient/filter?from=' + from + 'to=' + to + 'subject' + subject + 'hasthewords=' + hasthewords + 'year=' + year + 'tab=' + tab, // Controller action URL
-            type: 'POST',             // HTTP method
-            data: data,      // Data to send (query parameter)
-            success: function (response) {
-                // Handle success - update the page dynamically
-                console.log('Response:', response);
-                $('#detailsTableBody').html('');
-                var htmltab = '';
-                for (var i = 0; i < response.length; i++) {
+            $('#claimnodiv').css('display', 'none');
 
-                    htmltab += '<tr>';
-                    htmltab += '<td>' + (i + 1) + '</td>';
-                    htmltab += '<td style="display:none">' + response[i].sc_id + '</td>';
-                    htmltab += '<td>' + response[i].sc_from + '</td>';
-                    htmltab += '<td>' + response[i].sc_subject + '</td>';
-                    htmltab += '<td>' + response[i].sc_sentdate + '</td>';
-                    htmltab += '<td style="display:none">' + response[i].sc_attachment + '</td>';
-                    //htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg('+response[i].sc_toemail+')"></i></td>';
-                    htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].sc_id + ')"></i></td>';
+            $('#enquiry-tab').attr('aria-selected', 'true');
+            $('#enquiry-tab').attr('class', 'nav-link active');
 
-                    htmltab += '</tr>';
+            $.ajax({
+                url: '/SentClient/filter?from=' + from + 'to=' + to + 'subject' + subject + 'hasthewords=' + hasthewords + 'year=' + year + 'tab=' + tab, // Controller action URL
+                type: 'POST',             // HTTP method
+                data: data,      // Data to send (query parameter)
+                success: function (response) {
+                    // Handle success - update the page dynamically
+                    console.log('Response:', response);
+                    $('#detailsTableBody').html('');
+                    var htmltab = '';
+                    for (var i = 0; i < response.length; i++) {
+
+                        htmltab += '<tr>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + (i + 1) + '</td>';
+                        htmltab += '<td style="display:none">' + response[i].sc_id + '</td>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + response[i].sc_from + '</td>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + response[i].sc_to + '</td>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + response[i].sc_subject + '</td>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + response[i].sc_sentdate + '</td>';
+                        //htmltab += '<td style="display:none">' + response[i].sc_attachment + '</td>';
+                        if (response[i].sc_attachment != "No attachments available.") {
+                            htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
+                        }
+                        else {
+                            htmltab += '<td style="width:4%"></td>';
+                        }
+                        //htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg('+response[i].sc_toemail+')"></i></td>';
+                        htmltab += '<td style="display:none"><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].sc_id + ')"></i></td>';
+
+                        htmltab += '</tr>';
+                    }
+                    $('#detailsTableBody').html(htmltab);
+
+                    // Example: Update a specific section with the response data
+                    $('#content-area').html(response);
+                },
+                error: function (xhr, status, error) {
+                    // Handle errors
+                    console.error('Error:', error);
                 }
-                $('#detailsTableBody').html(htmltab);
+            });
+        }
+        else {
+            $('#claim-tab').attr('aria-selected', 'true');
+            $('#claim-tab').attr('class', 'nav-link active');
+            $('#detailsTableBody').css('display', 'none');
+            $('#detailsGrid').css('display', 'block');
+            $('#attachGrid').css('display', 'none');
+            $('#dataTable4').show();
+            $('#dataTable2').hide();
+            $('#dataTable3').hide();
 
-                // Example: Update a specific section with the response data
-                $('#content-area').html(response);
-            },
-            error: function (xhr, status, error) {
-                // Handle errors
-                console.error('Error:', error);
-            }
-        });
+            $('#detailsTableBody1').css('display', 'contents');
+            $('#detailsTableBody').css('display', 'none');
+
+            $('#claimnodiv').css('display', 'contents');
+
+            $.ajax({
+                url: '/SentClient/filter?from=' + from + 'to=' + to + 'subject' + subject + 'hasthewords=' + hasthewords + 'year=' + year + 'tab=' + tab, // Controller action URL
+                type: 'POST',             // HTTP method
+                data: data,      // Data to send (query parameter)
+                success: function (response) {
+                    // Handle success - update the page dynamically
+                    console.log('Response:', response);
+                    $('#detailsTableBody1').html('');
+                    var htmltab = '';
+                    for (var i = 0; i < response.length; i++) {
+
+                        htmltab += '<tr>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + (i + 1) + '</td>';
+                        htmltab += '<td style="display:none">' + response[i].sc_id + '</td>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + response[i].sc_claimno + '</td>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + response[i].sc_from + '</td>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + response[i].sc_to + '</td>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + response[i].sc_subject + '</td>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + response[i].sc_sentdate + '</td>';
+                        //htmltab += '<td style="display:none">' + response[i].sc_attachment + '</td>';
+                        if (response[i].sc_attachment != "No attachments available." || response[i].sc_attachment != null) {
+                            htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
+                        }
+                        else {
+                            htmltab += '<td style="width:4%"></td>';
+                        }
+                        //htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg('+response[i].sc_toemail+')"></i></td>';
+                        htmltab += '<td style="display:none"><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].sc_id + ')"></i></td>';
+
+                        htmltab += '</tr>';
+                    }
+                    $('#detailsTableBody1').html(htmltab);
+
+                    // Example: Update a specific section with the response data
+                    $('#content-area').html(response);
+                },
+                error: function (xhr, status, error) {
+                    // Handle errors
+                    console.error('Error:', error);
+                }
+            });
+        }
+
+    }
+
+    function claimdropdown() {
+
+        $('#detailsgridname').css('display', 'none');
+        $('#detailsGrid').css('display', 'none');
+
+        // var urlParams = new URLSearchParams(window.location.search);
+        // var tab = urlParams.get('tab');
+        var year = $('#yearDropdown option:selected').text();
+        var claim = $('#claimdropdown option:selected').text();
+
+        $('#detailsgridname').css('display', 'block');
+        $('#detailsGrid').css('display', 'block');
 
 
+        if ($('#enquiry-tab').hasClass('active')) {
+            tab = "Enquiry";
+        }
+        else {
+            tab = "Claim";
+        }
+
+        var clientid = $('#clientDropdown1').val();
+        var data = {
+            clientid: clientid,
+            tab: tab,
+            year: year,
+            claim: claim,
+        };
+
+
+        if ($('#enquiry-tab').hasClass('active')) {
+            tab = "Enquiry";
+
+            $('#dataTable4').hide();
+
+
+            $.ajax({
+                url: '/SentClient/ClaimNo', // Controller action URL
+                type: 'POST',             // HTTP method
+                data: data,
+                success: function (response) {
+                    console.log(response);
+
+                    // If the response length is 0, do not update the table or URL
+                    if (response.length === 0) {
+                        // alert("no data");
+                        $('#detailsTableBody').html('');
+                        return; // Exit the function early
+                    }
+
+                    // Make details grid visible when there is data
+
+                    $('#detailsTableBody').html('');  // Clear previous table content
+
+                    var htmltab = '';
+                    for (var i = 0; i < response.length; i++) {
+                        htmltab += '<tr>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + (i + 1) + '</td>';
+                        htmltab += '<td style="display:none">' + response[i].sc_id + '</td>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + response[i].sc_from + '</td>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + response[i].sc_to + '</td>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + response[i].sc_subject + '</td>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + response[i].sc_sentdate + '</td>';
+                        // htmltab += '<td >' + response[i].ic_attachment + '</td>';
+
+                        if (response[i].sc_attachment != "No attachments available." || response[i].sc_attachment != null) {
+                            htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
+                        }
+                        else {
+                            htmltab += '<td style="width:4%"></td>';
+                        }
+
+                        htmltab += '<td style="display:none"><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].sc_id + ')"></i></td>';
+                        htmltab += '</tr>';
+                    }
+
+                    // Update the table body with new data
+                    $('#detailsTableBody').html(htmltab);
+
+                    // Example: Update a specific section with the response data (if any)
+                    $('#content-area').html(response);
+                },
+                error: function (xhr, status, error) {
+                    // Handle errors
+                    console.error('Error:', error);
+                }
+            });
+        }
+
+        else {
+            tab = "Claim";
+            $('#dataTable4').show();
+
+            $.ajax({
+                url: '/SentClient/ClaimNo', // Controller action URL
+                type: 'POST',             // HTTP method
+                data: data,
+                success: function (response) {
+                    console.log(response);
+
+                    // If the response length is 0, do not update the table or URL
+                    if (response.length === 0) {
+                        // alert("no data");
+                        $('#detailsTableBody1').html('');
+                        return; // Exit the function early
+                    }
+
+                    // Make details grid visible when there is data
+
+                    $('#detailsTableBody1').html('');  // Clear previous table content
+
+                    var htmltab = '';
+                    for (var i = 0; i < response.length; i++) {
+                        htmltab += '<tr>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + (i + 1) + '</td>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + response[i].sc_claimno + '</td>';
+                        htmltab += '<td style="display:none">' + response[i].sc_id + '</td>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + response[i].sc_from + '</td>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + response[i].sc_to + '</td>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + response[i].sc_subject + '</td>';
+                        htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + response[i].sc_receiveddate + '</td>';
+                        // htmltab += '<td >' + response[i].ic_attachment + '</td>';
+
+                        if (response[i].sc_attachment != "No attachments available." || response[i].sc_attachment != null) {
+                            htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
+                        }
+                        else {
+                            htmltab += '<td style="width:4%"></td>';
+                        }
+
+                        htmltab += '<td style="display:none"><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].sc_id + ')"></i></td>';
+                        htmltab += '</tr>';
+                    }
+
+                    // Update the table body with new data
+                    $('#detailsTableBody1').html(htmltab);
+
+                    // Example: Update a specific section with the response data (if any)
+                    $('#content-area').html(response);
+                },
+                error: function (xhr, status, error) {
+                    // Handle errors
+                    console.error('Error:', error);
+                }
+            });
+        }
+
+        var client = $('#clientDropdown1').val();
+
+        // Match the text in the dropdown options and set the value
+        if (client) {
+            $('#clientDropdown1 option').each(function () {
+                if ($(this).val() == client) {
+                    $('#clientDropdown1').val($(this).val());
+                }
+            });
+        }
     }
 
 </script>

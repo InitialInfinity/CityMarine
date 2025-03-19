@@ -64,6 +64,19 @@ namespace ibillcraft.Controllers
             ViewBag.year = gerootObject;
 
 
+            if (tab == "claim")
+            {
+                string claimnourl = $"{_httpClient.BaseAddress}/InboxClient/dropdownclaimno?UserId={UserId}&ic_to={email}&ic_type={tab}";
+                HttpResponseMessage claimnoresponseView = _httpClient.GetAsync(claimnourl).Result;
+                dynamic claimnodata = claimnoresponseView.Content.ReadAsStringAsync().Result;
+                var claimResponse = JsonConvert.DeserializeObject<InboxClientModel>(claimnodata);
+                ViewBag.claimno = claimResponse.Data;
+            }
+            else
+            {
+                ViewBag.claimno = "";
+            }
+
             var sentclientDataList = new List<SentClientModel>();
             var sentclientList = new List<SentClientModel>();
             string sentclienturl = $"{_httpClient.BaseAddress}/SentClient/GetAll?UserId={UserId}&sc_to={email}&sc_type={tab}";
@@ -110,6 +123,19 @@ namespace ibillcraft.Controllers
             var rootObject = JsonConvert.DeserializeObject<List<FillDropdown>>(data1);
             ViewBag.customer = rootObject;
 
+            ViewBag.claimno = "";
+            if (tab == "claim")
+            {
+                string claimnourl = $"{_httpClient.BaseAddress}/InboxClient/dropdownclaimno?UserId={UserId}&ic_from={email}&ic_type={tab}";
+                HttpResponseMessage claimnoresponseView = _httpClient.GetAsync(claimnourl).Result;
+                dynamic claimnodata = claimnoresponseView.Content.ReadAsStringAsync().Result;
+                var claimResponse = JsonConvert.DeserializeObject<InboxClientModel>(claimnodata);
+                ViewBag.claimno = claimResponse.Data;
+            }
+            else
+            {
+                ViewBag.claimno = "";
+            }
 
             var sentclientDataList = new List<SentClientModel>();
             var sentclientList = new List<SentClientModel>();
@@ -138,17 +164,18 @@ namespace ibillcraft.Controllers
             return Json(sentclientDataList);
         }
 
-        public JsonResult fetchdetails(string? sc_year, string? sc_from,string? tab)
+        public JsonResult FetchAttachments(string? tab, string? sc_year, string sc_from)
         {
             GetCookies gk = new GetCookies();
-            CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);         
+            CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
 
             ViewBag.Format = CUtility.format;
-            Guid? UserId = new Guid(CUtility.comid);
+            Guid? UserId = new Guid(CUtility.userid);
+
 
             var sentclientDataList = new List<SentClientModel>();
             var sentclientList = new List<SentClientModel>();
-            string sentclienturl = $"{_httpClient.BaseAddress}/SentClient/GetDetails?UserId={UserId}&sc_year={sc_year}&sc_from={sc_from}&sc_type={tab}";
+            string sentclienturl = $"{_httpClient.BaseAddress}/SentClient/GetAllAttchment?UserId={UserId}&sc_year={sc_year}&sc_type={tab}&sc_from={sc_from}";
             HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
             if (response.IsSuccessStatusCode)
             {
@@ -169,6 +196,67 @@ namespace ibillcraft.Controllers
                 }
             }
             return Json(sentclientDataList);
+        }
+
+        public JsonResult fetchdetails(string? sc_year, string? sc_to,string? tab)
+        {
+            GetCookies gk = new GetCookies();
+            CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);         
+
+            ViewBag.Format = CUtility.format;
+            Guid? UserId = new Guid(CUtility.comid);
+
+            ViewBag.claimno = "";
+
+            if (tab == "claim")
+            {
+                string claimnourl = $"{_httpClient.BaseAddress}/SentClient/dropdownclaimno?UserId={UserId}&sc_to={sc_to}&sc_type={tab}";
+                HttpResponseMessage claimnoresponseView = _httpClient.GetAsync(claimnourl).Result;
+                dynamic claimnodata = claimnoresponseView.Content.ReadAsStringAsync().Result;
+                var claimResponse = JsonConvert.DeserializeObject<InboxClientModel>(claimnodata);
+                ViewBag.claimno = claimResponse.Data;
+            }
+
+            var sentclientDataList = new List<SentClientModel>();
+            var sentclientList = new List<SentClientModel>();
+            string sentclienturl = $"{_httpClient.BaseAddress}/SentClient/GetDetails?UserId={UserId}&sc_year={sc_year}&sc_to={sc_to}&sc_type={tab}";
+            HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                dynamic data = response.Content.ReadAsStringAsync().Result;
+                var dataObject = new { data = new List<SentClientModel>() };
+                var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
+                sentclientList = response2.data;
+                //ViewBag.sc_to = sentclientList.sc_to;
+
+                return Json(new
+                {
+                    sentclientList = sentclientList,
+                    claimno = ViewBag.claimno
+                });
+            }
+            //return Json(sentclientDataList);
+            return Json(new
+            {
+                sentclientList = sentclientList,
+                claimno = ViewBag.claimno
+            });
+        }
+
+        public async Task<IActionResult> Claimnoassign(string? sc_year, string? sc_from, string? tab)
+        {
+            GetCookies gk = new GetCookies();
+            CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
+            ViewBag.Format = CUtility.format;
+            Guid? UserId = new Guid(CUtility.userid);
+
+            string claimnourl = $"{_httpClient.BaseAddress}/SentClient/dropdownclaimno?UserId={UserId}&sc_from={sc_from}&sc_type={tab}";
+            HttpResponseMessage claimnoresponseView = await _httpClient.GetAsync(claimnourl);
+
+            dynamic claimnodata = await claimnoresponseView.Content.ReadAsStringAsync();
+            var claimResponse = JsonConvert.DeserializeObject<SentClientModel>(claimnodata);
+            ViewBag.claimno = claimResponse.Data; // Get claim data to return
+            return View();
         }
 
         public JsonResult showdetails(string id)
@@ -415,6 +503,39 @@ namespace ibillcraft.Controllers
             var sentclientDataList = new List<SentClientModel>();
             var sentclientList = new List<SentClientModel>();
             string sentclienturl = $"{_httpClient.BaseAddress}/SentClient/Clientchange1?UserId={UserId}&clientid={clientid}&sc_type={tab}&sc_year={year}";
+            HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                dynamic data = response.Content.ReadAsStringAsync().Result;
+                var dataObject = new { data = new List<SentClientModel>() };
+                var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
+                sentclientList = response2.data;
+
+                if (sentclientList != null)
+                {
+                    return Json(sentclientList);
+                }
+                else
+                {
+                    var sentclientList1 = new List<SentClientModel>();
+                    return Json(sentclientList1);
+                }
+            }
+            return Json(sentclientDataList);
+        }
+
+        public JsonResult ClaimNo(string? clientid, string? tab, string? year, string? claim)
+        {
+
+            GetCookies gk = new GetCookies();
+            CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
+
+            ViewBag.Format = CUtility.format;
+            Guid? UserId = new Guid(CUtility.userid);
+
+            var sentclientDataList = new List<SentClientModel>();
+            var sentclientList = new List<SentClientModel>();
+            string sentclienturl = $"{_httpClient.BaseAddress}/SentClient/ClaimNo?UserId={UserId}&clientid={clientid}&sc_type={tab}&sc_year={year}&sc_claimno={claim}";
             HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
             if (response.IsSuccessStatusCode)
             {

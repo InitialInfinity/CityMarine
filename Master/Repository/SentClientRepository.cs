@@ -115,6 +115,7 @@ namespace Master.Repository
             parameters.Add("@sc_type", user.sc_type, DbType.String);
             parameters.Add("@sc_attachment", user.sc_attachment, DbType.String);
             parameters.Add("@sc_sentdate", user.sc_sentdate, DbType.String);
+            parameters.Add("@sc_claimno", user.sc_claimno, DbType.String);
             parameters.Add("@OutcomeId", dbType: DbType.Int32, direction: ParameterDirection.Output);
             parameters.Add("@OutcomeDetail", dbType: DbType.String, size: 4000, direction: ParameterDirection.Output);
             return parameters;

@@ -17,5 +17,6 @@ namespace Master.Entity
         public string? sc_subject { get; set; }
         public string? sc_type { get; set; }
         public string? clientid { get; set; }
+        public string? sc_claimno { get; set; }
     }
 }

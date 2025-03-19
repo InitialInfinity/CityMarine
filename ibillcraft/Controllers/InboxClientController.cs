@@ -401,8 +401,8 @@ namespace ibillcraft.Controllers
             return Json(sentclientDataList);
         }
 
-        public JsonResult filter(string? from, string? to, string? subject, string? hasthewords, string year, string? tab)
-        {
+        public JsonResult filter(string from, string to, string subject, string hasthewords, string year, string? tab)
+        {          
             GetCookies gk = new GetCookies();
             CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
 
@@ -411,7 +411,8 @@ namespace ibillcraft.Controllers
             Guid? UserId = new Guid(CUtility.userid);
             var sentemailDataList = new List<InboxClientModel>();
             var sentemailList = new List<InboxClientModel>();
-            string sentemailurl = $"{_httpClient.BaseAddress}/InboxClient/GetEmail?UserId={UserId}&from={from}&to={to}&subject={subject}&hasthewords={hasthewords}&sc_year={year}&type={tab}";
+
+            string sentemailurl = $"{_httpClient.BaseAddress}/InboxClient/GetEmail?UserId={UserId}&from={from}&to={to}&subject={subject}&hasthewords={hasthewords}&ic_year={year}&type={tab}";
             HttpResponseMessage response = _httpClient.GetAsync(sentemailurl).Result;
             if (response.IsSuccessStatusCode)
             {

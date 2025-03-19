@@ -170,7 +170,7 @@ namespace Master.Controllers
         }
 
         [HttpGet("GetEmail")]
-        public async Task<IActionResult> GetEmail(Guid UserId, string? from, string? to, string? subject, string? hasthewords, string ic_year, string type)
+        public async Task<IActionResult> GetEmail(Guid UserId, string from,string to, string subject, string hasthewords, string ic_year, string type)
         {
             try
             {
@@ -178,8 +178,8 @@ namespace Master.Controllers
                 user.UserId = UserId;
                 user.ic_from = from;
                 user.ic_to = to;
-                user.ic_subject = subject;
-                user.ic_body = hasthewords;
+               user.ic_subject = subject;
+               user.ic_body = hasthewords;
                 user.ic_year = ic_year;
                 user.ic_type = type;
                 if (user.BaseModel == null)

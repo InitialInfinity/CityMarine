@@ -24,13 +24,13 @@ namespace Master.Controllers
         }
 
         [HttpGet("GetAll")]
-        public async Task<IActionResult> GetAll(Guid UserId, string sc_from,string sc_type)
+        public async Task<IActionResult> GetAll(Guid UserId, string sc_to,string sc_type)
         {
             try
             {
                 SentClientModel user = new SentClientModel();
                 user.UserId = UserId;
-                user.sc_from = sc_from;
+                user.sc_to = sc_to;
                 user.sc_type = sc_type;
                 if (user.BaseModel == null)
                 {
@@ -47,8 +47,8 @@ namespace Master.Controllers
             }
         }
 
-        [HttpGet("GetDetails")]
-        public async Task<IActionResult> GetDetails(Guid UserId, string sc_year,string sc_from, string sc_type)
+        [HttpGet("GetAllAttchment")]
+        public async Task<IActionResult> GetAllAttchment(Guid UserId, string sc_type, string sc_year, string sc_from)
         {
             try
             {
@@ -56,6 +56,31 @@ namespace Master.Controllers
                 user.UserId = UserId;
                 user.sc_year = sc_year;
                 user.sc_from = sc_from;
+                user.sc_type = sc_type;
+                if (user.BaseModel == null)
+                {
+                    user.BaseModel = new BaseModel();
+                }
+                user.BaseModel.OperationType = "GetAllAttchment";
+                var createduser = await _sentclient.SentClient(user);
+                var data = ((Microsoft.AspNetCore.Mvc.ObjectResult)createduser).Value;
+                return Ok(data);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [HttpGet("GetDetails")]
+        public async Task<IActionResult> GetDetails(Guid UserId, string sc_year,string sc_to, string sc_type)
+        {
+            try
+            {
+                SentClientModel user = new SentClientModel();
+                user.UserId = UserId;
+                user.sc_year = sc_year;
+                user.sc_to = sc_to;
                 user.sc_type=sc_type;
                 if (user.BaseModel == null)
                 {
@@ -183,6 +208,60 @@ namespace Master.Controllers
                     user.BaseModel = new BaseModel();
                 }
                 user.BaseModel.OperationType = "Generalcount";
+                var createduser = await _sentclient.SentClient(user);
+                var data = ((Microsoft.AspNetCore.Mvc.ObjectResult)createduser).Value;
+                return Ok(data);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [HttpGet("ClaimNo")]
+        public async Task<IActionResult> ClaimNo(Guid UserId, string clientid, string sc_type, string sc_year, string sc_claimno)
+        {
+            try
+            {
+                SentClientModel user = new SentClientModel();
+                user.UserId = UserId;
+                user.clientid = clientid;
+                user.sc_type = sc_type;
+                user.sc_year = sc_year;
+                if (sc_claimno == "--Select Claim No--")
+                {
+                    sc_claimno = "";
+                }
+                user.sc_claimno = sc_claimno;
+                if (user.BaseModel == null)
+                {
+                    user.BaseModel = new BaseModel();
+                }
+                user.BaseModel.OperationType = "ClaimNo";
+                var createduser = await _sentclient.SentClient(user);
+                var data = ((Microsoft.AspNetCore.Mvc.ObjectResult)createduser).Value;
+                return Ok(data);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [HttpGet("dropdownclaimno")]
+        public async Task<IActionResult> dropdownclaimno(Guid UserId, string sc_to, string sc_type)
+        {
+            try
+            {
+                SentClientModel user = new SentClientModel();
+                user.UserId = UserId;
+                user.sc_to = sc_to;
+                user.sc_type = sc_type;
+                if (user.BaseModel == null)
+                {
+                    user.BaseModel = new BaseModel();
+                }
+                user.BaseModel.OperationType = "dropdownClaimNo";
                 var createduser = await _sentclient.SentClient(user);
                 var data = ((Microsoft.AspNetCore.Mvc.ObjectResult)createduser).Value;
                 return Ok(data);

@@ -80,7 +80,7 @@
             <div class="col">
                 <h2 class="m-0 font-weight-bold text-primary">@Localizer["Sent"]</h2>
             </div>
-            <div class="col-md-2 justify-content-lg-end justify-content-md-end justify-content-center mt-lg-0 mt-md-0 mt-3">
+            <div class="col-md-2 justify-content-lg-end justify-content-md-end justify-content-center mt-lg-0 mt-md-0 mt-3" style="display:none">
                 <input type="text" id="custom-search" class="form-control" placeholder="@Localizer["Search"]" />
             </div>
             <div class="col-auto d-flex flex-wrap toggle">
@@ -426,8 +426,8 @@
                         <tr>
                             <td>@itemNumber</td>
                             <td>
-                                <a href="/SentClient?email=@item.s_from&client=@item.s_fromname&tab=@item.s_type" class="text-primary">
-                                    @Html.DisplayFor(modelItem => item.s_fromname)
+                                <a href="/SentClient?email=@item.s_to&client=@item.s_toname&tab=@item.s_type" class="text-primary">
+                                    @Html.DisplayFor(modelItem => item.s_toname)
                                 </a>
                             </td>
                             <td>
@@ -523,8 +523,8 @@
                 for (var i = 0; i < response.length; i++) {
                     htmltab += '<tr>';
                     htmltab += '<td>' + (i + 1) + '</td>';
-                    let s_from = response[i].s_from.trim();
-                    htmltab += '<td><a href="/SentClient?email=' + response[i].s_from + '&client=' + response[i].s_fromname + '&tab=' + tab + '">' + response[i].s_fromname + '</a></td>';
+                    let s_to = response[i].s_to.trim();
+                    htmltab += '<td><a href="/SentClient?email=' + response[i].s_to + '&client=' + response[i].s_toname + '&tab=' + tab + '">' + response[i].s_toname + '</a></td>';
                     htmltab += '<td>' + response[i].s_sentdate + '</td>';
                     htmltab += '</tr>';
                 }
@@ -567,8 +567,8 @@
                 for (var i = 0; i < response.length; i++) {
                     htmltab += '<tr>';
                     htmltab += '<td>' + (i + 1) + '</td>'; // Serial number
-                    let s_from = response[i].s_from.trim();
-                    htmltab += '<td><a href="/SentClient?email=' + response[i].s_from + '&client=' + response[i].s_fromname + '&tab=' + tab + '">' + response[i].s_fromname + '</a></td>';
+                    let s_to = response[i].s_to.trim();
+                    htmltab += '<td><a href="/SentClient?email=' + response[i].s_to + '&client=' + response[i].s_toname + '&tab=' + tab + '">' + response[i].s_toname + '</a></td>';
                     htmltab += '<td>' + response[i].s_attachment + '</td>';
                     htmltab += '<td>' + response[i].s_sentdate + '</td>';
                     htmltab += '</tr>';
@@ -608,8 +608,8 @@
                 for (var i = 0; i < response.length; i++) {
                     htmltab += '<tr>';
                     htmltab += '<td>' + (i + 1) + '</td>'; // Serial number
-                    let s_from = response[i].s_from.trim();
-                    htmltab += '<td><a href="/SentClient?email=' + response[i].s_from + '&client=' + response[i].s_fromname + '&tab=' + tab + '">' + response[i].s_fromname + '</a></td>';
+                    let s_to = response[i].s_to.trim();
+                    htmltab += '<td><a href="/SentClient?email=' + response[i].s_to + '&client=' + response[i].s_toname + '&tab=' + tab + '">' + response[i].s_toname + '</a></td>';
                     htmltab += '<td>' + response[i].s_attachment + '</td>';
                     htmltab += '<td>' + response[i].s_sentdate + '</td>';
                     htmltab += '</tr>';
