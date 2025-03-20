@@ -1008,12 +1008,7 @@
     }
 
     function submitfilter() {
-        $("#addfilter").modal("hide");
-        var from = $('#i_from').val();
-        var to = $('#i_to').val();
-        var subject = $('#i_subject').val();
-        var hasthewords = $('#i_hasthewords').val();
-        var tab = $('#i_tab').val();
+       
 
 
         $('#enquiry-tab').attr('aria-selected', 'false');
@@ -1034,6 +1029,16 @@
         if (tab == 'client') {
             tab = "insurance";
         }
+
+        $("#addfilter").modal("hide");
+        var from = $('#i_from').val();
+        var to = $('#i_to').val();
+        var subject = $('#i_subject').val();
+        var hasthewords = $('#i_hasthewords').val();
+        var tab = $('#i_tab').val();
+
+        $('#client-tab').attr('aria-selected', 'true');
+        $('#client-tab').attr('class', 'nav-link active');
 
         if (tab != 'general') {
             var data = {
@@ -1074,9 +1079,19 @@
                     console.error('Error:', error);
                 }
             });
+             $('#i_from').val('');
+             $('#i_to').val('');
+            $('#i_subject').val('');
+             $('#i_hasthewords').val('');
+            $('#i_tab').val('');
 
         }
         else {
+            $('#typetab').css('display', 'content');
+
+
+            $('#general-tab').attr('aria-selected', 'true');
+            $('#general-tab').attr('class', 'nav-link active');
 
             var data = {
                 from: from,
@@ -1131,7 +1146,11 @@
                     console.error('Error:', error);
                 }
             });
-
+            $('#i_from').val('');
+            $('#i_to').val('');
+            $('#i_subject').val('');
+            $('#i_hasthewords').val('');
+            $('#i_tab').val('');
         }
     }
 

@@ -169,7 +169,7 @@ namespace Master.Controllers
         }
 
         [HttpGet("GetEmail")]
-        public async Task<IActionResult> GetEmail(Guid UserId, string? from, string? to, string? subject, string? hasthewords, string sc_year,string type)
+        public async Task<IActionResult> GetEmail(Guid? UserId, string? from, string? to, string? subject, string? hasthewords, string? sc_year,string? type)
         {
             try
             {

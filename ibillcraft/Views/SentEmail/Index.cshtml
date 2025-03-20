@@ -89,7 +89,7 @@
                     <i class="fa-solid fa-filter"></i>
                 </button>
             </div>
-            <div class="col-auto d-flex flex-wrap toggle" style="display:none">
+           @*  <div class="col-auto d-flex flex-wrap toggle" style="display:none">
                 <a class="btn btn-md text-light float-end bg-success mt-3 mt-lg-0 mt-md-0 ml-2" asp-action="Index" asp-controller="SentEmail"
                    title="Sync" type="button">
                     <i class="fas fa-sync-alt" style="font-size:18px"></i>
@@ -97,7 +97,7 @@
 
 
 
-            </div>
+            </div> *@
 
         </div>
     </div>
@@ -959,12 +959,7 @@
         $("#addfilter").modal("show");
     }
     function submitfilter() {
-        $("#addfilter").modal("hide");
-        var from = $('#s_from').val();
-        var to = $('#s_to').val();
-        var subject = $('#s_subject').val();
-        var hasthewords = $('#s_hasthewords').val();
-        var tab = $('#s_tab').val();
+      
 
 
         $('#enquiry-tab').attr('aria-selected', 'false');
@@ -985,6 +980,16 @@
         if (tab == 'client') {
             tab = "insurance";
         }
+
+        $("#addfilter").modal("hide");
+        var from = $('#s_from').val();
+        var to = $('#s_to').val();
+        var subject = $('#s_subject').val();
+        var hasthewords = $('#s_hasthewords').val();
+        var tab = $('#s_tab').val();
+
+           $('#client-tab').attr('aria-selected', 'true');
+        $('#client-tab').attr('class', 'nav-link active');
 
         if (tab != 'general') {
             var data = {
@@ -1010,8 +1015,8 @@
                     for (var i = 0; i < response.length; i++) {
                         htmltab += '<tr>';
                         htmltab += '<td>' + (i + 1) + '</td>'; // Serial number
-                        let s_from = response[i].s_from.trim();
-                        htmltab += '<td><a href="/SentClient?email=' + response[i].s_from + '&client=' + response[i].s_fromname + '&tab=' + tab + '">' + response[i].s_fromname + '</a></td>';
+                        let s_to = response[i].s_to.trim();
+                        htmltab += '<td><a href="/SentClient?email=' + response[i].s_to + '&client=' + response[i].s_toname + '&tab=' + tab + '">' + response[i].s_toname + '</a></td>';
                         htmltab += '<td>' + response[i].s_sentdate + '</td>';
                         htmltab += '</tr>';
                     }
@@ -1025,9 +1030,16 @@
                     console.error('Error:', error);
                 }
             });
-
+            $('#s_from').val('');
+            $('#s_to').val('');
+            $('#s_subject').val('');
+            $('#s_hasthewords').val('');
+            $('#s_tab').val('');
         }
         else {
+            $('#typetab').css('display', 'content');
+            $('#general-tab').attr('aria-selected', 'true');
+            $('#general-tab').attr('class', 'nav-link active');
 
             var data = {
                 from: from,
@@ -1053,7 +1065,7 @@
                         htmltab += '<tr>';
                         htmltab += '<td style="width:6%"  onclick="inboxmsg(' + response[i].s_id + ')">' + (i + 1) + '</td>'; // Serial number
                         let s_from = response[i].s_from.trim();
-                        htmltab += '<td style="width:12%"  onclick="inboxmsg(' + response[i].s_id + ')">' + response[i].s_fromname + '</a></td>';
+                        htmltab += '<td style="width:12%"  onclick="inboxmsg(' + response[i].s_id + ')">' + response[i].s_from + '</a></td>';
                         htmltab += '<td style="width:12%"  onclick="inboxmsg(' + response[i].s_id + ')">' + response[i].s_to + '</a></td>';
                         htmltab += '<td style="width:10%"  onclick="inboxmsg(' + response[i].s_id + ')">' + response[i].s_subject + '</td>';
 
@@ -1078,7 +1090,11 @@
                     console.error('Error:', error);
                 }
             });
-
+            $('#s_from').val('');
+            $('#s_to').val('');
+            $('#s_subject').val('');
+            $('#s_hasthewords').val('');
+            $('#s_tab').val('');
         }
     }
 

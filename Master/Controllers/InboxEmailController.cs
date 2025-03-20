@@ -46,7 +46,7 @@ namespace Master.Controllers
         }
 
         [HttpGet("GetEmail")]
-        public async Task<IActionResult> GetEmail(Guid UserId, string? from, string? to, string? subject, string? hasthewords, string type)
+        public async Task<IActionResult> GetEmail(Guid? UserId, string? from, string? to, string? subject, string? hasthewords, string? type)
         {
             try
             {
@@ -121,7 +121,7 @@ namespace Master.Controllers
         }
 
         [HttpGet("Generalfilter")]
-        public async Task<IActionResult> Generalfilter(Guid UserId, string? from, string? to, string? subject, string? hasthewords, string type)
+        public async Task<IActionResult> Generalfilter(Guid? UserId, string? from, string? to, string? subject, string? hasthewords, string? type)
         {
             try
             {
