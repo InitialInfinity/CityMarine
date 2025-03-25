@@ -220,7 +220,7 @@
                 </a>
 
             </div>
-            <div class="col-md-2 justify-content-lg-end justify-content-md-end justify-content-center mt-lg-0 mt-md-0 mt-3" style="display:none">
+            <div class="col-md-2 justify-content-lg-end justify-content-md-end justify-content-center mt-lg-0 mt-md-0 mt-3">
                 <input type="text" id="custom-search" class="form-control" placeholder="@Localizer["Search"]" />
             </div>
 
@@ -688,6 +688,8 @@
     </div>
 </div>
 
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 
     // $(document).ready(function () {
@@ -700,6 +702,15 @@
     // $('#table_length_select').change();
 
     $(document).ready(function () {
+
+         $("#custom-search").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+
+            $("#detailsTableBody tr, #detailsTableBody1 tr, #attachTableBody tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+            });
+        });
+
         // Extract URL parameters
         var urlParams = new URLSearchParams(window.location.search);
         var client = urlParams.get('client');

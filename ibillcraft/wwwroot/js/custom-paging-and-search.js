@@ -82,6 +82,7 @@ function myFunction() {
 
 
             }
+
         });
 
         //remove search
@@ -89,17 +90,15 @@ function myFunction() {
         //$('#table_id_filter').remove();
         //$('.dataTables_length').css("display", "none");
 
-
-
-
-
+      
 
         // Custom search functionality
 
         $('#custom-search').on('keyup', function () {
             table.search(this.value).draw();
         });
-        
+
+
 
     }
 }

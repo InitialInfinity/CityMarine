@@ -80,7 +80,7 @@
             <div class="col">
                 <h2 class="m-0 font-weight-bold text-primary">@Localizer["Inbox"]</h2>
             </div>
-            <div class="col-md-2 justify-content-lg-end justify-content-md-end justify-content-center mt-lg-0 mt-md-0 mt-3" style="display:none">
+            <div class="col-md-2 justify-content-lg-end justify-content-md-end justify-content-center mt-lg-0 mt-md-0 mt-3">
                 <input type="text" id="custom-search" class="form-control" placeholder="@Localizer["Search"]" />
             </div>
             <div class="col-auto d-flex flex-wrap toggle">
@@ -127,14 +127,14 @@
     </ul>
 
     @* <div id="typetab" style="display:none">
-        <div class="col-lg-1 col-md-1">
-            <label for="name" class="form-label float-lg-end">@Localizer["Type"]:</label>
-        </div>
-        <div class="col-lg-2 col-md-2">
-            <select id="typedropdown" class="form-select" placeholder="select type" asp-items="@(new SelectList(ViewBag.type,"Id","Value"))" onchange="return typechange()">
-                <option value="">--Select--</option>
-            </select>
-        </div>
+    <div class="col-lg-1 col-md-1">
+    <label for="name" class="form-label float-lg-end">@Localizer["Type"]:</label>
+    </div>
+    <div class="col-lg-2 col-md-2">
+    <select id="typedropdown" class="form-select" placeholder="select type" asp-items="@(new SelectList(ViewBag.type,"Id","Value"))" onchange="return typechange()">
+    <option value="">--Select--</option>
+    </select>
+    </div>
     </div> *@
 
 
@@ -424,7 +424,6 @@
                 <thead id="tabhead1" style="display:none">
                     <tr>
 
-
                         <th style="width:6%">Sr.No</th>
                         <th style="display:none">Id</th>
                         <th style="width: 12%">From</th>
@@ -499,17 +498,26 @@
         <!-- end Pagination-->
     </div>
 </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {
-        $('#dataTable').DataTable();
+        //  $('#dataTable1').DataTable();
+
+         $("#custom-search").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#tabtable tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+            });
+        });
 
         var url = window.location.href;
         var urlParams = new URLSearchParams(window.location.search);
-        var tab = urlParams.get('tab');
+        var tab = urlParams.get('tab');       
 
     });
     myFunction();
-    $('#table_length_select').change();
+    $('#table_length_select').change();  
+
 
     function Cancel() {
         $("#addSubscription").modal("hide");
@@ -745,17 +753,17 @@
                                 const safeAttachmentPath = encodeURIComponent(attachmentPath); // Encode for safety
 
                                 attachmentHTML += `
-                            <div class="attachments" style="margin: 8px 0;">
-                                <!-- Button for filename -->
-                                <button style="display: inline-block; padding: 8px; margin-right: 8px;" title="${fileName}">
-                                    ${fileName}
-                                </button>
-                                <!-- Button for download -->
-                                <button style="display: inline-block; height: 42px; width: auto;"
-                                        onclick="downloadFile('${safeAttachmentPath}')">
-                                    <i class="fa-solid fa-chevron-down" style="font-size: 16px; color: black;"></i>
-                                </button>
-                            </div>`;
+                                    <div class="attachments" style="margin: 8px 0;">
+                                        <!-- Button for filename -->
+                                        <button style="display: inline-block; padding: 8px; margin-right: 8px;" title="${fileName}">
+                                            ${fileName}
+                                        </button>
+                                        <!-- Button for download -->
+                                        <button style="display: inline-block; height: 42px; width: auto;"
+                                                onclick="downloadFile('${safeAttachmentPath}')">
+                                            <i class="fa-solid fa-chevron-down" style="font-size: 16px; color: black;"></i>
+                                        </button>
+                                    </div>`;
                             });
 
                             // Inject into the DOM
@@ -1008,7 +1016,7 @@
     }
 
     function submitfilter() {
-       
+
 
 
         $('#enquiry-tab').attr('aria-selected', 'false');
@@ -1079,10 +1087,10 @@
                     console.error('Error:', error);
                 }
             });
-             $('#i_from').val('');
-             $('#i_to').val('');
+            $('#i_from').val('');
+            $('#i_to').val('');
             $('#i_subject').val('');
-             $('#i_hasthewords').val('');
+            $('#i_hasthewords').val('');
             $('#i_tab').val('');
 
         }
