@@ -524,6 +524,7 @@
     }
 
     function clienttab() {
+        $('#custom-search').val('');
         $('#typetab').css('display', 'none');
         var tab = "Insurance";
         $('#enquiry-tab').attr('aria-selected', 'false');
@@ -657,6 +658,7 @@
 
     function generaltab() {
         var tab = "General";
+        $('#custom-search').val('');
 
         $('#typetab').css('display', 'flex');
         $('#enquiry-tab').attr('aria-selected', 'false');
