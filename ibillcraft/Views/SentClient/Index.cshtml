@@ -352,6 +352,7 @@
                             <th style="width:0%">Sr.No</th>
                             <th style="display:none">Id</th>
                             <th style="width: 4%">Attachment</th>
+                            <th style="width: 4%">Date</th>
                             <td style="width: 6%">Download</td>
                         </tr>
                     </thead>
@@ -806,7 +807,7 @@
                     htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].sc_id + ')">' + response.sentclientList[i].sc_sentdate + '</td>';
                     //   htmltab += '<td style="display:none">' + response[i].sc_attachment + '</td>';
 
-                    if (response.sentclientList[i].sc_attachment != "No attachments available.") {
+                    if (response.sentclientList[i].sc_attachment != "No attachments available." && response.sentclientList[i].sc_attachment != null) {
                         htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
                     }
                     else {
@@ -861,7 +862,7 @@
 
 
                     //if (response.sc_attachment != "" ) {
-                    if (response.sc_attachment != "No attachments available." || response.sc_attachment != null) {
+                    if (response.sc_attachment != "No attachments available." && response.sc_attachment != null) {
                         // const fileName = response.sc_attachment.split(/[/\\]/).pop();
                         // $('#filename').text(fileName);
 
@@ -1216,7 +1217,7 @@
                         htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + response[i].sc_sentdate + '</td>';
                         //  htmltab += '<td style="display:none">' + response[i].sc_attachment + '</td>';
 
-                        if (response[i].sc_attachment != "No attachments available." || response[i].sc_attachment != null) {
+                        if (response[i].sc_attachment != "No attachments available." && response[i].sc_attachment != null) {
                             htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
                         }
                         else {
@@ -1275,7 +1276,7 @@
                         htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + response[i].sc_sentdate + '</td>';
                         //  htmltab += '<td style="display:none">' + response[i].sc_attachment + '</td>';
 
-                        if (response[i].sc_attachment != "No attachments available." || response[i].sc_attachment != null) {
+                        if (response[i].sc_attachment != "No attachments available." && response[i].sc_attachment != null) {
                             htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
                         }
                         else {
@@ -1469,7 +1470,7 @@
                     htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].sc_id + ')">' + response.sentclientList[i].sc_subject + '</td>';
                     htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].sc_id + ')">' + response.sentclientList[i].sc_sentdate + '</td>';
                     //htmltab += '<td style="display:none">' + response[i].sc_attachment + '</td>';
-                    if (response.sentclientList[i].sc_attachment != "No attachments available." || response.sentclientList[i].sc_attachment != null) {
+                    if (response.sentclientList[i].sc_attachment != "No attachments available." && response.sentclientList[i].sc_attachment != null) {
                         htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
                     }
                     else {
@@ -1556,7 +1557,7 @@
                     htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].sc_id + ')">' + response.sentclientList[i].sc_subject + '</td>';
                     htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].sc_id + ')">' + response.sentclientList[i].sc_sentdate + '</td>';
                     ///  htmltab += '<td style="display:none">' + response[i].sc_attachment + '</td>';
-                    if (response.sentclientList[i].sc_attachment != "No attachments available." || response.sentclientList[i].sc_attachment != null) {
+                    if (response.sentclientList[i].sc_attachment != "No attachments available." && response.sentclientList[i].sc_attachment != null) {
                         htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
                     }
                     else {
@@ -1653,6 +1654,7 @@
                     htmltab += '<td style="display:none">' + response[i].sc_id + '</td>';
 
                     htmltab += '<td >' + response[i].sc_attachment + '</td>';
+                    htmltab += '<td >' + response[i].sc_sentdate + '</td>';
 
                     //htmltab += '<td><i class="fas fa-download text-primary" onclick="downloadFile(' + response[i].icc_attachment + ')" ></i></td>';
 
@@ -1743,6 +1745,7 @@
                     htmltab += '<td style="display:none">' + response[i].sc_id + '</td>';
 
                     htmltab += '<td >' + response[i].sc_attachment + '</td>';
+                    htmltab += '<td >' + response[i].sc_sentdate + '</td>';
 
                     //htmltab += '<td><i class="fas fa-download text-primary" onclick="downloadFile(' + response[i].icc_attachment + ')" ></i></td>';
 
@@ -1880,7 +1883,7 @@
                         htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + response[i].sc_subject + '</td>';
                         htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + response[i].sc_sentdate + '</td>';
                         //htmltab += '<td style="display:none">' + response[i].sc_attachment + '</td>';
-                        if (response[i].sc_attachment != "No attachments available.") {
+                        if (response[i].sc_attachment != "No attachments available." && response[i].sc_attachment != null) {
                             htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
                         }
                         else {
@@ -1943,7 +1946,7 @@
                         htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + response[i].sc_subject + '</td>';
                         htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + response[i].sc_sentdate + '</td>';
                         //htmltab += '<td style="display:none">' + response[i].sc_attachment + '</td>';
-                        if (response[i].sc_attachment != "No attachments available." || response[i].sc_attachment != null) {
+                        if (response[i].sc_attachment != "No attachments available." && response[i].sc_attachment != null) {
                             htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
                         }
                         else {
@@ -2039,7 +2042,7 @@
                         htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + response[i].sc_sentdate + '</td>';
                         // htmltab += '<td >' + response[i].ic_attachment + '</td>';
 
-                        if (response[i].sc_attachment != "No attachments available." || response[i].sc_attachment != null) {
+                        if (response[i].sc_attachment != "No attachments available." && response[i].sc_attachment != null) {
                             htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
                         }
                         else {
@@ -2097,7 +2100,7 @@
                         htmltab += '<td onclick="inboxmsg(' + response[i].sc_id + ')">' + response[i].sc_receiveddate + '</td>';
                         // htmltab += '<td >' + response[i].ic_attachment + '</td>';
 
-                        if (response[i].sc_attachment != "No attachments available." || response[i].sc_attachment != null) {
+                        if (response[i].sc_attachment != "No attachments available." && response[i].sc_attachment != null) {
                             htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
                         }
                         else {

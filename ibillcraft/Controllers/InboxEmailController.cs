@@ -620,7 +620,7 @@ namespace ibillcraft.Controllers
 
                     }
                 }
-                string vemail = "EMS@Citymarinebrokers.com";
+               // string vemail = "EMS@Citymarinebrokers.com";
                 using (var httpClient = new HttpClient())
                 {
                     // Set the Authorization header
@@ -729,9 +729,9 @@ namespace ibillcraft.Controllers
 
 
 
-                              //  DateTime startDateTime = DateTime.ParseExact(time, "MM/dd/yy h:mm:ss tt", CultureInfo.InvariantCulture);
+                              // DateTime startDateTime = DateTime.ParseExact(time, "MM/dd/yy h:mm:ss tt", CultureInfo.InvariantCulture);
 
-                                  DateTime startDateTime = DateTime.ParseExact(time, "M/d/yyyy h:mm:ss tt", CultureInfo.InvariantCulture);
+                                 DateTime startDateTime = DateTime.ParseExact(time, "M/d/yyyy h:mm:ss tt", CultureInfo.InvariantCulture);
 
                                 //DateTime currentDateTime = DateTime.UtcNow.AddHours(-5).AddMinutes(-30);// Get the current UTC time
 
@@ -1015,6 +1015,7 @@ namespace ibillcraft.Controllers
                                 }
 
                                 DateTime startDateTime = DateTime.ParseExact(time, "M/d/yyyy h:mm:ss tt", CultureInfo.InvariantCulture);
+                                //DateTime startDateTime = DateTime.ParseExact(time, "MM/dd/yy h:mm:ss tt", CultureInfo.InvariantCulture);
 
                                 //DateTime currentDateTime = DateTime.UtcNow.AddHours(-5).AddMinutes(-30);// Get the current UTC time
 
@@ -1459,12 +1460,28 @@ namespace ibillcraft.Controllers
                 }
 
 
-                string query2 = @"SELECT COUNT(*) FROM [dbo].[tbl_customermaster] WHERE SUBSTRING(c_email, CHARINDEX('@', c_email) + 1, LEN(c_email)) = @Email";
+                //string query2 = @"SELECT COUNT(*) FROM [dbo].[tbl_customermaster] WHERE SUBSTRING(c_email, CHARINDEX('@', c_email) + 1, LEN(c_email)) = @Email";
 
-                // string domain = from.Substring(from.IndexOf('@') + 1);
+                //// string domain = from.Substring(from.IndexOf('@') + 1);
+                //using (SqlCommand cmd2 = new SqlCommand(query2, conn))
+                //{
+                //    cmd2.Parameters.AddWithValue("@Email", from);
+
+                //    // Execute the query and get the count
+                //    int count = (int)cmd2.ExecuteScalar();
+
+                //    if (count == 0)
+                //    {
+                //        sType = "General";
+                //    }
+                //}
+
+                string query2 = @"SELECT COUNT(*) FROM [dbo].[tbl_customermaster] WHERE SUBSTRING(c_email, CHARINDEX('@', c_email) + 1, LEN(c_email)) = @Email";
+                string domain = to.Substring(to.IndexOf('@') + 1);
+
                 using (SqlCommand cmd2 = new SqlCommand(query2, conn))
                 {
-                    cmd2.Parameters.AddWithValue("@Email", from);
+                    cmd2.Parameters.AddWithValue("@Email", domain);
 
                     // Execute the query and get the count
                     int count = (int)cmd2.ExecuteScalar();
