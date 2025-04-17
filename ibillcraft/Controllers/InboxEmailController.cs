@@ -597,8 +597,8 @@ namespace ibillcraft.Controllers
                 // string userId = "0f5fb42b-eeab-48f5-8345-5e32fa67158e"; // Replace with the correct user ID
 
                 string userId = "";
-                string connectionString = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
-                // string connectionString = "Server=P3NWPLSK12SQL-v13.shr.prod.phx3.secureserver.net;Database=CityMarineMgmt;User Id=CityMarineMgmt;Password=bZl34u0^6;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+                // string connectionString = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+                string connectionString = "Server=EMS\\MSSQLSERVER1;Database=dbCityMarine_UAT;User Id=sa;Password=sql@2025;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
 
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
@@ -685,7 +685,8 @@ namespace ibillcraft.Controllers
                                 //latest email
                                 //var Emails = inboxEmails.Value.OrderByDescending(email => email.ReceivedDateTime).GroupBy(email => email.ReceivedDateTime).FirstOrDefault();
 
-                                string connectionString2 = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+                                //string connectionString2 = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+                                string connectionString2 = "Server=EMS\\MSSQLSERVER1;Database=dbCityMarine_UAT;User Id=sa;Password=sql@2025;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
 
                                 using (SqlConnection conn = new SqlConnection(connectionString2))
                                 {
@@ -994,7 +995,8 @@ namespace ibillcraft.Controllers
                                 //var Emails = sentEmails.Value
                                 //    .Where(email => email.ReceivedDateTime.HasValue && email.ReceivedDateTime.Value.Date == today) // Ensure the value is not null
                                 //    .OrderByDescending(email => email.ReceivedDateTime); // Order by ReceivedDateTime descending
-                                string connectionString2 = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+                               // string connectionString2 = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+                                string connectionString2 = "Server=EMS\\MSSQLSERVER1;Database=dbCityMarine_UAT;User Id=sa;Password=sql@2025;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
 
                                 using (SqlConnection conn = new SqlConnection(connectionString2))
                                 {
@@ -1102,7 +1104,8 @@ namespace ibillcraft.Controllers
                     }
                 }
 
-                string connectionString1 = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+                //string connectionString1 = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+                string connectionString1 = "Server=EMS\\MSSQLSERVER1;Database=dbCityMarine_UAT;User Id=sa;Password=sql@2025;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
 
                 using (SqlConnection conn = new SqlConnection(connectionString1))
                 {
@@ -1197,7 +1200,8 @@ namespace ibillcraft.Controllers
         private void InsertInboxEmailToDatabase(string subject, string from, string to, string body, string inReplyTo, string messageId, DateTime receivedDate, string attachmentPath, string emailType)
         {
             //string connectionString = "Server=P3NWPLSK12SQL-v13.shr.prod.phx3.secureserver.net;Database=CityMarineMgmt;User Id=CityMarineMgmt;Password=bZl34u0^6;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
-            string connectionString = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+            //string connectionString = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+            string connectionString = "Server=EMS\\MSSQLSERVER1;Database=dbCityMarine_UAT;User Id=sa;Password=sql@2025;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
 
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
@@ -1372,8 +1376,8 @@ namespace ibillcraft.Controllers
 
         private void InsertSentEmailToDatabase(string subject, string from, string to, string body, string inReplyTo, string messageId, DateTime sendDate, string attachmentPath, string sType)
         {
-            string connectionString = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
-            //string connectionString = "Server=P3NWPLSK12SQL-v13.shr.prod.phx3.secureserver.net;Database=CityMarineMgmt;User Id=CityMarineMgmt;Password=bZl34u0^6;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+            //string connectionString = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+            string connectionString = "Server=EMS\\MSSQLSERVER1;Database=dbCityMarine_UAT;User Id=sa;Password=sql@2025;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
 
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
