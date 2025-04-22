@@ -40,6 +40,8 @@ namespace ibillcraft.Controllers
         private readonly ILogger<InboxEmailController> _logger;
         private readonly IStringLocalizer<InboxEmailController> _localizer;
         private Timer timer = new Timer();
+        string sql;
+        public static string emailconfig;
         public InboxEmailController(ILogger<InboxEmailController> logger, IStringLocalizer<InboxEmailController> localizer, IConfiguration configuration)
         {
             var handler = new HttpClientHandler();
@@ -51,9 +53,10 @@ namespace ibillcraft.Controllers
             _httpClient2 = new HttpClient(handler);
 
             _httpClient.BaseAddress = new Uri(configuration.GetSection("Server:Master").Value);
-            //_httpClient1.BaseAddress = new Uri(configuration.GetSection("Server:Sql").Value);
+            sql = new (configuration.GetSection("Server:Sql").Value);
+            emailconfig=new(configuration.GetSection("UploadSettings:emailconfig").Value);
             //_httpClient2.BaseAddress = new Uri(configuration.GetSection("Server:SavePath").Value);
-           
+
             _logger = logger;
             _localizer = localizer;
         }
@@ -598,7 +601,8 @@ namespace ibillcraft.Controllers
 
                 string userId = "";
                 // string connectionString = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
-                string connectionString = "Server=EMS\\MSSQLSERVER1;Database=dbCityMarine_UAT;User Id=sa;Password=sql@2025;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+                //string connectionString = "Server=EMS\\MSSQLSERVER1;Database=dbCityMarine_UAT;User Id=sa;Password=sql@2025;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+                string connectionString = sql;
 
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
@@ -656,8 +660,32 @@ namespace ibillcraft.Controllers
                     }
                     string inboxfolderid = inboxFolder.Id;
                     string sentFolderId = sentFolder.Id;
-                    string inboxUrl = $"https://graph.microsoft.com/v1.0/users/{userId}/mailFolders/{inboxfolderid}/messages?$expand=attachments&$top=200";
-                    string sentUrl = $"https://graph.microsoft.com/v1.0/users/{userId}/mailFolders/{sentFolderId}/messages?$expand=attachments&$top=200";
+
+                    string number = "";
+                    string connstring = sql;
+                    using (SqlConnection conn = new SqlConnection(connectionString))
+                    {
+                        conn.Open();
+
+                        // Query to fetch email rule configuration data
+                        string query1 = @"SELECT number from dbo.tbl_fetchemailno";
+
+                        using (SqlCommand cmd = new SqlCommand(query1, conn))
+                        {
+                            using (SqlDataReader reader = cmd.ExecuteReader())
+                            {
+                                while (reader.Read())
+                                {
+
+                                    number = reader["number"].ToString();
+                                }
+                            }
+
+                        }
+                    }
+
+                    string inboxUrl = $"https://graph.microsoft.com/v1.0/users/{userId}/mailFolders/{inboxfolderid}/messages?$expand=attachments&$top={number}";
+                    string sentUrl = $"https://graph.microsoft.com/v1.0/users/{userId}/mailFolders/{sentFolderId}/messages?$expand=attachments&$top={number}";
 
                     httpClient.DefaultRequestHeaders.Add("Prefer", "outlook.timezone=\"Asia/Kolkata\"");
 
@@ -686,7 +714,8 @@ namespace ibillcraft.Controllers
                                 //var Emails = inboxEmails.Value.OrderByDescending(email => email.ReceivedDateTime).GroupBy(email => email.ReceivedDateTime).FirstOrDefault();
 
                                 //string connectionString2 = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
-                                string connectionString2 = "Server=EMS\\MSSQLSERVER1;Database=dbCityMarine_UAT;User Id=sa;Password=sql@2025;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+                                //string connectionString2 = "Server=EMS\\MSSQLSERVER1;Database=dbCityMarine_UAT;User Id=sa;Password=sql@2025;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+                                string connectionString2 = sql;
 
                                 using (SqlConnection conn = new SqlConnection(connectionString2))
                                 {
@@ -730,7 +759,7 @@ namespace ibillcraft.Controllers
 
 
 
-                              // DateTime startDateTime = DateTime.ParseExact(time, "MM/dd/yy h:mm:ss tt", CultureInfo.InvariantCulture);
+                               //DateTime startDateTime = DateTime.ParseExact(time, "MM/dd/yy h:mm:ss tt", CultureInfo.InvariantCulture);
 
                                  DateTime startDateTime = DateTime.ParseExact(time, "M/d/yyyy h:mm:ss tt", CultureInfo.InvariantCulture);
 
@@ -740,8 +769,10 @@ namespace ibillcraft.Controllers
                                 // Get the current UTC time
                                 DateTime currentUtcTime = DateTime.UtcNow;
 
-                                // Convert the UTC time to UTC+05:30 (Indian Standard Time)
-                                TimeZoneInfo istTimeZone1 = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+                                // Convert the UTC time to UTC+04:00 (Indian Standard Time)
+                                //  TimeZoneInfo istTimeZone1 = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+                                TimeZoneInfo istTimeZone1 = TimeZoneInfo.FindSystemTimeZoneById("Arabian Standard Time");
+
                                 DateTime currentDateTimeInIst = TimeZoneInfo.ConvertTimeFromUtc(currentUtcTime, istTimeZone1);
 
                                 // Format the converted time to the desired format: "yyyy-MM-dd HH:mm:ss.fff"
@@ -995,8 +1026,9 @@ namespace ibillcraft.Controllers
                                 //var Emails = sentEmails.Value
                                 //    .Where(email => email.ReceivedDateTime.HasValue && email.ReceivedDateTime.Value.Date == today) // Ensure the value is not null
                                 //    .OrderByDescending(email => email.ReceivedDateTime); // Order by ReceivedDateTime descending
-                               // string connectionString2 = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
-                                string connectionString2 = "Server=EMS\\MSSQLSERVER1;Database=dbCityMarine_UAT;User Id=sa;Password=sql@2025;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+                                // string connectionString2 = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+                                //string connectionString2 = "Server=EMS\\MSSQLSERVER1;Database=dbCityMarine_UAT;User Id=sa;Password=sql@2025;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+                                string connectionString2 = sql;
 
                                 using (SqlConnection conn = new SqlConnection(connectionString2))
                                 {
@@ -1017,7 +1049,7 @@ namespace ibillcraft.Controllers
                                 }
 
                                 DateTime startDateTime = DateTime.ParseExact(time, "M/d/yyyy h:mm:ss tt", CultureInfo.InvariantCulture);
-                                //DateTime startDateTime = DateTime.ParseExact(time, "MM/dd/yy h:mm:ss tt", CultureInfo.InvariantCulture);
+                               // DateTime startDateTime = DateTime.ParseExact(time, "MM/dd/yy h:mm:ss tt", CultureInfo.InvariantCulture);
 
                                 //DateTime currentDateTime = DateTime.UtcNow.AddHours(-5).AddMinutes(-30);// Get the current UTC time
 
@@ -1105,7 +1137,8 @@ namespace ibillcraft.Controllers
                 }
 
                 //string connectionString1 = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
-                string connectionString1 = "Server=EMS\\MSSQLSERVER1;Database=dbCityMarine_UAT;User Id=sa;Password=sql@2025;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+                //string connectionString1 = "Server=EMS\\MSSQLSERVER1;Database=dbCityMarine_UAT;User Id=sa;Password=sql@2025;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+                string connectionString1 = sql;
 
                 using (SqlConnection conn = new SqlConnection(connectionString1))
                 {
@@ -1201,7 +1234,8 @@ namespace ibillcraft.Controllers
         {
             //string connectionString = "Server=P3NWPLSK12SQL-v13.shr.prod.phx3.secureserver.net;Database=CityMarineMgmt;User Id=CityMarineMgmt;Password=bZl34u0^6;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
             //string connectionString = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
-            string connectionString = "Server=EMS\\MSSQLSERVER1;Database=dbCityMarine_UAT;User Id=sa;Password=sql@2025;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+            //string connectionString = "Server=EMS\\MSSQLSERVER1;Database=dbCityMarine_UAT;User Id=sa;Password=sql@2025;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+            string connectionString = sql;
 
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
@@ -1377,7 +1411,7 @@ namespace ibillcraft.Controllers
         private void InsertSentEmailToDatabase(string subject, string from, string to, string body, string inReplyTo, string messageId, DateTime sendDate, string attachmentPath, string sType)
         {
             //string connectionString = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
-            string connectionString = "Server=EMS\\MSSQLSERVER1;Database=dbCityMarine_UAT;User Id=sa;Password=sql@2025;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+            string connectionString = sql;
 
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
@@ -1700,7 +1734,7 @@ namespace ibillcraft.Controllers
             {
                 List<string> filePaths = new List<string>();
                 List<Task> downloadTasks = new List<Task>();
-                string attachmentpath = "CityMarine_EmailCRM/wwwroot/Email_Attachment";
+                string attachmentpath = emailconfig;
                 //string attachmentpath = ConfigurationManager.AppSettings["attachmentpath"];
 
                 if (email.Attachments != null && email.Attachments.Count > 0)
@@ -1708,7 +1742,9 @@ namespace ibillcraft.Controllers
                     foreach (var attachment in email.Attachments)
                     {
                         string senderEmail = email.From?.EmailAddress?.Address ?? "UnknownSender";
-                        string attachmentsFolder = Path.Combine(attachmentpath, senderEmail);
+                        string Id = email.Id ?? "UnknownSender1";
+                        string lastId = Id.Length > 13 ? Id.Substring(Id.Length - 13) : Id;
+                        string attachmentsFolder = Path.Combine(attachmentpath, senderEmail, lastId);
 
                         if (!Directory.Exists(attachmentsFolder))
                         {
@@ -1786,7 +1822,7 @@ namespace ibillcraft.Controllers
             {
                 List<string> filePaths = new List<string>();
                 //string attachmentpath = ConfigurationManager.AppSettings["attachmentpath"];
-                string attachmentpath = "CityMarine_EmailCRM/wwwroot/Email_Attachment";
+                string attachmentpath = emailconfig;
 
                 // Ensure email has attachments
                 if (email.Attachments != null && email.Attachments.Any())
