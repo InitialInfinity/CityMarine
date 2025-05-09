@@ -524,7 +524,7 @@ namespace ibillcraft.Controllers
                         if (htmlContent.Contains("<td"))
                         {
                             MemoryStream ms = new MemoryStream();
-                            Document pdfDoc = new Document(PageSize.A4, 10f, 10f, 10f, 0f);
+                            Document pdfDoc = new Document(PageSize.A3, 10f, 10f, 10f, 0f);
                             PdfWriter writer = PdfWriter.GetInstance(pdfDoc, ms);
                             pdfDoc.Open();
                             TextReader sr = new StringReader(htmlContent);

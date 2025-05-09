@@ -17,6 +17,10 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using Tokens;
+using PageSize = iTextSharp.text.PageSize;
+using Document = iTextSharp.text.Document;
+using System.Web;
+
 
 namespace ibillcraft.Controllers
 {
@@ -224,6 +228,9 @@ namespace ibillcraft.Controllers
             MemoryStream ms1 = new MemoryStream();
             try
             {
+                //Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
+
                 EmailRuleConfg model = new EmailRuleConfg();
                 UserId = new Guid("990fcade-b7ba-4787-ad03-7dcf03a0ab05");
                 model.UserId = UserId;
@@ -232,8 +239,14 @@ namespace ibillcraft.Controllers
                 HttpResponseMessage response = await _httpClient.GetAsync(url);
                 if (response.IsSuccessStatusCode)
                 {
-                    var content = await response.Content.ReadAsStringAsync();
-                    string htmlContent = content.ToString();
+
+                    var content = Encoding.UTF8.GetString(await response.Content.ReadAsByteArrayAsync());
+
+                   // var content = await response.Content.ReadAsStringAsync();
+                    string htmlContent = content.ToString();              
+
+
+
                     if (htmlContent.Contains("<td"))
                     {
                         MemoryStream ms = new MemoryStream();

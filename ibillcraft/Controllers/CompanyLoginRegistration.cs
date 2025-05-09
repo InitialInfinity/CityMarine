@@ -48,73 +48,7 @@ namespace ibillcraft.Controllers
                 dynamic tbldata = responseView.Content.ReadAsStringAsync().Result;
                 var rootObject = JsonConvert.DeserializeObject<List<FillDropdown>>(tbldata);
                 ViewBag.CountryId = rootObject;
-                //string ipAddress = HttpContext.Connection.RemoteIpAddress.ToString();
-                //var feature = HttpContext.Features.Get<IHttpConnectionFeature>();
-                //string ipAddress = feature?.RemoteIpAddress?.ToString();
-
-                //// Check if the IP address is in IPv6 format and convert it to IPv4
-                //using (Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, 0))
-                //{
-                //    socket.Connect("8.8.8.8", 65530);
-                //    IPEndPoint endPoint = socket.LocalEndPoint as IPEndPoint;
-                //    ipAddress = endPoint.Address.ToString();
-                //}
-                //string userAgentString = Request.Headers["User-Agent"].ToString();
-                //var uaParser = Parser.GetDefault();
-                //ClientInfo clientInfo = uaParser.Parse(userAgentString);
-                //string browserName = clientInfo.UserAgent.Family;
-                //string browserVersion = clientInfo.UserAgent.Major + "." + clientInfo.UserAgent.Minor;
-                //string url = $"{_httpClient.BaseAddress}/LoginDetails/Get?ip_address={ipAddress}&browserName={browserName}&browserVersion={browserVersion}";
-                //var Logindetails = new LoginDetailsModel();
-                //HttpResponseMessage response = _httpClient.GetAsync(url).Result;
-                //if (response.IsSuccessStatusCode)
-                //{
-                //    dynamic data = response.Content.ReadAsStringAsync().Result;
-                //    var dataObject = new { data = new LoginDetailsModel() };
-                //    var responselogin = JsonConvert.DeserializeObject<LoginDetailsModel>(data);
-                //    if (responselogin != null)
-                //    {
-                //        if (responselogin.com_password == null)
-                //        {
-                //            return View(responselogin);
-                //        }
-                //        else
-                //        {
-                //            string comid = responselogin.com_id;
-                //            string? comname = responselogin.com_company_name;
-                //            string? rolename = responselogin.rolename;
-                //            string? staffid = responselogin.staffid;
-                //            string? RoleId = responselogin.RoleId;
-                //            string? co_country_code = responselogin.co_country_code;
-                //            string? co_timezone = responselogin.co_timezone;
-                //            string? cm_currency_format = responselogin.cm_currency_format;
-                //            string? cm_currencysymbol = responselogin.cm_currencysymbol;
-                //            //ViewBag.comname=comname;
-                //            TempData["comname"] = comname;
-                //            string serverValue = responselogin.server_Value;
-                //            string loginId = responselogin.LoginId;
-                //            string Baseaddress = _httpClient.BaseAddress.ToString();
-                //            HttpContext.Session.SetString("com_id", comid);
-                //            HttpContext.Session.SetString("Server_Value", serverValue);
-                //            HttpContext.Session.SetString("loginId", loginId);
-                //            HttpContext.Session.SetString("RoleId", RoleId);
-                //            HttpContext.Session.SetString("RoleName", rolename);
-                //            HttpContext.Session.SetString("StaffId", staffid);
-                //            HttpContext.Session.SetString("BaseAddress", Baseaddress);
-                //            HttpContext.Session.SetString("co_country_code", co_country_code);
-                //            HttpContext.Session.SetString("co_timezone", co_timezone);
-                //            HttpContext.Session.SetString("cm_currency_format", cm_currency_format);
-                //            HttpContext.Session.SetString("cm_currencysymbol", cm_currencysymbol);
-                //            HttpContext.Session.SetString("BaseAddressUser", baseaddresuser);
-                //            TempData["successMessage"] = "Login successfully";
-                //            return RedirectToAction("Index", "Dashboard");
-                //        }
-                //    }
-                //    else
-                //    {
-                //        return View();
-                //    }
-                //}
+                
                 return View();
             }
             catch (Exception)

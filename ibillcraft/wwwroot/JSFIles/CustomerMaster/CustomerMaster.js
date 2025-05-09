@@ -2,7 +2,7 @@
 
     $("#createModal").modal("show");
     //$("#co_id").val('');
-  
+
     $('#btnsubmit').prop('disabled', false);
 
 }
@@ -106,14 +106,14 @@ function isNumber(event) {
     var allowedKeys = [37, 39, 46, 8, 9]; // Arrow keys, delete, backspace, tab
     var allowedChars = ['+', '-', '(', ')', ',', '_']; // Allowed special characters
 
-    if ((num >= 48 && num <= 57) ||(num > 95 && num < 106) || (num > 36 && num < 41) || allowedKeys.includes(num)) {
+    if ((num >= 48 && num <= 57) || (num > 95 && num < 106) || (num > 36 && num < 41) || allowedKeys.includes(num)) {
         return; // Allow number keys, arrow keys, delete, backspace, and tab
     }
-    
+
     var charCode = event.which || event.keyCode;
     var charTyped = String.fromCharCode(charCode);
-    
-    if (num>=65 && num<=122) {
+
+    if (num >= 65 && num <= 122) {
         event.preventDefault();
     }
 }
@@ -322,30 +322,30 @@ function submitCustomer() {
     //    formData.append('c_note', $("#c_note").val());
     //    formData.append('c_isactive', $("#c_isactive").val());
 
-        if ($('#c_name').val().trim() == '') {
-            alert("Please enter name!");
-            return false;
-        }
-        else if ($('#c_ccode').val().trim() == '') {
+    if ($('#c_name').val().trim() == '') {
+        alert("Please enter name!");
+        return false;
+    }
+    else if ($('#c_ccode').val().trim() == '') {
         alert("Please enter code!");
         return false;
     }
-        else if ($('#c_address').val().trim() == '') {
-            alert("Please enter address!");
-            return false;
-        }
-        else if ($('#co_country_code').val().trim() == '') {
-            alert("Please enter country code!");
-            return false;
-        }
-        else if ($('#c_contact').val().trim() == '') {
-            alert("Please enter contact no!");
-            return false;
-        }
-        else if ($('#c_email').val().trim() == '') {
-            alert("Please enter email!");
-            return false;
-        }
+    else if ($('#c_address').val().trim() == '') {
+        alert("Please enter address!");
+        return false;
+    }
+    else if ($('#co_country_code').val().trim() == '') {
+        alert("Please enter country code!");
+        return false;
+    }
+    else if ($('#c_contact').val().trim() == '') {
+        alert("Please enter contact no!");
+        return false;
+    }
+    else if ($('#c_email').val().trim() == '') {
+        alert("Please enter email!");
+        return false;
+    }
 
     //var rowCount = $('#dataTable tbody tr').length;
     //if (rowCount == 0) {
@@ -370,30 +370,30 @@ function submitCustomer() {
 
 
     //formData.append('CustomerAttachment',orderDataArray);
-        var data = {
-            c_id: $("#c_id").val(),
-            c_name: $("#c_name").val(),
-            c_ccode: $("#c_ccode").val(),
-            co_country_code: $("#co_country_code").val(),
-            c_address: $("#c_address").val(),
-            c_contact: $("#c_contact").val(),
-            c_contact2: $("#c_contact2").val(),
-            c_email: $("#c_email").val(),
-            c_dob: $("#c_dob").val(),
-            c_anidate: $("#c_anidate").val(),
-            c_isactive: isActive,
-            c_note: $("#c_note").val(),
-          
-            CustomerAttachment: orderDataArray
-        };
+    var data = {
+        c_id: $("#c_id").val(),
+        c_name: $("#c_name").val(),
+        c_ccode: $("#c_ccode").val(),
+        co_country_code: $("#co_country_code").val(),
+        c_address: $("#c_address").val(),
+        c_contact: $("#c_contact").val(),
+        c_contact2: $("#c_contact2").val(),
+        c_email: $("#c_email").val(),
+        c_dob: $("#c_dob").val(),
+        c_anidate: $("#c_anidate").val(),
+        c_isactive: isActive,
+        c_note: $("#c_note").val(),
+
+        CustomerAttachment: orderDataArray
+    };
 
 
     console.log("CustomerAttachment", orderDataArray);
-   
+
     $.ajax({
         type: 'POST',
         url: '/CustomerMaster/Create', // Use the form's action attribute
-       // data: formData,
+        // data: formData,
         data: data,
         //dataType: "json",
         //contentType: false,
@@ -405,7 +405,7 @@ function submitCustomer() {
         },
         error: function (xhr, status, error) {
             console.error("Error:", error);
-           /* alert("Error saving data. Please try again.");*/
+            /* alert("Error saving data. Please try again.");*/
         }
     });
 }
@@ -418,7 +418,7 @@ $(document).on('click', '#dataTable tbody .click-edit', function () {
     var c_type_id = $rowToEdit.find('td:eq(0)').text();
     var name = $rowToEdit.find('td:eq(1)').text();
     var c_type = $rowToEdit.find('td:eq(2)').text();
-   
+
     var attachment = $rowToEdit.find('td:eq(3) .download-link').attr('data-file');
     var mdate = $rowToEdit.find('td:eq(4)').text();
     var idate = $rowToEdit.find('td:eq(5)').text().trim();
@@ -433,19 +433,19 @@ $(document).on('click', '#dataTable tbody .click-edit', function () {
 
 
     $("#name").val(name.trim());
-   /* $("#attachment").val(attachment.trim());*/
+    /* $("#attachment").val(attachment.trim());*/
 
     $("#mdate").val(mdate.trim());
 
     let formattedFDate = formatDate(idate);
-  
+
 
     $('#idate').val(formattedFDate);
-   
+
     $("#vdate").val(vdate.trim());
-   
+
     $("#createModal").modal("show");
-    
+
 
 });
 
@@ -460,7 +460,7 @@ $(document).on('click', '#dataTable tbody .click', function () {
     // Remove the row from the table
     $rowToDelete.remove();
 
-   
+
 });
 
 function formatDate(dateTimeString) {
@@ -503,7 +503,7 @@ function submitCredit() {
         },
 
         error: function (xhr, status, error) {
-             console.error(error);
+            console.error(error);
         }
     });
 }
@@ -577,7 +577,7 @@ function Excel() {
 
 function Pdf() {
 
-  
+
 
     var currentUrl = window.location.href;
 
@@ -621,7 +621,7 @@ function performAction() {
 
     var status = ($('#toggleStatus').is(':checked')) ? '1' : '0';
 
-   
+
 
     window.location.href = "/CustomerMaster/Index?status=" + status;
 
@@ -659,26 +659,26 @@ function readURL(input) {
 
 
 
-    function CancelData() {
+function CancelData() {
 
-       
-        $("#c_name").val('');
-        $("#c_address").val('');
-        $('#c_contact').val('');
-        $('#c_contact2').val('');
-        $('#c_ccode').val('');
-        $('#co_country_code').val('');
-     
-        $('#c_email').val('');
-        $('#c_dob').val('');
-        $('#c_anidate').val('');
-        $('#c_note').val('');
-       
-      
-        $("#c_isactive").prop("checked", true);
-        const tableBody = document.querySelector("#attachmentTable");
-        tableBody.innerHTML = "";
-       
+
+    $("#c_name").val('');
+    $("#c_address").val('');
+    $('#c_contact').val('');
+    $('#c_contact2').val('');
+    $('#c_ccode').val('');
+    $('#co_country_code').val('');
+
+    $('#c_email').val('');
+    $('#c_dob').val('');
+    $('#c_anidate').val('');
+    $('#c_note').val('');
+
+
+    $("#c_isactive").prop("checked", true);
+    const tableBody = document.querySelector("#attachmentTable");
+    tableBody.innerHTML = "";
+
 }
 
 function CancelModelData() {
@@ -699,7 +699,11 @@ function CloseData() {
     $('#idate').val('');
     $('#vdate').val('');
     document.querySelector("#attachment").value = "";
-   
-   
+
+
     $("#createModal").modal("hide");
 }
+function validateCountryCode(input) {
+    input.value = input.value.replace(/[^0-9+-]/g, '');
+}
+

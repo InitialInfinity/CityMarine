@@ -60,10 +60,7 @@ function submitStaff() {
         alert("Please select gender!");
         return false;
     }
-    else if ($('#st_username').val() == '') {
-        alert("Please enter username!");
-        return false;
-    }
+    
     //else if ($('#st_designation_id').val() == '') {
     //    alert("Please select designation!");
     //    return false;
@@ -84,8 +81,8 @@ function submitStaff() {
         alert("Please select role!");
         return false;
     }
-    else if ($('#st_rolename').val() == '') {
-        alert("Please select role!");
+    else if ($('#st_username').val() == '') {
+        alert("Please enter username!");
         return false;
     }
     else if ($('#st_password').val() == '') {

@@ -64,7 +64,7 @@
                     <label class="col-form-label col-md-2">@Localizer["Contact No"] <span class="text-danger">*</span> </label>
                     <div class="col-md-3 py-2 d-flex">
 
-                        <input class="form-control" id="co_country_code" style="width:60px;text-align:center" type="text"  asp-for="@Model.Item1.co_country_code" name="name" maxlength="4" >
+                        <input class="form-control" id="co_country_code" style="width:60px;text-align:center" type="text" asp-for="@Model.Item1.co_country_code" name="name" maxlength="4" oninput="validateCountryCode(this)">
                         <input id="c_contact" class="form-control" placeholder="@Localizer["Enter Contact No"]" maxlength="10" textmode="number" asp-for="@Model.Item1.c_contact" onkeydown="return isNumber(event)" onblur="isNumber(this)" autocomplete="off" />
                     </div>
                     <label class="col-form-label col-md-2 text-end"> @Localizer["Alternative Contact No"]</label>

@@ -12,6 +12,7 @@ using System.Text;
 using Tokens;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using System.Web;
 
 namespace Master.Controllers 
 {
@@ -255,11 +256,47 @@ namespace Master.Controllers
 
                 //htmlContent += "</tbody></table></div>";
 
+                //string htmlContent = "<div style='margin-top: 5rem; padding-left: 3rem; padding-right: 3rem; margin-bottom: 5rem; border: double;'>";
+                //htmlContent += "    <div style='text-align: center; line-height: 1; margin-bottom: 2rem;'>";
+                //htmlContent += "        <h3 style='font-weight: bold;'>Country Master</h3>";
+                //htmlContent += "    </div>";
+                //htmlContent += "    <table style='width:100%; border-collapse: collapse; margin-top: 10px'>";
+                //htmlContent += "        <thead>";
+                //htmlContent += "            <tr>";
+                //htmlContent += "                <th style='border: 1px solid black; background-color: gray; color: white; padding: 8px;'>Parameter</th>";
+                //htmlContent += "                <th style='border: 1px solid black; background-color: gray; color: white; padding: 8px;'>Condition</th>";
+                //htmlContent += "                <th style='border: 1px solid black; background-color: gray; color: white; padding: 8px;'>Category</th>";
+                //htmlContent += "                <th style='border: 1px solid black; background-color: gray; color: white; padding: 8px;'>Value</th>";
+                //htmlContent += "                <th style='border: 1px solid black; background-color: gray; color: white; padding: 8px;'>Status</th>";
+                //htmlContent += "            </tr>";
+                //htmlContent += "        </thead>";
+                //htmlContent += "        <tbody>";
+                //foreach (DataRow row in data.Rows)
+                //{
+                //    string? E_parameterName = row["E_parameterName"].ToString();
+                //    string? E_conditionName = row["E_conditionName"].ToString();
+                //    string? E_categoryName = row["E_categoryName"].ToString();
+                //    string? E_value = row["E_value"].ToString();
+                //    string? isActive = row["E_isactive"].ToString();
+                //    htmlContent += "<tr style='border: 1px solid black;'>";
+                //    htmlContent += "    <td style='border: 1px solid black; padding: 8px;'>" + E_parameterName + "</td>";
+                //    htmlContent += "    <td style='border: 1px solid black; padding: 8px;'>" + E_conditionName + "</td>";
+                //    htmlContent += "    <td style='border: 1px solid black; padding: 8px;'>" + E_categoryName + "</td>";
+                //    htmlContent += "    <td style='border: 1px solid black; padding: 8px;'>" + E_value + "</td>";
+                //    htmlContent += "    <td style='border: 1px solid black; padding: 8px;'>" + isActive + "</td>";
+                //    htmlContent += "</tr>";
+                //}
+                //htmlContent += "        </tbody>";
+                //htmlContent += "    </table>";
+                //htmlContent += "</div>";
+                //string date = DateTime.Now.ToString("dd-MM-yyyy--HH-mm");
+                //return Ok(htmlContent);
+
                 string htmlContent = "<div style='margin-top: 5rem; padding-left: 3rem; padding-right: 3rem; margin-bottom: 5rem; border: double;'>";
                 htmlContent += "    <div style='text-align: center; line-height: 1; margin-bottom: 2rem;'>";
                 htmlContent += "        <h3 style='font-weight: bold;'>Country Master</h3>";
                 htmlContent += "    </div>";
-                htmlContent += "    <table style='width:100%; border-collapse: collapse; margin-top: 10px'>";
+                htmlContent += "    <table style='width:100%; border-collapse: collapse; margin-top: 10px;'>";
                 htmlContent += "        <thead>";
                 htmlContent += "            <tr>";
                 htmlContent += "                <th style='border: 1px solid black; background-color: gray; color: white; padding: 8px;'>Parameter</th>";
@@ -270,26 +307,36 @@ namespace Master.Controllers
                 htmlContent += "            </tr>";
                 htmlContent += "        </thead>";
                 htmlContent += "        <tbody>";
+
+                // Loop through the data and add rows
                 foreach (DataRow row in data.Rows)
                 {
-                    string? E_parameterName = row["E_parameterName"].ToString();
-                    string? E_conditionName = row["E_conditionName"].ToString();
-                    string? E_categoryName = row["E_categoryName"].ToString();
-                    string? E_value = row["E_value"].ToString();
-                    string? isActive = row["E_isactive"].ToString();
+                    // Retrieve the data and ensure we don't insert null values into the table
+                    string? E_parameterName = row["E_parameterName"]?.ToString() ?? string.Empty;
+                    string? E_conditionName = row["E_conditionName"]?.ToString() ?? string.Empty;
+                    string? E_categoryName = row["E_categoryName"]?.ToString() ?? string.Empty;
+                    string? E_value = HttpUtility.HtmlEncode(row["E_value"]?.ToString() ?? string.Empty);
+                    string? isActive = row["E_isactive"]?.ToString() ?? string.Empty;
+
+                    // Ensure that we only open a <tr> tag if we are within the table
                     htmlContent += "<tr style='border: 1px solid black;'>";
-                    htmlContent += "    <td style='border: 1px solid black; padding: 8px;'>" + E_parameterName + "</td>";
-                    htmlContent += "    <td style='border: 1px solid black; padding: 8px;'>" + E_conditionName + "</td>";
-                    htmlContent += "    <td style='border: 1px solid black; padding: 8px;'>" + E_categoryName + "</td>";
-                    htmlContent += "    <td style='border: 1px solid black; padding: 8px;'>" + E_value + "</td>";
-                    htmlContent += "    <td style='border: 1px solid black; padding: 8px;'>" + isActive + "</td>";
+                    htmlContent += $"    <td style='border: 1px solid black; padding: 8px;'>{E_parameterName}</td>";
+                    htmlContent += $"    <td style='border: 1px solid black; padding: 8px;'>{E_conditionName}</td>";
+                    htmlContent += $"    <td style='border: 1px solid black; padding: 8px;'>{E_categoryName}</td>";
+                    htmlContent += $"    <td style='border: 1px solid black; padding: 8px;'>{E_value}</td>";
+                    htmlContent += $"    <td style='border: 1px solid black; padding: 8px;'>{isActive}</td>";
                     htmlContent += "</tr>";
                 }
+
                 htmlContent += "        </tbody>";
                 htmlContent += "    </table>";
                 htmlContent += "</div>";
+
+                // Add date to filename or elsewhere if needed
                 string date = DateTime.Now.ToString("dd-MM-yyyy--HH-mm");
                 return Ok(htmlContent);
+
+
             }
             catch (Exception ex)
             {

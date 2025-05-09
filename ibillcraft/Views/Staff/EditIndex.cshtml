@@ -159,7 +159,7 @@
 
                     <div class="row mt-3 mt-lg-0 mt-md-3">
                         <div class="col-lg-5">
-                            <label for="designation" class="form-label float-lg-end">@Localizer["Department"]:<span class="text-danger">*</span></label>
+                            <label for="designation" class="form-label float-lg-end">@Localizer["Department"]:</label>
                         </div>
                         <div class="col-lg-7">
                             <select class="form-select" id="st_category" asp-items="@(new SelectList(ViewBag.st_category,"Id","Value", ViewBag.SelectedCat))" placeholder="Select Designation" required>

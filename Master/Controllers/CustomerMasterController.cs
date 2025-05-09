@@ -495,9 +495,9 @@ namespace Master.API.Controllers
             htmlContent += "            <thead>";
             htmlContent += "            <tr>";
             htmlContent += "                <th style='border: 1px solid black; background-color: gray; color: white; padding: 8px;width: 30%;'>Name</th>";
-            htmlContent += "                <th style='border: 1px solid black; background-color: gray; color: white; padding: 8px;width: 30%;'>Code</th>";
+            htmlContent += "                <th style='border: 1px solid black; background-color: gray; color: white; padding: 8px;width: 20%;'>Code</th>";
             htmlContent += "                <th style='border: 1px solid black; background-color: gray; color: white; padding: 8px;width: 20%;'>Address</th>";
-            htmlContent += "                <th style='border: 1px solid black; background-color: gray; color: white; padding: 8px;width: 10%;'>Contact</th>";
+            htmlContent += "                <th style='border: 1px solid black; background-color: gray; color: white; padding: 8px;width: 20%;'>Contact</th>";
             //htmlContent += "                <th style='border: 1px solid black; background-color: gray; color: white; padding: 8px;'>Alternate Contact</th>";
             htmlContent += "                <th style='border: 1px solid black; background-color: gray; color: white; padding: 8px;width: 10%;'>DOB</th>";
 
