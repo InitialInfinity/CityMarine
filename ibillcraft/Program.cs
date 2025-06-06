@@ -2,6 +2,7 @@ using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc.Razor;
 using System.Globalization;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -31,6 +32,12 @@ builder.Services.Configure<RequestLocalizationOptions>(Options =>
     //Options.DefaultRequestCulture = new RequestCulture("");
     Options.SupportedUICultures = supportedculture;
 });
+
+
+//Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
+
+
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {

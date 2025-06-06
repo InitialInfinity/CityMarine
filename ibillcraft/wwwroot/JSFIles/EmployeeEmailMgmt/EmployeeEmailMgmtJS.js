@@ -1,4 +1,8 @@
-﻿function toggleDropdown() {
+﻿$(document).ready(function () {
+    $("#e_email").css("display", "block");
+    $("#e_email1").css("display", "none");
+});
+function toggleDropdown() {
     const dropdownContent = document.querySelector('.dropdown-content');
     // Toggle visibility of dropdown
     dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
@@ -43,7 +47,10 @@ function editLinkClick(e_id,e_emailid, e_email,e_staffname, e_employee, e_isacti
 
     $("#createModal").modal("show");
     $('#e_id').val(e_id);
+    $("#e_email").css("display", "none");
     $("#e_email").val(e_emailid);
+    $("#e_email1").css("display", "block");
+    $("#e_email1").val(e_email);
     /*$("#e_employee").val(e_employee);*/
     let ids = e_employee.split(','); // Convert string to array
 

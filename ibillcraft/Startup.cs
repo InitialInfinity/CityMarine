@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Options;
+using System.Text;
 
 namespace ibillcraft
 {
@@ -17,8 +18,10 @@ namespace ibillcraft
 		{
 			services.AddSingleton<IConfiguration>(Configuration);
 			services.AddControllers();
-			
-			services.Configure<KestrelServerOptions>(options => options.AllowSynchronousIO = true);
+
+          //  Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
+            services.Configure<KestrelServerOptions>(options => options.AllowSynchronousIO = true);
 			services.AddCors(options =>
 			{
 				options.AddDefaultPolicy(
