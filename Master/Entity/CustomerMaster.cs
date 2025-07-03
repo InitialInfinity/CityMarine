@@ -45,6 +45,7 @@ namespace Master.Entity
 
         public string? c_com_id { get; set; }
         public string? co_country_code { get; set; }
+        public string? c_domain {  get; set; }
 
         public DataTable? DataTable { get; set; }
 

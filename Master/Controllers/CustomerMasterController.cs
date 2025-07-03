@@ -556,5 +556,31 @@ namespace Master.API.Controllers
             return Ok(htmlContent);
 
         }
+
+        [HttpGet("GetDomain")]
+        public async Task<IActionResult> GetDomain(Guid? UserId, string Server_Value, string? comid, string? c_domain)
+        {
+            try
+            {
+                CustomerMaster user = new CustomerMaster();
+                user.UserId = UserId;
+                user.c_com_id = comid;
+                user.c_domain = c_domain;
+
+                if (user.BaseModel == null)
+                {
+                    user.BaseModel = new BaseModel();
+                }
+                user.BaseModel.Server_Value = Server_Value;
+                user.BaseModel.OperationType = "GetDomain";
+
+                var createduser = await _customerRepo.Customer(user);
+                return createduser;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

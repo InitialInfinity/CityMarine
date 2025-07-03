@@ -535,7 +535,8 @@ namespace ibillcraft.Controllers
         //CityMarine
         private static string tenantId = "26d892b0-3196-4399-ba55-2f2f17cf30c7"; // Azure AD tenant ID
         private static string clientId = "c84beebd-a48c-4aad-b0c1-814fcb7fba17"; // Application (client) ID
-        private static string clientSecret = "F3S8Q~RV_vbrCt-uosG.WTe8UdLth0oQOAVdwcZy"; // Application (client) secret
+        //private static string clientSecret = "F3S8Q~RV_vbrCt-uosG.WTe8UdLth0oQOAVdwcZy"; // Application (client) secret
+        private static string clientSecret = "SgD8Q~JmkeRbMMylPskmsM7CyJpL1aABPDJnxcbm"; // Application (client) secret
 
 
         private static string authority = $"https://login.microsoftonline.com/{tenantId}";
@@ -619,10 +620,17 @@ namespace ibillcraft.Controllers
 
                     // Query to fetch email rule configuration data
                     //string query1 = @"SELECT userid from dbo.tbl_emsuser";
-                    string query1 = @"select E_Key from tbl_EmailList e join tbl_staff s on s.st_email=e.E_email where st_id=@st_id";
+
+
+
+                    //string query1 = @"select E_Key from tbl_EmailList e join tbl_staff s on s.st_email=e.E_email where st_id=@st_id";
+                    string query1 = @"SELECT el.E_key FROM tbl_EmailList el JOIN tbl_employeeemailmgmt em ON el.e_id = em.e_email
+WHERE ',' + em.e_employee + ',' LIKE @searchPattern AND EXISTS ( SELECT 1 FROM tbl_staff s WHERE s.st_id = @st_id )";
+
                     using (SqlCommand cmd = new SqlCommand(query1, conn))
                     {
                         cmd.Parameters.AddWithValue("@st_id", CUtility.userid);
+                        cmd.Parameters.AddWithValue("@searchPattern", "%," + CUtility.userid + ",%");
                         using (SqlDataReader reader = cmd.ExecuteReader())
                         {
                             while (reader.Read())
@@ -769,10 +777,12 @@ namespace ibillcraft.Controllers
 
 
 
+                                //for local
+                                DateTime startDateTime = DateTime.ParseExact(time, "MM/dd/yy h:mm:ss tt", CultureInfo.InvariantCulture);
 
-                               // DateTime startDateTime = DateTime.ParseExact(time, "MM/dd/yy h:mm:ss tt", CultureInfo.InvariantCulture);
 
-                                DateTime startDateTime = DateTime.ParseExact(time, "M/d/yyyy h:mm:ss tt", CultureInfo.InvariantCulture);
+                                //for server
+                                //DateTime startDateTime = DateTime.ParseExact(time, "M/d/yyyy h:mm:ss tt", CultureInfo.InvariantCulture);
 
                                 //DateTime currentDateTime = DateTime.UtcNow.AddHours(-5).AddMinutes(-30);// Get the current UTC time
 
@@ -1059,9 +1069,12 @@ namespace ibillcraft.Controllers
                                     }
 
                                 }
+                                //for server
+                                //DateTime startDateTime = DateTime.ParseExact(time, "M/d/yyyy h:mm:ss tt", CultureInfo.InvariantCulture);
+                                
 
-                                DateTime startDateTime = DateTime.ParseExact(time, "M/d/yyyy h:mm:ss tt", CultureInfo.InvariantCulture);
-                                // DateTime startDateTime = DateTime.ParseExact(time, "MM/dd/yy h:mm:ss tt", CultureInfo.InvariantCulture);
+                                //for local
+                                DateTime startDateTime = DateTime.ParseExact(time, "MM/dd/yy h:mm:ss tt", CultureInfo.InvariantCulture);
 
                                 //DateTime currentDateTime = DateTime.UtcNow.AddHours(-5).AddMinutes(-30);// Get the current UTC time
 
@@ -1383,7 +1396,9 @@ namespace ibillcraft.Controllers
                 }
 
 
-                string query2 = @"SELECT COUNT(*) FROM [dbo].[tbl_customermaster] WHERE SUBSTRING(c_email, CHARINDEX('@', c_email) + 1, LEN(c_email)) = @Email";
+                //string query2 = @"SELECT COUNT(*) FROM [dbo].[tbl_customermaster] WHERE SUBSTRING(c_email, CHARINDEX('@', c_email) + 1, LEN(c_email)) = @Email";
+                string query2 = @"SELECT COUNT(*) FROM [dbo].[tbl_customermaster] WHERE EXISTS ( SELECT 1 FROM STRING_SPLIT(c_domain, ',') AS email
+                WHERE RIGHT(email.value, LEN(email.value) - CHARINDEX('@', email.value)) =  @Email);";
                 string domain = from.Substring(from.IndexOf('@') + 1);
 
                 using (SqlCommand cmd2 = new SqlCommand(query2, conn))

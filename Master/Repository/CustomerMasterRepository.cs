@@ -137,6 +137,7 @@ namespace Master.Repository
             parameters.Add("@c_contact", user.c_contact, DbType.String);
             parameters.Add("@c_contact2", user.c_contact2, DbType.String);
             parameters.Add("@c_code", user.co_country_code, DbType.String);
+            parameters.Add("@c_domain", user.c_domain, DbType.String);
            
             parameters.Add("@c_email", user.c_email, DbType.String);
             parameters.Add("@c_dob", user.c_dob, DbType.String);

@@ -37,8 +37,10 @@ namespace ibillcraft.Models
         public string? c_type { get; set; }
      
         public string? cd_id { get; set; }
-       
-      
+        public string? c_domain {  get; set; }
+
+
+
         public DateTime? c_updateddate { get; set; }
         public DateTime? c_createddate { get; set; }
 

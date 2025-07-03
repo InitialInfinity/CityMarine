@@ -383,6 +383,7 @@ function submitCustomer() {
         c_anidate: $("#c_anidate").val(),
         c_isactive: isActive,
         c_note: $("#c_note").val(),
+        c_domain: $("#c_domain").val(),
 
         CustomerAttachment: orderDataArray
     };
@@ -400,7 +401,19 @@ function submitCustomer() {
         //processData: false,
         success: function (response) {
             console.log("Server Response:", response);
-            window.location.href = "/CustomerMaster/Index";
+
+            if (response.success === true) {
+                console.log("Server Response:", response);
+                window.location.href = "/CustomerMaster/Index";
+            }
+            else {
+                
+
+                console.log("Server Response:", response);
+                alert(response.message);
+                return false;
+            }
+            
             /*alert("Data saved successfully!");*/
         },
         error: function (xhr, status, error) {

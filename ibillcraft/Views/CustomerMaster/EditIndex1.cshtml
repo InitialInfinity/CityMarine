@@ -74,10 +74,17 @@
                 </div>
                 <div class="form-group row ">
                     <label class="col-form-label col-md-2">@Localizer["Email Id"] <span class="text-danger">*</span> </label>
-                    <div class="col-md-8 py-2">
-                        <input id="c_email" class="form-control" placeholder="@Localizer["Enter Email"]" maxlength="250"  asp-for="@Model.Item1.c_email" autocomplete="off" />
+                    <div class="col-md-3 py-2 d-flex">
+                        <input id="c_email" class="form-control" placeholder="@Localizer["Enter Email"]" maxlength="250" asp-for="@Model.Item1.c_email" autocomplete="off" />
                     </div>
+
+                    <label class="col-form-label col-md-2  text-end">@Localizer["Domain Name"] <span class="text-danger">*</span> </label>
+                    <div class="col-md-3 py-2 ">
+                        <input id="c_domain" class="form-control" placeholder="@Localizer["Enter Domain Name"]" asp-for="@Model.Item1.c_domain" autocomplete="off" />
+                    </div>
+
                 </div>
+
 
                 <div class="form-group row ">
                     <label class="col-form-label col-md-2">@Localizer["DOB"]  </label>
@@ -241,11 +248,21 @@
 
 
 <script>
-   
 
 
 
-       
+
+
 </script>
 
 
+@section Scripts {
+        <script>
+            $(document).ready(function () {
+                var errorMessage = '@TempData["errorMessage"]';
+                if (errorMessage) {
+                    alert(errorMessage);
+                }
+            });
+        </script>
+}
