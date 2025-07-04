@@ -109,13 +109,13 @@
                 Client
             </button>
         </li>
-        <li class="nav-item" style="display:none;">
-            <button class="nav-link" id="enquiry-tab" data-bs-toggle="tab" data-bs-target="#enquiry" type="button" role="tab" aria-controls="enquiry" onclick="return enquirytab()">
+        <li class="nav-item">
+            <button class="nav-link" id="enquiry-tab" data-bs-toggle="tab" data-bs-target="#enquiry" type="button" role="tab" aria-controls="enquiry" onclick="return enquiryonetab()">
                 Enquiry
             </button>
         </li>
-        <li class="nav-item" style="display:none;">
-            <button class="nav-link" id="claim-tab" data-bs-toggle="tab" data-bs-target="#claim" type="button" role="tab" aria-controls="claim" onclick="return claimtab()">
+        <li class="nav-item">
+            <button class="nav-link" id="claim-tab" data-bs-toggle="tab" data-bs-target="#claim" type="button" role="tab" aria-controls="claim" onclick="return claimonetab()">
                 Claim
             </button>
         </li>
@@ -686,7 +686,115 @@
                     htmltab += '<td style="width:10%" onclick="inboxmsg(' + response[i].i_id + ')">' + response[i].i_subject + '</td>';
 
 
-                    if (response[i].i_attachment != "No attachments available.") {
+                    if (response[i].i_attachment != "No attachments available." && response[i].i_attachment !== "null" && response[i].i_attachment !== null) {
+                        htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
+                    }
+                    else {
+                        htmltab += '<td style="width:4%"></td>';
+                    }
+
+
+                    htmltab += '<td  style="width:12%" onclick="inboxmsg(' + response[i].i_id + ')">' + response[i].i_receiveddate + '</td>';
+                    htmltab += '<td style="display:none"><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].i_id + ')"></i></td>';
+                    htmltab += '</tr>';
+                }
+                $('#tabtable').html(htmltab);
+
+                // Example: Update a specific section with the response data
+                $('#content-area').html(response);
+            },
+            error: function (xhr, status, error) {
+                // Handle errors
+                console.error('Error:', error);
+            }
+        });
+    }
+    function enquiryonetab() {
+        var tab = "Enquiry one";
+        $('#custom-search').val('');
+
+        $('#typetab').css('display', 'none');
+        $('#enquiry-tab').attr('aria-selected', 'false');
+        $('#client-tab').attr('aria-selected', 'false');
+        $('#claim-tab').attr('aria-selected', 'false');
+        $('#general-tab').attr('aria-selected', 'true');
+
+        $.ajax({
+            url: '/InboxEmail/general?tab=' + tab, // Controller action URL
+            type: 'POST',             // HTTP method
+            data: { tab: tab },      // Data to send (query parameter)
+            success: function (response) {
+                // Handle success - update the page dynamically
+                console.log('Response:', response);
+                $('#tabhead').css('display', 'none');
+                $('#tabhead1').css('display', 'contents');
+                $('#tabtable').html('');
+                var htmltab = '';
+                for (var i = 0; i < response.length; i++) {
+                    htmltab += '<tr>';
+                    htmltab += '<td style="width:6%" onclick="inboxmsg(' + response[i].i_id + ')">' + (i + 1) + '</td>';
+                    htmltab += '<td style="display:none">' + response[i].i_id + '</td>';
+                    htmltab += '<td  style="width:12%" onclick="inboxmsg(' + response[i].i_id + ')">' + response[i].i_from + '</td>';
+                    htmltab += '<td  style="width:12%" onclick="inboxmsg(' + response[i].i_id + ')">' + response[i].i_to + '</td>';
+                    htmltab += '<td style="width:10%" onclick="inboxmsg(' + response[i].i_id + ')">' + response[i].i_subject + '</td>';
+
+
+                    if (response[i].i_attachment != "No attachments available." && response[i].i_attachment !== "null" && response[i].i_attachment !== null) {
+                        htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
+                    }
+                    else {
+                        htmltab += '<td style="width:4%"></td>';
+                    }
+
+
+                    htmltab += '<td  style="width:12%" onclick="inboxmsg(' + response[i].i_id + ')">' + response[i].i_receiveddate + '</td>';
+                    htmltab += '<td style="display:none"><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].i_id + ')"></i></td>';
+                    htmltab += '</tr>';
+                }
+                $('#tabtable').html(htmltab);
+
+                // Example: Update a specific section with the response data
+                $('#content-area').html(response);
+            },
+            error: function (xhr, status, error) {
+                // Handle errors
+                console.error('Error:', error);
+            }
+        });
+    }
+
+    function claimonetab() {
+        var tab = "Claim one";
+        $('#custom-search').val('');
+
+        $('#typetab').css('display', 'none');
+        $('#enquiry-tab').attr('aria-selected', 'false');
+        $('#client-tab').attr('aria-selected', 'false');
+        $('#claim-tab').attr('aria-selected', 'false');
+        $('#general-tab').attr('aria-selected', 'true');
+
+        $.ajax({
+            url: '/InboxEmail/general?tab=' + tab, // Controller action URL
+            type: 'POST',             // HTTP method
+            data: { tab: tab },      // Data to send (query parameter)
+            success: function (response) {
+                // Handle success - update the page dynamically
+                console.log('Response:', response);
+                $('#tabhead').css('display', 'none');
+                $('#tabhead1').css('display', 'contents');
+                $('#tabtable').html('');
+                var htmltab = '';
+                for (var i = 0; i < response.length; i++) {
+                    htmltab += '<tr>';
+                    htmltab += '<td style="width:6%" onclick="inboxmsg(' + response[i].i_id + ')">' + (i + 1) + '</td>';
+                    htmltab += '<td style="display:none">' + response[i].i_id + '</td>';
+                    htmltab += '<td  style="width:12%" onclick="inboxmsg(' + response[i].i_id + ')">' + response[i].i_from + '</td>';
+                    htmltab += '<td  style="width:12%" onclick="inboxmsg(' + response[i].i_id + ')">' + response[i].i_to + '</td>';
+                    htmltab += '<td style="width:10%" onclick="inboxmsg(' + response[i].i_id + ')">' + response[i].i_subject + '</td>';
+
+
+                    if (response[i].i_attachment !== "No attachments available." &&response[i].i_attachment !== "null" &&response[i].i_attachment !== null)
+                    {
                         htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
                     }
                     else {
@@ -733,7 +841,7 @@
                     // Clear previous content before updating
                     attachmentsContainer.innerHTML = '';
 
-                    if (response.i_attachment != "No attachments available.") {
+                    if (response.i_attachment != "No attachments available." && response.i_attachment !== "null" && response.i_attachment !== null) {
                         // const fileName = response.i_attachment.split(/[/\\]/).pop();
 
 
@@ -1134,7 +1242,7 @@
 
 
 
-                        if (response[i].i_attachment != "No attachments available.") {
+                        if (response[i].i_attachment != "No attachments available." && response[i].i_attachment !== "null" && response[i].i_attachment !== null) {
                             htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
                         }
                         else {
@@ -1196,7 +1304,7 @@
                     htmltab += '<td style="width:10%" onclick="inboxmsg(' + response[i].i_id + ')">' + response[i].i_subject + '</td>';
 
 
-                    if (response[i].i_attachment != "No attachments available.") {
+                    if (response[i].i_attachment != "No attachments available." && response[i].i_attachment !== "null" && response[i].i_attachment !== null) {
                         htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
                     }
                     else {
