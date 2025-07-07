@@ -96,6 +96,21 @@ namespace ibillcraft.Controllers
             ViewBag.type = gerootObject;
 
 
+                string claimnourl1 = $"{_httpClient.BaseAddress}/InboxEmail/dropdownclaimno?UserId={UserId}&i_type={tab}";
+                HttpResponseMessage claimnoresponseView1 = _httpClient.GetAsync(claimnourl1).Result;
+                dynamic claimnodata1 = claimnoresponseView1.Content.ReadAsStringAsync().Result;
+                var claimResponse1 = JsonConvert.DeserializeObject<InboxClientModel>(claimnodata1);
+                ViewBag.enquiryno = claimResponse1.Data;
+            
+
+                string claimnourl = $"{_httpClient.BaseAddress}/InboxEmail/dropdownclaimno?UserId={UserId}&i_type={tab}";
+                HttpResponseMessage claimnoresponseView = _httpClient.GetAsync(claimnourl).Result;
+                dynamic claimnodata = claimnoresponseView.Content.ReadAsStringAsync().Result;
+                var claimResponse = JsonConvert.DeserializeObject<InboxClientModel>(claimnodata);
+                ViewBag.claimno = claimResponse.Data;
+            
+
+
             string sentemailurl = $"{_httpClient.BaseAddress}/InboxEmail/GetAll?UserId={UserId}&type={tab}";
             HttpResponseMessage response = _httpClient.GetAsync(sentemailurl).Result;
             if (response.IsSuccessStatusCode)
@@ -155,42 +170,197 @@ namespace ibillcraft.Controllers
             return Json(sentemailDataList);
         }
 
+        //public JsonResult General(string tab)
+        //{
+        //    if (tab == null)
+        //    {
+        //        tab = "General";
+        //    }
+
+        //    GetCookies gk = new GetCookies();
+        //    CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
+
+        //    ViewBag.Format = CUtility.format;
+
+        //    Guid? UserId = new Guid(CUtility.userid);
+        //    var sentemailDataList = new List<InboxEmailModel>();
+        //    var sentemailList = new List<InboxEmailModel>();
+
+        //    if (tab == "Enquiry one")
+        //    {
+        //        string claimnourl = $"{_httpClient.BaseAddress}/InboxEmail/dropdownclaimno?UserId={UserId}&i_type={tab}";
+        //        HttpResponseMessage claimnoresponseView = _httpClient.GetAsync(claimnourl).Result;
+        //        dynamic claimnodata = claimnoresponseView.Content.ReadAsStringAsync().Result;
+        //        var claimResponse = JsonConvert.DeserializeObject<InboxClientModel>(claimnodata);
+        //        ViewBag.enquiryno = claimResponse.Data;
+        //    }
+        //     if (tab == "Claim one")
+        //    {
+        //        string claimnourl = $"{_httpClient.BaseAddress}/InboxEmail/dropdownclaimno?UserId={UserId}&i_type={tab}";
+        //        HttpResponseMessage claimnoresponseView = _httpClient.GetAsync(claimnourl).Result;
+        //        dynamic claimnodata = claimnoresponseView.Content.ReadAsStringAsync().Result;
+        //        var claimResponse = JsonConvert.DeserializeObject<InboxClientModel>(claimnodata);
+        //        ViewBag.claimno = claimResponse.Data;
+        //    }
+
+        //    string sentemailurl = $"{_httpClient.BaseAddress}/InboxEmail/General?UserId={UserId}&type={tab}";
+        //    HttpResponseMessage response = _httpClient.GetAsync(sentemailurl).Result;
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        dynamic data = response.Content.ReadAsStringAsync().Result;
+        //        var dataObject = new { data = new List<InboxEmailModel>() };
+        //        var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
+        //        sentemailList = response2.data;
+
+        //        if (sentemailList != null)
+        //        {
+        //            //return Json(sentemailList);
+        //            if (tab == "Claim one")
+        //            {
+        //                return Json(new
+        //                {
+        //                    sentemailList = sentemailList,
+        //                    claimno = ViewBag.claimno
+        //                });
+        //            }
+        //            else if(tab =="enquiry one")
+        //            {
+        //                return Json(new
+        //                {
+        //                    sentemailList = sentemailList,
+        //                    enquiryno = ViewBag.enquiryno
+        //                });
+        //            }
+
+        //        }
+        //        else
+        //        {
+        //            var sentemailList1 = new List<InboxEmailModel>();
+        //            //return Json(sentemailList1);
+        //            //return Json(new
+        //            //{
+        //            //    sentemailList = sentemailList,
+        //            //    claimno = ViewBag.claimno
+        //            //});
+        //            if (tab == "Claim one")
+        //            {
+        //                return Json(new
+        //                {
+        //                    sentemailList = sentemailList,
+        //                    claimno = ViewBag.claimno
+        //                });
+        //            }
+        //            else if (tab == "enquiry one")
+        //            {
+        //                return Json(new
+        //                {
+        //                    sentemailList = sentemailList,
+        //                    enquiryno = ViewBag.enquiryno
+        //                });
+        //            }
+        //        }
+        //    }
+        //    //return Json(sentemailDataList);
+        //    //return Json(new
+        //    //{
+        //    //    sentemailList = sentemailList,
+        //    //    claimno = ViewBag.claimno
+        //    //});
+        //    if (tab == "Claim one")
+        //    {
+        //        return Json(new
+        //        {
+        //            sentemailList = sentemailList,
+        //            claimno = ViewBag.claimno
+        //        });
+        //    }
+        //    else if (tab == "enquiry one")
+        //    {
+        //        return Json(new
+        //        {
+        //            sentemailList = sentemailList,
+        //            enquiryno = ViewBag.enquiryno
+        //        });
+        //    }
+        //}
+
         public JsonResult General(string tab)
         {
-            if (tab == null)
-            {
-                tab = "General";
-            }
+            tab ??= "General";  // Null coalescing assignment
 
-            GetCookies gk = new GetCookies();
-            CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
+            var gk = new GetCookies();
+            var cUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
+            ViewBag.Format = cUtility.format;
 
-            ViewBag.Format = CUtility.format;
-
-            Guid? UserId = new Guid(CUtility.userid);
-            var sentemailDataList = new List<InboxEmailModel>();
+            Guid userId = new Guid(cUtility.userid);
             var sentemailList = new List<InboxEmailModel>();
-            string sentemailurl = $"{_httpClient.BaseAddress}/InboxEmail/General?UserId={UserId}&type={tab}";
-            HttpResponseMessage response = _httpClient.GetAsync(sentemailurl).Result;
-            if (response.IsSuccessStatusCode)
-            {
-                dynamic data = response.Content.ReadAsStringAsync().Result;
-                var dataObject = new { data = new List<InboxEmailModel>() };
-                var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
-                sentemailList = response2.data;
 
-                if (sentemailList != null)
+            if (tab == "Claim one" )
+            {
+                string claimNoUrl = $"{_httpClient.BaseAddress}/InboxEmail/dropdownclaimno?UserId={userId}&i_type={tab}";
+                var claimNoResponse = _httpClient.GetAsync(claimNoUrl).Result;
+
+                if (claimNoResponse.IsSuccessStatusCode)
                 {
-                    return Json(sentemailList);
-                }
-                else
-                {
-                    var sentemailList1 = new List<InboxEmailModel>();
-                    return Json(sentemailList1);
+                    var claimData = claimNoResponse.Content.ReadAsStringAsync().Result;
+                    var claimResponse = JsonConvert.DeserializeObject<InboxClientModel>(claimData);
+
+
+                    ViewBag.claimno = claimResponse.Data;
                 }
             }
-            return Json(sentemailDataList);
+            if (tab == "Enquiry one")
+            {
+                string enquiryNoUrl = $"{_httpClient.BaseAddress}/InboxEmail/dropdownenquiryno?UserId={userId}&i_type={tab}";
+                var enquiryNoResponse = _httpClient.GetAsync(enquiryNoUrl).Result;
+
+                    if (enquiryNoResponse.IsSuccessStatusCode)
+                    {
+                        var claimData = enquiryNoResponse.Content.ReadAsStringAsync().Result;
+                        var claimResponse = JsonConvert.DeserializeObject<InboxClientModel>(claimData);
+
+
+                        ViewBag.enquiryno = claimResponse.Data;
+                    }
+            }
+
+            // Fetch emails
+            string emailUrl = $"{_httpClient.BaseAddress}/InboxEmail/General?UserId={userId}&type={tab}";
+            var emailResponse = _httpClient.GetAsync(emailUrl).Result;
+
+            if (emailResponse.IsSuccessStatusCode)
+            {
+                var data = emailResponse.Content.ReadAsStringAsync().Result;
+                var parsed = JsonConvert.DeserializeAnonymousType(data, new { data = new List<InboxEmailModel>() });
+                sentemailList = parsed.data ?? new List<InboxEmailModel>();
+            }
+
+            // Final JSON return
+            if (tab == "Claim one")
+            {
+                return Json(new
+                {
+                    sentemailList,
+                    claimno = ViewBag.claimno
+                });
+            }
+            else if (tab == "Enquiry one")
+            {
+                return Json(new
+                {
+                    sentemailList,
+                    enquiryno = ViewBag.enquiryno
+                });
+            }
+            else
+            {
+                return Json(new
+                {
+                    sentemailList
+                });
+            }
         }
+
 
         public JsonResult filter(string? from, string? to, string? subject, string? hasthewords, string? tab)
         {
@@ -351,6 +521,51 @@ namespace ibillcraft.Controllers
             return Json(sentemailDataList);
         }
 
+
+        public JsonResult ClaimoneNo( string? tab,  string? claim)
+        {
+
+            GetCookies gk = new GetCookies();
+            CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
+
+            ViewBag.Format = CUtility.format;
+            Guid? UserId = new Guid(CUtility.userid);
+
+            var sentemailDataList = new List<InboxEmailModel>();
+            var sentemailList = new List<InboxEmailModel>();
+            string sentclienturl = $"{_httpClient.BaseAddress}/InboxEmail/ClaimoneNo?UserId={UserId}&i_type={tab}&i_claimno={claim}";
+            HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                dynamic data = response.Content.ReadAsStringAsync().Result;
+                var dataObject = new { data = new List<InboxEmailModel>() };
+                var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
+                sentemailList = response2.data;
+
+                if (sentemailList != null)
+                {
+                    //return Json(sentemailList);
+                    return Json(new
+                    {
+                        sentemailList
+                    });
+                }
+                else
+                {
+                    var sentemailList1 = new List<InboxEmailModel>();
+                    //return Json(sentemailList1);
+                    return Json(new
+                    {
+                        sentemailList1
+                    });
+                }
+            }
+            //return Json(sentemailDataList);
+            return Json(new
+            {
+                sentemailDataList
+            });
+        }
 
         private string GetMimeType(string filePath)
         {
@@ -791,7 +1006,7 @@ WHERE ',' + em.e_employee + ',' LIKE @searchPattern AND EXISTS ( SELECT 1 FROM t
                                 DateTime currentUtcTime = DateTime.UtcNow;
 
                                 // Convert the UTC time to UTC+04:00 (Indian Standard Time)
-                                  TimeZoneInfo istTimeZone1 = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+                                TimeZoneInfo istTimeZone1 = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
                                 //TimeZoneInfo istTimeZone1 = TimeZoneInfo.FindSystemTimeZoneById("Arabian Standard Time");
 
                                 DateTime currentDateTimeInIst = TimeZoneInfo.ConvertTimeFromUtc(currentUtcTime, istTimeZone1);
@@ -1071,7 +1286,7 @@ WHERE ',' + em.e_employee + ',' LIKE @searchPattern AND EXISTS ( SELECT 1 FROM t
                                 }
                                 //for server
                                 DateTime startDateTime = DateTime.ParseExact(time, "M/d/yyyy h:mm:ss tt", CultureInfo.InvariantCulture);
-                                
+
 
                                 //for local
                                 //DateTime startDateTime = DateTime.ParseExact(time, "MM/dd/yy h:mm:ss tt", CultureInfo.InvariantCulture);
@@ -1426,88 +1641,88 @@ WHERE ',' + em.e_employee + ',' LIKE @searchPattern AND EXISTS ( SELECT 1 FROM t
 
                 //            if (i_messageid != messageId)
                 //            {
-                                string query = @"INSERT INTO dbo.tbl_InboxEmail (i_subject, i_from, i_to, i_body, i_replyto, i_messageid, i_receiveddate, i_attachment, i_type)
+                string query = @"INSERT INTO dbo.tbl_InboxEmail (i_subject, i_from, i_to, i_body, i_replyto, i_messageid, i_receiveddate, i_attachment, i_type)
                          VALUES (@i_subject, @i_from, @i_to, @i_body, @i_replyto, @i_messageid, @i_receiveddate, @i_attachment, @i_type)";
 
-                                using (SqlCommand cmd1 = new SqlCommand(query, conn))
-                                {
-                                    // Add parameters to the insert query
-                                    cmd1.Parameters.AddWithValue("@i_subject", subject);
-                                    cmd1.Parameters.AddWithValue("@i_from", from);
-                                    cmd1.Parameters.AddWithValue("@i_to", to);
-                                    cmd1.Parameters.AddWithValue("@i_body", body);
-                                    cmd1.Parameters.AddWithValue("@i_replyto", inReplyTo);
-                                    cmd1.Parameters.AddWithValue("@i_messageid", messageId);
-                                    cmd1.Parameters.AddWithValue("@i_receiveddate", receivedDate);
-                                    cmd1.Parameters.AddWithValue("@i_attachment", attachmentPath);
-                                    cmd1.Parameters.AddWithValue("@i_type", emailType);
-
-                                    // Execute the query to insert the email into the database
-                                    cmd1.ExecuteNonQuery();
-                                }
-
-                           // }
-                      //  }
-                 //   }
-               // }
-
-
-
-
-                    // Insert email data into the tbl_InboxEmail table
-                    //string query = @"INSERT INTO dbo.tbl_InboxEmail (i_subject, i_from, i_to, i_body, i_replyto, i_messageid, i_receiveddate, i_attachment, i_type)
-                    //     VALUES (@i_subject, @i_from, @i_to, @i_body, @i_replyto, @i_messageid, @i_receiveddate, @i_attachment, @i_type)";
-
-                    //using (SqlCommand cmd1 = new SqlCommand(query, conn))
-                    //{
-                    //    // Add parameters to the insert query
-                    //    cmd1.Parameters.AddWithValue("@i_subject", subject);
-                    //    cmd1.Parameters.AddWithValue("@i_from", from);
-                    //    cmd1.Parameters.AddWithValue("@i_to", to);
-                    //    cmd1.Parameters.AddWithValue("@i_body", body);
-                    //    cmd1.Parameters.AddWithValue("@i_replyto", inReplyTo);
-                    //    cmd1.Parameters.AddWithValue("@i_messageid", messageId);
-                    //    cmd1.Parameters.AddWithValue("@i_receiveddate", receivedDate);
-                    //    cmd1.Parameters.AddWithValue("@i_attachment", attachmentPath);
-                    //    cmd1.Parameters.AddWithValue("@i_type", emailType);
-
-                    //    // Execute the query to insert the email into the database
-                    //    cmd1.ExecuteNonQuery();
-                    //}
-
-
-
-
-
-
-
-                }
-            }
-
-            private async Task SentEmail(GraphApiEmailResponse.GraphApiMessage email, string userId)
-            {
-                try
+                using (SqlCommand cmd1 = new SqlCommand(query, conn))
                 {
-                    // Extract email details with null checks
-                    string subject = email.Subject ?? string.Empty;
-                    string from = email.From?.EmailAddress?.Address ?? string.Empty;
-                    string to = string.Join(", ", email.ToRecipients?.Select(r => r.EmailAddress?.Address) ?? new List<string>());
-                    string body = email.Body?.Content ?? string.Empty;
-                    string inReplyTo = email.InReplyToId ?? string.Empty;
-                    string messageId = email.Id ?? string.Empty;
-                    DateTime sentDate = email.ReceivedDateTime ?? DateTime.MinValue; // Use appropriate sent date field if available
-                    string emailType = "General";
+                    // Add parameters to the insert query
+                    cmd1.Parameters.AddWithValue("@i_subject", subject);
+                    cmd1.Parameters.AddWithValue("@i_from", from);
+                    cmd1.Parameters.AddWithValue("@i_to", to);
+                    cmd1.Parameters.AddWithValue("@i_body", body);
+                    cmd1.Parameters.AddWithValue("@i_replyto", inReplyTo);
+                    cmd1.Parameters.AddWithValue("@i_messageid", messageId);
+                    cmd1.Parameters.AddWithValue("@i_receiveddate", receivedDate);
+                    cmd1.Parameters.AddWithValue("@i_attachment", attachmentPath);
+                    cmd1.Parameters.AddWithValue("@i_type", emailType);
 
-                    // Process attachments if available
-                    var attachmentSaver = new AttachmentSaver();
+                    // Execute the query to insert the email into the database
+                    cmd1.ExecuteNonQuery();
+                }
 
-                    using (HttpClient httpClient = new HttpClient())
-                    {
-                        // Save attachments
-                        string attachmentPath = await attachmentSaver.SaveAttachments1(email, userId, httpClient);
+                // }
+                //  }
+                //   }
+                // }
 
-                        // Insert email into the database along with attachments
-                     
+
+
+
+                // Insert email data into the tbl_InboxEmail table
+                //string query = @"INSERT INTO dbo.tbl_InboxEmail (i_subject, i_from, i_to, i_body, i_replyto, i_messageid, i_receiveddate, i_attachment, i_type)
+                //     VALUES (@i_subject, @i_from, @i_to, @i_body, @i_replyto, @i_messageid, @i_receiveddate, @i_attachment, @i_type)";
+
+                //using (SqlCommand cmd1 = new SqlCommand(query, conn))
+                //{
+                //    // Add parameters to the insert query
+                //    cmd1.Parameters.AddWithValue("@i_subject", subject);
+                //    cmd1.Parameters.AddWithValue("@i_from", from);
+                //    cmd1.Parameters.AddWithValue("@i_to", to);
+                //    cmd1.Parameters.AddWithValue("@i_body", body);
+                //    cmd1.Parameters.AddWithValue("@i_replyto", inReplyTo);
+                //    cmd1.Parameters.AddWithValue("@i_messageid", messageId);
+                //    cmd1.Parameters.AddWithValue("@i_receiveddate", receivedDate);
+                //    cmd1.Parameters.AddWithValue("@i_attachment", attachmentPath);
+                //    cmd1.Parameters.AddWithValue("@i_type", emailType);
+
+                //    // Execute the query to insert the email into the database
+                //    cmd1.ExecuteNonQuery();
+                //}
+
+
+
+
+
+
+
+            }
+        }
+
+        private async Task SentEmail(GraphApiEmailResponse.GraphApiMessage email, string userId)
+        {
+            try
+            {
+                // Extract email details with null checks
+                string subject = email.Subject ?? string.Empty;
+                string from = email.From?.EmailAddress?.Address ?? string.Empty;
+                string to = string.Join(", ", email.ToRecipients?.Select(r => r.EmailAddress?.Address) ?? new List<string>());
+                string body = email.Body?.Content ?? string.Empty;
+                string inReplyTo = email.InReplyToId ?? string.Empty;
+                string messageId = email.Id ?? string.Empty;
+                DateTime sentDate = email.ReceivedDateTime ?? DateTime.MinValue; // Use appropriate sent date field if available
+                string emailType = "General";
+
+                // Process attachments if available
+                var attachmentSaver = new AttachmentSaver();
+
+                using (HttpClient httpClient = new HttpClient())
+                {
+                    // Save attachments
+                    string attachmentPath = await attachmentSaver.SaveAttachments1(email, userId, httpClient);
+
+                    // Insert email into the database along with attachments
+
 
 
                     string connectionString = sql;
@@ -1543,29 +1758,29 @@ WHERE ',' + em.e_employee + ',' LIKE @searchPattern AND EXISTS ( SELECT 1 FROM t
 
                     // Log success
                     WriteToFile($"Sent email processed successfully: {subject} with attachments.");
-                    }
+                }
 
-                }
-                catch (Exception ex)
-                {
-                    // Log the error with details
-                    // string emailId = email?.Id ?? "Unknown";
-                    WriteToFile($"Error processing sent email (ID: {email}): {ex.Message}");
-                }
             }
-
-
-            private void InsertSentEmailToDatabase(string subject, string from, string to, string body, string inReplyTo, string messageId, DateTime sendDate, string attachmentPath, string sType)
+            catch (Exception ex)
             {
-                //string connectionString = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
-                string connectionString = sql;
+                // Log the error with details
+                // string emailId = email?.Id ?? "Unknown";
+                WriteToFile($"Error processing sent email (ID: {email}): {ex.Message}");
+            }
+        }
 
-                using (SqlConnection conn = new SqlConnection(connectionString))
-                {
-                    conn.Open();
 
-                    // Query to fetch email rules
-                    string query1 = @"SELECT E_id, pv1.pv_parametervalue as E_parameterName, pv2.pv_parametervalue as E_conditionName,
+        private void InsertSentEmailToDatabase(string subject, string from, string to, string body, string inReplyTo, string messageId, DateTime sendDate, string attachmentPath, string sType)
+        {
+            //string connectionString = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+            string connectionString = sql;
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+
+                // Query to fetch email rules
+                string query1 = @"SELECT E_id, pv1.pv_parametervalue as E_parameterName, pv2.pv_parametervalue as E_conditionName,
                                 pv3.pv_parametervalue as E_categoryName, E_category, E_value, E_parameter, E_condition,
                                 E_createdby, E_updatedby, E_updateddate, E_createddate, E_isactive 
                           FROM [dbo].[tbl_EmailRuleConfg] ec
@@ -1577,302 +1792,302 @@ WHERE ',' + em.e_employee + ',' LIKE @searchPattern AND EXISTS ( SELECT 1 FROM t
 
 
 
-                    using (SqlCommand cmd = new SqlCommand(query1, conn))
+                using (SqlCommand cmd = new SqlCommand(query1, conn))
+                {
+                    using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        // Loop through each row in the result
+                        while (reader.Read())
                         {
-                            // Loop through each row in the result
-                            while (reader.Read())
+                            string E_parameterName = reader["E_parameterName"].ToString();
+                            string E_conditionName = reader["E_conditionName"].ToString();
+                            string E_categoryName = reader["E_categoryName"].ToString();
+                            string E_value = reader["E_value"].ToString();
+
+                            if (E_parameterName == "Subject")
                             {
-                                string E_parameterName = reader["E_parameterName"].ToString();
-                                string E_conditionName = reader["E_conditionName"].ToString();
-                                string E_categoryName = reader["E_categoryName"].ToString();
-                                string E_value = reader["E_value"].ToString();
-
-                                if (E_parameterName == "Subject")
+                                if (E_conditionName == "Contains")
                                 {
-                                    if (E_conditionName == "Contains")
+                                    //if (subject.Contains(E_value))
+                                    if (subject.IndexOf(E_value, StringComparison.OrdinalIgnoreCase) >= 0)
                                     {
-                                        //if (subject.Contains(E_value))
-                                        if (subject.IndexOf(E_value, StringComparison.OrdinalIgnoreCase) >= 0)
-                                        {
-                                            sType = E_categoryName;
-                                        }
+                                        sType = E_categoryName;
                                     }
-                                    else if (E_conditionName == "Begin With")
-                                    {
-                                        if (subject.StartsWith(E_value, StringComparison.OrdinalIgnoreCase))
-                                        {
-                                            sType = E_categoryName;
-                                        }
-                                    }
-                                    else if (E_conditionName == "Equal To")
-                                    {
-                                        if (subject.Equals(E_value, StringComparison.OrdinalIgnoreCase))
-                                        {
-                                            sType = E_categoryName;
-                                        }
-                                    }
-
                                 }
-                                else if (E_parameterName == "Domain")
+                                else if (E_conditionName == "Begin With")
                                 {
-                                    if (E_conditionName == "Contains")
+                                    if (subject.StartsWith(E_value, StringComparison.OrdinalIgnoreCase))
                                     {
-                                        //if (subject.Contains(E_value))
-                                        if (subject.IndexOf(E_value, StringComparison.OrdinalIgnoreCase) >= 0)
-                                        {
-                                            sType = E_categoryName;
-                                        }
+                                        sType = E_categoryName;
                                     }
-                                    else if (E_conditionName == "Begin With")
+                                }
+                                else if (E_conditionName == "Equal To")
+                                {
+                                    if (subject.Equals(E_value, StringComparison.OrdinalIgnoreCase))
                                     {
-                                        if (subject.StartsWith(E_value, StringComparison.OrdinalIgnoreCase))
-                                        {
-                                            sType = E_categoryName;
-                                        }
+                                        sType = E_categoryName;
                                     }
-                                    else if (E_conditionName == "Equal To")
+                                }
+
+                            }
+                            else if (E_parameterName == "Domain")
+                            {
+                                if (E_conditionName == "Contains")
+                                {
+                                    //if (subject.Contains(E_value))
+                                    if (subject.IndexOf(E_value, StringComparison.OrdinalIgnoreCase) >= 0)
                                     {
-                                        if (subject.Equals(E_value, StringComparison.OrdinalIgnoreCase))
-                                        {
-                                            sType = E_categoryName;
-                                        }
+                                        sType = E_categoryName;
+                                    }
+                                }
+                                else if (E_conditionName == "Begin With")
+                                {
+                                    if (subject.StartsWith(E_value, StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        sType = E_categoryName;
+                                    }
+                                }
+                                else if (E_conditionName == "Equal To")
+                                {
+                                    if (subject.Equals(E_value, StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        sType = E_categoryName;
                                     }
                                 }
                             }
                         }
                     }
+                }
 
 
-                    //string query2 = @"SELECT COUNT(*) FROM [dbo].[tbl_customermaster] WHERE SUBSTRING(c_email, CHARINDEX('@', c_email) + 1, LEN(c_email)) = @Email";
+                //string query2 = @"SELECT COUNT(*) FROM [dbo].[tbl_customermaster] WHERE SUBSTRING(c_email, CHARINDEX('@', c_email) + 1, LEN(c_email)) = @Email";
 
-                    //// string domain = from.Substring(from.IndexOf('@') + 1);
-                    //using (SqlCommand cmd2 = new SqlCommand(query2, conn))
-                    //{
-                    //    cmd2.Parameters.AddWithValue("@Email", from);
+                //// string domain = from.Substring(from.IndexOf('@') + 1);
+                //using (SqlCommand cmd2 = new SqlCommand(query2, conn))
+                //{
+                //    cmd2.Parameters.AddWithValue("@Email", from);
 
-                    //    // Execute the query and get the count
-                    //    int count = (int)cmd2.ExecuteScalar();
+                //    // Execute the query and get the count
+                //    int count = (int)cmd2.ExecuteScalar();
 
-                    //    if (count == 0)
-                    //    {
-                    //        sType = "General";
-                    //    }
-                    //}
+                //    if (count == 0)
+                //    {
+                //        sType = "General";
+                //    }
+                //}
 
-                    string query2 = @"SELECT COUNT(*) FROM [dbo].[tbl_customermaster] WHERE SUBSTRING(c_email, CHARINDEX('@', c_email) + 1, LEN(c_email)) = @Email";
-                    string domain = to.Substring(to.IndexOf('@') + 1);
+                string query2 = @"SELECT COUNT(*) FROM [dbo].[tbl_customermaster] WHERE SUBSTRING(c_email, CHARINDEX('@', c_email) + 1, LEN(c_email)) = @Email";
+                string domain = to.Substring(to.IndexOf('@') + 1);
 
-                    using (SqlCommand cmd2 = new SqlCommand(query2, conn))
+                using (SqlCommand cmd2 = new SqlCommand(query2, conn))
+                {
+                    cmd2.Parameters.AddWithValue("@Email", domain);
+
+                    // Execute the query and get the count
+                    int count = (int)cmd2.ExecuteScalar();
+
+                    if (count == 0)
                     {
-                        cmd2.Parameters.AddWithValue("@Email", domain);
-
-                        // Execute the query and get the count
-                        int count = (int)cmd2.ExecuteScalar();
-
-                        if (count == 0)
-                        {
-                            sType = "General";
-                        }
-                    }
-
-
-                    // Insert email into SentEmail table
-                    string insertQuery = @"INSERT INTO dbo.tbl_SentEmail (s_subject,s_from,s_to,s_body,s_replyto,s_messageid,s_sentdate,s_attachment,s_type) 
-            VALUES (@s_subject,@s_from,@s_to,@s_body,@s_replyto,@s_messageid,@s_sentdate,@s_attachment,@s_type)";
-
-                    using (SqlCommand insertCmd = new SqlCommand(insertQuery, conn))
-                    {
-                        insertCmd.Parameters.AddWithValue("@s_subject", subject);
-                        insertCmd.Parameters.AddWithValue("@s_from", from);
-                        insertCmd.Parameters.AddWithValue("@s_to", to);
-                        insertCmd.Parameters.AddWithValue("@s_body", body);
-                        insertCmd.Parameters.AddWithValue("@s_replyto", inReplyTo);
-                        insertCmd.Parameters.AddWithValue("@s_messageid", messageId);
-                        insertCmd.Parameters.AddWithValue("@s_sentdate", sendDate);
-                        insertCmd.Parameters.AddWithValue("@s_attachment", attachmentPath);
-                        insertCmd.Parameters.AddWithValue("@s_type", sType);
-
-                        insertCmd.ExecuteNonQuery();
+                        sType = "General";
                     }
                 }
+
+
+                // Insert email into SentEmail table
+                string insertQuery = @"INSERT INTO dbo.tbl_SentEmail (s_subject,s_from,s_to,s_body,s_replyto,s_messageid,s_sentdate,s_attachment,s_type) 
+            VALUES (@s_subject,@s_from,@s_to,@s_body,@s_replyto,@s_messageid,@s_sentdate,@s_attachment,@s_type)";
+
+                using (SqlCommand insertCmd = new SqlCommand(insertQuery, conn))
+                {
+                    insertCmd.Parameters.AddWithValue("@s_subject", subject);
+                    insertCmd.Parameters.AddWithValue("@s_from", from);
+                    insertCmd.Parameters.AddWithValue("@s_to", to);
+                    insertCmd.Parameters.AddWithValue("@s_body", body);
+                    insertCmd.Parameters.AddWithValue("@s_replyto", inReplyTo);
+                    insertCmd.Parameters.AddWithValue("@s_messageid", messageId);
+                    insertCmd.Parameters.AddWithValue("@s_sentdate", sendDate);
+                    insertCmd.Parameters.AddWithValue("@s_attachment", attachmentPath);
+                    insertCmd.Parameters.AddWithValue("@s_type", sType);
+
+                    insertCmd.ExecuteNonQuery();
+                }
             }
+        }
 
         //public class AttachmentSaver
         //{
 
-            //    //Inbox
-            //    public async Task<string> SaveAttachments(GraphApiEmailResponse.GraphApiMessage email, string userId, HttpClient httpClient)
-            //    {
-            //        List<string> filePaths = new List<string>();
-            //        string attachmentpath = "CityMarine_EmailCRM/wwwroot/Email_Attachment";
+        //    //Inbox
+        //    public async Task<string> SaveAttachments(GraphApiEmailResponse.GraphApiMessage email, string userId, HttpClient httpClient)
+        //    {
+        //        List<string> filePaths = new List<string>();
+        //        string attachmentpath = "CityMarine_EmailCRM/wwwroot/Email_Attachment";
 
-            //        // Ensure email has attachments
-            //        if (email.Attachments != null && email.Attachments.Count > 0)
-            //        {
-            //            foreach (var attachment in email.Attachments)
-            //            {
-            //                string senderEmail = email.From?.EmailAddress?.Address ?? "UnknownSender";
-            //                string attachmentsFolder = Path.Combine(attachmentpath, senderEmail);
+        //        // Ensure email has attachments
+        //        if (email.Attachments != null && email.Attachments.Count > 0)
+        //        {
+        //            foreach (var attachment in email.Attachments)
+        //            {
+        //                string senderEmail = email.From?.EmailAddress?.Address ?? "UnknownSender";
+        //                string attachmentsFolder = Path.Combine(attachmentpath, senderEmail);
 
-            //                // Ensure the folder exists
-            //                if (!Directory.Exists(attachmentsFolder))
-            //                {
-            //                    Directory.CreateDirectory(attachmentsFolder);
-            //                }
+        //                // Ensure the folder exists
+        //                if (!Directory.Exists(attachmentsFolder))
+        //                {
+        //                    Directory.CreateDirectory(attachmentsFolder);
+        //                }
 
-            //                string fileName = SanitizeFileName(attachment.Name);
-            //                string filePath = Path.Combine(attachmentsFolder, fileName);
+        //                string fileName = SanitizeFileName(attachment.Name);
+        //                string filePath = Path.Combine(attachmentsFolder, fileName);
 
-            //                // If the attachment is of type 'GraphApiAttachment'
-            //                if (attachment is GraphApiAttachment fileAttachment)
-            //                {
-            //                    try
-            //                    {
-            //                        // Check if the attachment has a contentUrl or contentBytes
-            //                        if (!string.IsNullOrEmpty(fileAttachment.ContentUrl))
-            //                        {
-            //                            // Download the attachment using its contentUrl
-            //                            await DownloadAttachmentFromUrl(fileAttachment.ContentUrl, filePath, httpClient);
-            //                        }
-            //                        else if (!string.IsNullOrEmpty(fileAttachment.ContentBytes))
-            //                        {
-            //                            // Decode and save attachment from Base64 contentBytes
-            //                            byte[] content = Convert.FromBase64String(fileAttachment.ContentBytes);
-            //                            System.IO.File.WriteAllBytes(filePath, content);
-            //                        }
+        //                // If the attachment is of type 'GraphApiAttachment'
+        //                if (attachment is GraphApiAttachment fileAttachment)
+        //                {
+        //                    try
+        //                    {
+        //                        // Check if the attachment has a contentUrl or contentBytes
+        //                        if (!string.IsNullOrEmpty(fileAttachment.ContentUrl))
+        //                        {
+        //                            // Download the attachment using its contentUrl
+        //                            await DownloadAttachmentFromUrl(fileAttachment.ContentUrl, filePath, httpClient);
+        //                        }
+        //                        else if (!string.IsNullOrEmpty(fileAttachment.ContentBytes))
+        //                        {
+        //                            // Decode and save attachment from Base64 contentBytes
+        //                            byte[] content = Convert.FromBase64String(fileAttachment.ContentBytes);
+        //                            System.IO.File.WriteAllBytes(filePath, content);
+        //                        }
 
-            //                        filePaths.Add(filePath);
-            //                        Console.WriteLine($"Attachment saved: {filePath}");
-            //                    }
-            //                    catch (Exception ex)
-            //                    {
-            //                        Console.WriteLine($"Error downloading attachment {fileAttachment.Name}: {ex.Message}");
-            //                    }
-            //                }
-            //                else
-            //                {
-            //                    Console.WriteLine($"Attachment {attachment.Name} is not a file attachment.");
-            //                }
-            //            }
-            //        }
-            //        else
-            //        {
-            //            Console.WriteLine("No attachments found.");
-            //            return "No attachments available.";
-            //        }
+        //                        filePaths.Add(filePath);
+        //                        Console.WriteLine($"Attachment saved: {filePath}");
+        //                    }
+        //                    catch (Exception ex)
+        //                    {
+        //                        Console.WriteLine($"Error downloading attachment {fileAttachment.Name}: {ex.Message}");
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    Console.WriteLine($"Attachment {attachment.Name} is not a file attachment.");
+        //                }
+        //            }
+        //        }
+        //        else
+        //        {
+        //            Console.WriteLine("No attachments found.");
+        //            return "No attachments available.";
+        //        }
 
-            //        return string.Join(Environment.NewLine, filePaths);
-            //    }
+        //        return string.Join(Environment.NewLine, filePaths);
+        //    }
 
 
-            //    private async Task DownloadAttachmentFromUrl(string contentUrl, string filePath, HttpClient httpClient)
-            //    {
-            //        var response = await httpClient.GetAsync(contentUrl);
-            //        if (response.IsSuccessStatusCode)
-            //        {
-            //            var content = await response.Content.ReadAsByteArrayAsync();
-            //            System.IO.File.WriteAllBytes(filePath, content);
-            //        }
-            //        else
-            //        {
-            //            Console.WriteLine($"Failed to download attachment from URL: {contentUrl}");
-            //        }
-            //    }
+        //    private async Task DownloadAttachmentFromUrl(string contentUrl, string filePath, HttpClient httpClient)
+        //    {
+        //        var response = await httpClient.GetAsync(contentUrl);
+        //        if (response.IsSuccessStatusCode)
+        //        {
+        //            var content = await response.Content.ReadAsByteArrayAsync();
+        //            System.IO.File.WriteAllBytes(filePath, content);
+        //        }
+        //        else
+        //        {
+        //            Console.WriteLine($"Failed to download attachment from URL: {contentUrl}");
+        //        }
+        //    }
 
-            //    private string SanitizeFileName(string fileName)
-            //    {
+        //    private string SanitizeFileName(string fileName)
+        //    {
 
-            //        return string.Concat(fileName.Split(Path.GetInvalidFileNameChars()));
-            //    }
-            //    //Send
-            //    public async Task<string> SaveAttachments1(GraphApiEmailResponse.GraphApiMessage email, string userId, HttpClient httpClient)
-            //    {
-            //        List<string> filePaths = new List<string>();
-            //        string attachmentpath = "CityMarine_EmailCRM/wwwroot/Email_Attachment";
+        //        return string.Concat(fileName.Split(Path.GetInvalidFileNameChars()));
+        //    }
+        //    //Send
+        //    public async Task<string> SaveAttachments1(GraphApiEmailResponse.GraphApiMessage email, string userId, HttpClient httpClient)
+        //    {
+        //        List<string> filePaths = new List<string>();
+        //        string attachmentpath = "CityMarine_EmailCRM/wwwroot/Email_Attachment";
 
-            //        // Ensure email has attachments
-            //        if (email.Attachments != null && email.Attachments.Any())
-            //        {
-            //            foreach (var attachment in email.Attachments)
-            //            {
-            //                string senderEmail = email.From?.EmailAddress?.Address ?? "UnknownSender";
-            //                string attachmentsFolder = Path.Combine(attachmentpath, senderEmail);
+        //        // Ensure email has attachments
+        //        if (email.Attachments != null && email.Attachments.Any())
+        //        {
+        //            foreach (var attachment in email.Attachments)
+        //            {
+        //                string senderEmail = email.From?.EmailAddress?.Address ?? "UnknownSender";
+        //                string attachmentsFolder = Path.Combine(attachmentpath, senderEmail);
 
-            //                // Ensure the folder exists
-            //                if (!Directory.Exists(attachmentsFolder))
-            //                {
-            //                    Directory.CreateDirectory(attachmentsFolder);
-            //                }
+        //                // Ensure the folder exists
+        //                if (!Directory.Exists(attachmentsFolder))
+        //                {
+        //                    Directory.CreateDirectory(attachmentsFolder);
+        //                }
 
-            //                string fileName = SanitizeFileName(attachment.Name);
-            //                string filePath = Path.Combine(attachmentsFolder, fileName);
+        //                string fileName = SanitizeFileName(attachment.Name);
+        //                string filePath = Path.Combine(attachmentsFolder, fileName);
 
-            //                try
-            //                {
-            //                    // Check if the attachment is of type 'GraphApiAttachment'
-            //                    if (attachment is GraphApiEmailResponse.GraphApiAttachment graphAttachment)
-            //                    {
-            //                        // If the attachment has contentBytes (Base64 encoded)
-            //                        if (!string.IsNullOrEmpty(graphAttachment.ContentBytes))
-            //                        {
-            //                            byte[] content = Convert.FromBase64String(graphAttachment.ContentBytes);
-            //                            System.IO.File.WriteAllBytes(filePath, content);
-            //                        }
-            //                        // If the attachment has a contentUrl, download the file
-            //                        else if (!string.IsNullOrEmpty(graphAttachment.ContentUrl))
-            //                        {
-            //                            await DownloadAttachmentFromUrl1(graphAttachment.ContentUrl, filePath, httpClient);
-            //                        }
+        //                try
+        //                {
+        //                    // Check if the attachment is of type 'GraphApiAttachment'
+        //                    if (attachment is GraphApiEmailResponse.GraphApiAttachment graphAttachment)
+        //                    {
+        //                        // If the attachment has contentBytes (Base64 encoded)
+        //                        if (!string.IsNullOrEmpty(graphAttachment.ContentBytes))
+        //                        {
+        //                            byte[] content = Convert.FromBase64String(graphAttachment.ContentBytes);
+        //                            System.IO.File.WriteAllBytes(filePath, content);
+        //                        }
+        //                        // If the attachment has a contentUrl, download the file
+        //                        else if (!string.IsNullOrEmpty(graphAttachment.ContentUrl))
+        //                        {
+        //                            await DownloadAttachmentFromUrl1(graphAttachment.ContentUrl, filePath, httpClient);
+        //                        }
 
-            //                        filePaths.Add(filePath);
-            //                        Console.WriteLine($"Attachment saved: {filePath}");
-            //                    }
-            //                    else
-            //                    {
-            //                        Console.WriteLine($"Attachment {attachment.Name} is not a file attachment.");
-            //                    }
-            //                }
-            //                catch (Exception ex)
-            //                {
-            //                    Console.WriteLine($"Error processing attachment {attachment.Name}: {ex.Message}");
-            //                }
-            //            }
-            //        }
-            //        else
-            //        {
-            //            Console.WriteLine("No attachments found.");
-            //            return "No attachments available.";
-            //        }
+        //                        filePaths.Add(filePath);
+        //                        Console.WriteLine($"Attachment saved: {filePath}");
+        //                    }
+        //                    else
+        //                    {
+        //                        Console.WriteLine($"Attachment {attachment.Name} is not a file attachment.");
+        //                    }
+        //                }
+        //                catch (Exception ex)
+        //                {
+        //                    Console.WriteLine($"Error processing attachment {attachment.Name}: {ex.Message}");
+        //                }
+        //            }
+        //        }
+        //        else
+        //        {
+        //            Console.WriteLine("No attachments found.");
+        //            return "No attachments available.";
+        //        }
 
-            //        return string.Join(Environment.NewLine, filePaths);
-            //    }
+        //        return string.Join(Environment.NewLine, filePaths);
+        //    }
 
-            //    public async Task DownloadAttachmentFromUrl1(string contentUrl, string filePath, HttpClient httpClient)
-            //    {
-            //        try
-            //        {
-            //            // Get the attachment content from the URL
-            //            var response = await httpClient.GetAsync(contentUrl);
+        //    public async Task DownloadAttachmentFromUrl1(string contentUrl, string filePath, HttpClient httpClient)
+        //    {
+        //        try
+        //        {
+        //            // Get the attachment content from the URL
+        //            var response = await httpClient.GetAsync(contentUrl);
 
-            //            if (response.IsSuccessStatusCode)
-            //            {
-            //                var content = await response.Content.ReadAsByteArrayAsync();
-            //                System.IO.File.WriteAllBytes(filePath, content);
-            //                Console.WriteLine($"Attachment downloaded: {filePath}");
-            //            }
-            //            else
-            //            {
-            //                Console.WriteLine($"Failed to download attachment from {contentUrl}");
-            //            }
-            //        }
-            //        catch (Exception ex)
-            //        {
-            //            Console.WriteLine($"Error downloading attachment: {ex.Message}");
-            //        }
-            //    }
-            //}
+        //            if (response.IsSuccessStatusCode)
+        //            {
+        //                var content = await response.Content.ReadAsByteArrayAsync();
+        //                System.IO.File.WriteAllBytes(filePath, content);
+        //                Console.WriteLine($"Attachment downloaded: {filePath}");
+        //            }
+        //            else
+        //            {
+        //                Console.WriteLine($"Failed to download attachment from {contentUrl}");
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Console.WriteLine($"Error downloading attachment: {ex.Message}");
+        //        }
+        //    }
+        //}
 
         public class AttachmentSaver
         {

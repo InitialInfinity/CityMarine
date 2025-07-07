@@ -358,6 +358,8 @@
                         <tr>
                             <th style="width:0%">Sr.No</th>
                             <th style="display:none">Id</th>
+                            <th style="width: 4%"> From</th>
+                            <th style="width: 4%"> Subject</th>
                             <th style="width: 4%">Attachment</th>
                             <th style="width: 4%">Date</th>
                             <td style="width: 6%">Download</td>
@@ -1663,6 +1665,8 @@
                     htmltab += '<td>' + (i + 1) + '</td>';
                     htmltab += '<td style="display:none">' + response[i].ic_id + '</td>';
 
+                    htmltab += '<td >' + response[i].ic_from + '</td>';
+                    htmltab += '<td >' + response[i].ic_subject + '</td>';
                     htmltab += '<td >' + response[i].ic_attachment + '</td>';
                     htmltab += '<td >' + response[i].ic_receiveddate + '</td>';
 
@@ -1752,7 +1756,8 @@
                     htmltab += '<tr>';
                     htmltab += '<td>' + (i + 1) + '</td>';
                     htmltab += '<td style="display:none">' + response[i].ic_id + '</td>';
-
+                    htmltab += '<td >' + response[i].ic_from + '</td>';
+                    htmltab += '<td >' + response[i].ic_subject + '</td>';
                     htmltab += '<td >' + response[i].ic_attachment + '</td>';
                     htmltab += '<td >' + response[i].ic_receiveddate + '</td>';
 

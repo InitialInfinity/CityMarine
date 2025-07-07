@@ -104,7 +104,7 @@ namespace Master.Controllers
                 user.UserId = UserId;
 
                 user.i_generaltype = i_generaltype;
-                user.i_type = "General";    
+                user.i_type = "General";
                 if (user.BaseModel == null)
                 {
                     user.BaseModel = new BaseModel();
@@ -182,6 +182,84 @@ namespace Master.Controllers
                     user.BaseModel = new BaseModel();
                 }
                 user.BaseModel.OperationType = "inboxdates";
+                var createduser = await _sentemail.InboxEmail(user);
+                var data = ((Microsoft.AspNetCore.Mvc.ObjectResult)createduser).Value;
+                return Ok(data);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [HttpGet("dropdownclaimno")]
+        public async Task<IActionResult> dropdownclaimno(Guid UserId, string i_type)
+        {
+            try
+            {
+                InboxEmailModel user = new InboxEmailModel();
+                user.UserId = UserId;
+                user.i_type = i_type;
+                if (user.BaseModel == null)
+                {
+                    user.BaseModel = new BaseModel();
+                }
+                user.BaseModel.OperationType = "dropdownClaimoneNo";
+                var createduser = await _sentemail.InboxEmail(user);
+                var data = ((Microsoft.AspNetCore.Mvc.ObjectResult)createduser).Value;
+                return Ok(data);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [HttpGet("dropdownenquiryno")]
+        public async Task<IActionResult> dropdownenquiryno(Guid UserId, string i_type)
+        {
+            try
+            {
+                InboxEmailModel user = new InboxEmailModel();
+                user.UserId = UserId;
+                user.i_type = i_type;
+                if (user.BaseModel == null)
+                {
+                    user.BaseModel = new BaseModel();
+                }
+                user.BaseModel.OperationType = "dropdownenquiryno";
+                var createduser = await _sentemail.InboxEmail(user);
+                var data = ((Microsoft.AspNetCore.Mvc.ObjectResult)createduser).Value;
+                return Ok(data);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [HttpGet("ClaimoneNo")]
+        public async Task<IActionResult> ClaimoneNo(Guid UserId, string i_type,  string i_claimno)
+        {
+            try
+            {
+                InboxEmailModel user = new InboxEmailModel();
+                user.UserId = UserId;                
+                user.i_type = i_type;
+                if (i_claimno == "--Select Claim No--")
+                {
+                    i_claimno = "";
+                }
+                if (i_claimno == "--Select Enquiry No--")
+                {
+                    i_claimno = "";
+                }
+                user.i_claimno = i_claimno;
+                if (user.BaseModel == null)
+                {
+                    user.BaseModel = new BaseModel();
+                }
+                user.BaseModel.OperationType = "ClaimoneNo";
                 var createduser = await _sentemail.InboxEmail(user);
                 var data = ((Microsoft.AspNetCore.Mvc.ObjectResult)createduser).Value;
                 return Ok(data);

@@ -17,5 +17,6 @@ namespace Master.Entity
         public string? i_attachment { get; set; }
         public string? i_type { get; set; }
         public string? i_generaltype {  get; set; }
+        public string? i_claimno {  get; set; }
     }
 }
