@@ -383,7 +383,14 @@ function submitCustomer() {
         c_anidate: $("#c_anidate").val(),
         c_isactive: isActive,
         c_note: $("#c_note").val(),
-        c_domain: $("#c_domain").val(),
+
+
+        c_domain: $("#emailFields input[name='c_email']").map(function () {
+            return $(this).val().trim();
+        }).get().filter(Boolean).join(","),
+
+
+        //c_domain: $("#c_domain").val(),
 
         CustomerAttachment: orderDataArray
     };

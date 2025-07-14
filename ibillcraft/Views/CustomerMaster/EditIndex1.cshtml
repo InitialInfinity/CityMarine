@@ -51,7 +51,12 @@
 
                     <label class="col-form-label col-md-2 text-end">@Localizer["Code"] <span class="text-danger">*</span> </label>
                     <div class="col-md-3 py-2">
-                        <input id="c_ccode" class="form-control" name="c_ccode" placeholder="@Localizer["Enter Code"]" maxlength="100" asp-for="@Model.Item1.c_ccode" autocomplete="off" />
+
+                        
+                            <input id="c_ccode" class="form-control" name="c_ccode" placeholder="@Localizer["Enter Code"]" maxlength="100" asp-for="@Model.Item1.c_ccode" autocomplete="off" />
+                        
+
+
                     </div>
                 </div>
                 <div class="form-group row ">
@@ -76,13 +81,23 @@
                     <label class="col-form-label col-md-2">@Localizer["Email Id"] <span class="text-danger">*</span> </label>
                     <div class="col-md-3 py-2 d-flex">
                         <input id="c_email" class="form-control" placeholder="@Localizer["Enter Email"]" maxlength="250" asp-for="@Model.Item1.c_email" autocomplete="off" />
+                        <span class="col-md-1" id="addEmailField" style="cursor: pointer; font-weight: bolder; color: green;">+</span>
                     </div>
 
-                    <label class="col-form-label col-md-2  text-end">@Localizer["Domain Name"] <span class="text-danger">*</span> </label>
-                    <div class="col-md-3 py-2 ">
+                    @*   <div class="col-md-3 py-2" id="emailFields">
+                    <span id="addEmailField" style="cursor: pointer; font-weight: bold; color: green;">+</span>
+                    </div> *@
+
+                    <label class="col-form-label col-md-2  text-end" style="display:none">@Localizer["Domain Name"] <span class="text-danger">*</span> </label>
+                    <div class="col-md-3 py-2 " style="display:none">
                         <input id="c_domain" class="form-control" placeholder="@Localizer["Enter Domain Name"]" asp-for="@Model.Item1.c_domain" autocomplete="off" />
                     </div>
 
+                </div>
+                <div class="form-group row ">
+                    <label class="col-form-label col-md-2"></label>
+                    <div class="col-md-3 py-2" id="emailFields">
+                    </div>
                 </div>
 
 
@@ -247,22 +262,58 @@
 </div>
 
 
-<script>
-
-
-
-
-
-</script>
-
-
 @section Scripts {
-        <script>
-            $(document).ready(function () {
-                var errorMessage = '@TempData["errorMessage"]';
-                if (errorMessage) {
-                    alert(errorMessage);
-                }
-            });
-        </script>
+    <script>
+        $(document).ready(function () {
+            var errorMessage = '@TempData["errorMessage"]';
+            if (errorMessage) {
+                alert(errorMessage);
+            }
+
+
+
+
+            var existingEmails = @Html.Raw(Json.Serialize(Model?.Item1?.c_domain ?? ""));
+
+            if (existingEmails) {
+                var emails = existingEmails.split(',');
+
+                $("#emailFields").empty();
+
+                emails.forEach(function (email) {
+                    var input = $('<input>')
+                        .attr('type', 'text')
+                        .attr('name', 'c_email')
+                        .attr('maxlength', '250')
+                        .attr('autocomplete', 'off')
+                        .addClass('form-control mb-2')
+                        .val(email.trim());
+
+                    $("#emailFields").append(input);
+                });
+            }
+
+
+        });
+
+        let emailFieldCount = 1;
+
+        document.getElementById('addEmailField').addEventListener('click', function () {
+            const container = document.getElementById('emailFields');
+            const input = document.createElement('input');
+
+            input.type = 'text';
+            input.className = 'form-control mb-2';
+            input.placeholder = '@Localizer["Enter Email"]';
+            input.maxLength = 250;
+            input.name = 'c_email'; // Optional: make this c_email[] if you want a list
+            input.id = 'c_email_' + emailFieldCount;
+            input.autocomplete = 'off';
+
+            container.appendChild(input);
+            emailFieldCount++;
+        });
+    </script>
 }
+
+
