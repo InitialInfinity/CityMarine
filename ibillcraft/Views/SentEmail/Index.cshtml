@@ -638,7 +638,8 @@
     function generaltab() {
         var tab = "General";
         $('#custom-search').val('');
-          $('#typetab').css('display', 'flex');
+          //$('#typetab').css('display', 'flex');
+        $('#typetab').css('display', 'none');
 
         $('#enquiry-tab').attr('aria-selected', 'false');
         $('#client-tab').attr('aria-selected', 'false');
@@ -1151,7 +1152,8 @@
             $('#s_tab').val('');
         }
         else {
-            $('#typetab').css('display', 'content');
+            //$('#typetab').css('display', 'content');
+            $('#typetab').css('display', 'none');
             $('#general-tab').attr('aria-selected', 'true');
             $('#general-tab').attr('class', 'nav-link active');
 
