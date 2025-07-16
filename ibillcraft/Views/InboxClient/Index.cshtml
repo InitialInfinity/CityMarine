@@ -13,192 +13,9 @@
 
 }
 
-
-<style>
-    * {
-        box-sizing: border-box;
-    }
-
-    .flex-container {
-        display: flex;
-        width: 100%;
-        gap: 10px;
-    }
-
-    .box {
-        padding: 15px;
-        border: 1px solid;
-    }
-
-        .box:first-child {
-            flex: 2; /* First box will take twice the space compared to the second */
-        }
-
-        .box:nth-child(2) {
-            flex: 1; /* Second box will take normal space */
-        }
-
-    .buttons {
-        margin-top: 20px;
-        padding-left: 40%;
-    }
-
-    .attachments, .conversation {
-        margin-top: 20px;
-    }
-
-
-    .modal-body {
-        background-color: #f8f9fa;
-        padding: 15px;
-        border-radius: 8px;
-    }
-
-    .box {
-        background-color: #ffffff;
-        border: 1px solid #ddd;
-        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-        margin-bottom: 15px;
-        padding: 15px;
-    }
-
-    .form-group label {
-        font-size: larger;
-        font-weight: bold;
-    }
-
-    .form-group textarea {
-        width: 100%;
-        font-size: medium;
-        resize: none;
-    }
-
-    .attachments table,
-    .conversation table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-    }
-
-    .attachments th,
-    .conversation th {
-        text-align: left;
-        padding: 10px;
-        font-size: larger;
-        font-weight: bold;
-        border: 1px solid #ddd;
-    }
-
-    .attachments td,
-    .conversation td {
-        padding: 8px;
-        border: 1px solid #ddd;
-    }
-
-
-
-    body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #f4f4f4;
-    }
-
-    .container {
-        width: 60%;
-        margin: 20px auto;
-        background: white;
-        padding: 20px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .header {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 20px;
-    }
-
-    .date {
-        font-size: 14px;
-        color: #555;
-    }
-
-    .subject {
-        font-weight: bold;
-        font-size: 18px;
-        margin-bottom: 20px;
-    }
-
-    .content {
-        line-height: 1.6;
-        color: #333;
-    }
-
-    ul {
-        margin: 10px 0;
-        padding-left: 20px;
-    }
-
-    .footer {
-        margin-top: 20px;
-    }
-
-    .button {
-        margin-top: 20px;
-        text-align: center;
-    }
-
-        .button a {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #5a67d8;
-            color: white;
-            text-decoration: none;
-            font-size: 16px;
-            border-radius: 4px;
-        }
-
-    .email-info {
-        font-size: 14px;
-        color: #555;
-        margin-bottom: 10px;
-    }
-
-
-
-    /* arrow */
-    .arrow-container {
-        background-color: #4a4747;
-        padding: 10px;
-        width: 100px;
-        color: white;
-        font-family: Arial, sans-serif;
-    }
-
-    .arrow-item {
-        background-color: #d3d3d3;
-        color: black;
-        padding: 4px;
-        position: relative;
-        margin-bottom: 15px;
-        font-size: 14px;
-        text-align: center;
-        border-radius: 3px;
-    }
-
-        .arrow-item::after {
-            content: '';
-            position: absolute;
-            top: 53%;
-            right: -26px;
-            transform: translateY(-50%);
-            border-width: 14px;
-            border-style: solid;
-            border-color: transparent transparent transparent #d3d3d3;
-        }
-</style>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link href="~/css/emailview.css" rel="stylesheet" />
+<script src="~/jsfiles/inboxclient/inboxclientjs.js"></script>
 
 <div class="card shadow mb-4">
     <div class="card-header py-3">
@@ -206,21 +23,12 @@
             <div class="col">
                 <h2 class="m-0 font-weight-bold text-primary">@Localizer["Email Inbox"]</h2>
             </div>
-            <div class="col-lg-1 col-md-1 " style="display:none">
-                <label for="name" class="form-label float-lg-end">@Localizer["Client Name"]:</label>
-            </div>
-            <div class="col-lg-2 col-md-2" style="display:none">
-                <select id="clientDropdown" class="form-select" placeholder="select type" asp-items="@(new SelectList(ViewBag.customer,"Id","Value"))" onchange="return clientchange()">
-                    <option value="">--Select--</option>
-                </select>
-            </div>
+
             <div class="col-lg-2 col-md-2">
-                @*     <a class="btn btn-md text-light float-end bg-success mt-3 mt-lg-0 mt-md-0 ml-2" asp-action="Index" asp-controller="InboxEmail" *@
                 <a class="btn btn-md text-light float-end bg-success mt-3 mt-lg-0 mt-md-0 ml-2" asp-action="Index" asp-controller="InboxEmail"
                    title="Back" type="button">
                     <i class="fa fa-angle-left" style="font-size:24px"></i>
                 </a>
-
             </div>
             <div class="col-md-2 justify-content-lg-end justify-content-md-end justify-content-center mt-lg-0 mt-md-0 mt-3">
                 <input type="text" id="custom-search" class="form-control" placeholder="@Localizer["Search"]" />
@@ -230,44 +38,8 @@
     </div>
 
     <div class="card-body">
-        <div class="table-responsive" id="print" style="display:none">
-            <table class="table table-bordered" id="dataTable1" width="100%" cellspacing="0">
-                <thead>
-                    <tr>
-                        <th width="6%">@Localizer["Sr.No"]</th>
-                        <th style="display:none">from</th>
-                        <th style="display:none">fromemail</th>
-                        <th>@Localizer["Year"]</th>
-                        <th>@Localizer["Count"]</th>
-                    </tr>
-                </thead>
-                <tbody id="tbodyid">
-                    @{
-                        int itemNumber = 1;
-                    }
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td>@itemNumber</td>
-                            <td style="display:none"> @Html.DisplayFor(modelItem => item.ic_from)</td>
-                            <td style="display:none"> @Html.DisplayFor(modelItem => item.ic_fromname)</td>
-                            <td onclick="show('@item.ic_year.Substring(0, 4)', '@item.ic_fromname', '@item.ic_from','enquiry')">
-                                @Html.DisplayFor(modelItem => item.ic_year)
-                            </td>
 
-                            <td>
-                                @Html.DisplayFor(modelItem => item.ic_count)
-                            </td>
-                        </tr>
-                        itemNumber++;
-                    }
-                </tbody>
-            </table>
-
-
-        </div>
-
-        <div class="card-header py-3" style="display:none" id="detailsgridname">
+        <div class="card-header py-3" id="detailsgridname">
             <div class="row align-items-center">
                 <div class="col-lg-1 col-md-1 ">
                     <label for="name" class="form-label float-lg-end">@Localizer["Client Name"]:</label>
@@ -282,13 +54,12 @@
                     <input type="text" id="ic_toemail" value="@ViewBag.ic_toemail" />
                     <input type="text" id="ic_email" value="@ViewBag.ic_email" />
                 </div>
-                <div class="col-lg-1 col-md-1 ">
+                <div class="col-lg-1 col-md-1" style="display:none">
                     <label for="name" class="form-label float-lg-end">@Localizer["Year"]:</label>
                 </div>
-                <div class="col-md-2 justify-content-lg-end justify-content-md-end justify-content-center mt-lg-0 mt-md-0 mt-3">
+                <div class="col-md-2 justify-content-lg-end justify-content-md-end justify-content-center mt-lg-0 mt-md-0 mt-3" style="display:none">
                     <select id="yearDropdown" class="form-select" asp-items="@(new SelectList(ViewBag.year,"Id","Value"))" onchange="return clientchange1()">
                         <option value="">--Select Year--</option>
-                        <!-- You can dynamically add more options here if needed -->
                     </select>
                 </div>
                 <div id="claimnodiv" style="display:none;">
@@ -298,7 +69,16 @@
                     <div class="col-md-2 justify-content-lg-end justify-content-md-end justify-content-center mt-lg-0 mt-md-0 mt-3">
                         <select id="claimdropdown" class="form-select" asp-items="@(new SelectList(ViewBag.claimno,"Id","Value"))" onchange="return claimdropdown()">
                             <option value="">--Select Claim No--</option>
-                            <!-- You can dynamically add more options here if needed -->
+                        </select>
+                    </div>
+                </div>
+                <div id="enquirynodiv" style="display:none;">
+                    <div class="col-lg-1 col-md-1">
+                        <label for="name" class="form-label float-lg-end">@Localizer["Enquiry No"]:</label>
+                    </div>
+                    <div class="col-md-2 justify-content-lg-end justify-content-md-end justify-content-center mt-lg-0 mt-md-0 mt-3">
+                        <select id="enquirydropdown" class="form-select" asp-items="@(new SelectList(ViewBag.enquiryno,"Id","Value"))" onchange="return enquirydropdown()">
+                            <option value="">--Select Enquiry No--</option>
                         </select>
                     </div>
                 </div>
@@ -313,48 +93,40 @@
                 </div>
 
             </div>
-            <div class="row align-items-center">
-                <ul class="nav nav-tabs" id="tabMenu" role="tablist">
-                    <li class="nav-item" style="display:none">
-                        <button class="nav-link" id="client-tab" data-bs-toggle="tab" data-bs-target="#client" type="button" role="tab" aria-controls="client" onclick="return clienttab()">
-                            Client
-                        </button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="nav-link" id="enquiry-tab" data-bs-toggle="tab" data-bs-target="#enquiry" type="button" role="tab" aria-controls="enquiry" onclick="return enquirytab()">
-                            Enquiry
-                        </button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="nav-link" id="claim-tab" data-bs-toggle="tab" data-bs-target="#claim" type="button" role="tab" aria-controls="claim" onclick="return claimtab()">
-                            Claim
-                        </button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="nav-link" id="enquiry-atttab" data-bs-toggle="tab" data-bs-target="#enquiryatt" type="button" role="tab" aria-controls="enquiryatt" onclick="return enquiryatttab()">
-                            Enquiry Attachment
-                        </button>
-                    </li>
 
-                    <li class="nav-item">
-                        <button class="nav-link" id="claim-atttab" data-bs-toggle="tab" data-bs-target="#claimatt" type="button" role="tab" aria-controls="claimatt" onclick="return claimatttab()">
-                            Claim Attachment
-                        </button>
-                    </li>
-                    @*     <li class="nav-item">
-                    <button class="nav-link" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab" aria-controls="general" onclick="return generaltab()">
-                    General
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item" id="enquiry" style="display:none">
+                    <button class="nav-link active" id="enquiry-tab" data-bs-toggle="tab" data-bs-target="#enquiry" type="button" role="tab"
+                            aria-controls="enquiry" onclick="return enquirymail()">
+                        Enquiry
                     </button>
-                    </li> *@
-                </ul>
-            </div>
+                </li>
+                <li class="nav-item" id="claim" style="display:none">
+                    <button class="nav-link" id="claim-tab" data-bs-toggle="tab" data-bs-target="#claim" type="button" role="tab"
+                            aria-controls="claim" onclick="return claimmail()">
+                        Claim
+                    </button>
+                </li>
+                <li class="nav-item" id="enquiryattach" style="display:none">
+                    <button class="nav-link active" id="enquiry-atttab" data-bs-toggle="tab" data-bs-target="#enquiryatt" type="button" role="tab"
+                            aria-controls="enquiryatt" onclick="return enquiryattachment()">
+                        Enquiry Attachment
+                    </button>
+                </li>
+                <li class="nav-item" id="claimattach" style="display:none">
+                    <button class="nav-link" id="claim-atttab" data-bs-toggle="tab" data-bs-target="#claimatt" type="button" role="tab"
+                            aria-controls="claimatt" onclick="return claimattachment()">
+                        Claim Attachment
+                    </button>
+                </li>
+            </ul>
+
         </div>
 
-        <div id="attachGrid">
-
+        <div class="card-body" id="attachmenttable" style="display:none">
             <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable3" width="100%" cellspacing="0">
-                    <thead style="display:none" id="datatable3head">
+                <table class="table table-bordered" id="dataTable2" width="100%" cellspacing="0">
+                    <thead>
                         <tr>
                             <th style="width:0%">Sr.No</th>
                             <th style="display:none">Id</th>
@@ -365,7 +137,7 @@
                             <td style="width: 6%">Download</td>
                         </tr>
                     </thead>
-                    <tbody id="attachTableBody">
+                    <tbody id="attachmenttablebody">
                     </tbody>
                 </table>
 
@@ -375,11 +147,11 @@
 
 
 
-        <div id="detailsGrid" style="display:none">
+        <div class="card-body">
             <h5 style="display:none">Details for Year: <span id="selectedYear">2025</span></h5>
             <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable2" width="100%" cellspacing="0">
-                    <thead>
+                <table class="table table-bordered" id="dataTable1" width="100%" cellspacing="0">
+                    <thead id="enquirytablehead" style="display:none">
                         <tr>
                             <th style="width:6%">Sr.No</th>
                             <th style="display:none">Id</th>
@@ -388,15 +160,10 @@
                             <th style="width:10%">Subject</th>
                             <th style="width:12%">Date</th>
                             <th style="width:4%">Attachment</th>
-                            <td style="display:none" width="6%">View</td>
+                            <td style="width:6%"></td>
                         </tr>
                     </thead>
-                    <tbody id="detailsTableBody">
-                    </tbody>
-                </table>
-
-                <table class="table table-bordered" id="dataTable4" width="100%" cellspacing="0" style="display:none;">
-                    <thead>
+                    <thead id="claimtablehead" style="display:none">
                         <tr>
                             <th style="width:6%">Sr.No</th>
                             <th style="width:6%">Claim No</th>
@@ -406,10 +173,12 @@
                             <th style="width:10%">Subject</th>
                             <th style="width:12%">Date</th>
                             <th style="width:4%">Attachment</th>
-                            <td style="display:none" width="6%">View</td>
+                            <td style="width:6%"></td>
                         </tr>
                     </thead>
-                    <tbody id="detailsTableBody1">
+                    <tbody id="enquirytablebody" style="display:none">
+                    </tbody>
+                    <tbody id="claimtablebody" style="display:none">
                     </tbody>
                 </table>
 
@@ -469,8 +238,6 @@
                                 aria-label="Close"></button>
                     </div>
                     <div class="modal-body text-dark" style=" background-color: #f8f9fa;padding: 15px;border-radius: 8px;">
-                        @*    <div class="flex-container"> *@
-                        @*  <div class="box" style="background-color: #ffffff;border: 1px solid #ddd;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);"> *@
                         <div class="row">
                             <div class="col-xs-6 col-sm-6 col-md-12 ">
                                 <div class="form-group form-group-sm">
@@ -516,23 +283,22 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-xs-6 col-sm-6 col-md-12 ">
-                                <div class="form-group form-group-sm">
-                                    <label class="control-label fw-bold" style="font-size: larger;" for="subject">Search</label>
-                                    <select class="form-select" id="i_tab">
-                                        @*<option value="client">Client</option> *@
-                                        <option value="enquiry">Enquiry</option>
-                                        <option value="claim">Claim</option>
-                                    </select>
-                                </div>
-                            </div>
+                        @* <div class="row">
+                        <div class="col-xs-6 col-sm-6 col-md-12 ">
+                        <div class="form-group form-group-sm">
+                        <label class="control-label fw-bold" style="font-size: larger;" for="subject">Search</label>
+                        <select class="form-select" id="i_tab">
+                        <option value="enquiry">Enquiry</option>
+                        <option value="claim">Claim</option>
+                        </select>
                         </div>
+                        </div>
+                        </div> *@
 
                         @*</div>*@
                     </div>
                     <div class="modal-footer">
-                        <button title="Save" type="submit" id="btnsubmit" value="Create" class="btn btn-primary" onclick="submitfilter()">@Localizer["Submit"]</button>
+                        <button title="Save" type="submit" id="btnsubmit" value="Create" class="btn btn-primary" onclick="submitfilter1()">@Localizer["Submit"]</button>
                         <button type="button" title="Close" class="btn btn-danger" data-dismiss="modal" onclick="CancelData()">@Localizer["Cancel"]</button>
                     </div>
                 </div>
@@ -557,11 +323,6 @@
                         <div class="flex-container">
                             <div style="background-color: #4a4747;border: 1px solid #ddd;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);margin-bottom: 15px;padding: 15px;width: 11%;max-width: 800px;">
                                 <div class="arrow-container" id="arrow-container">
-                                    @*   <div class="arrow-item" id="date1" ></div>
-                                    <div style="padding:12px"></div>
-                                    <div class="arrow-item" id="date2" ></div>
-                                    <div style="padding:12px"></div>
-                                    <div class="arrow-item" id="date3" ></div> *@
                                 </div>
                             </div>
                             <div class="box" style="background-color: #ffffff;border: 1px solid #ddd;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);width:800px">
@@ -586,8 +347,6 @@
 
 
                                 <div class="form-group">
-                                    @*  <label class="control-label fw-bold" for="message" style="display: inline-block; vertical-align: top; margin-right: 10px;font-size: larger;">Message:</label> *@
-                                    @*  <textarea rows="20" cols="85" readonly id="ic_bodylabel" style="font-size:medium;border:none"></textarea> *@
                                     <div id="ic_bodyhtml" style="font-size:medium;border:none"></div>
                                 </div>
                                 <div id="attachments-container">
@@ -600,96 +359,8 @@
                                         </button>
                                     </div>
                                 </div>
-
-                                @*   <div class="attachments">
-                                <div id="viewattachments">
-
-                                <div style="padding: 8px;" id="filename"></div>
-                                <div style="text-align: center;" id="filebuttons2"></div>
-                                </div>
-                                </div>
-                                *@
-
-
-
-
-                                @*  <div class="attachments">
-                                <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-                                <thead>
-                                <tr>
-                                <th colspan="3" style="text-align: left; padding: 10px; font-size: larger; font-weight: bold; border: 1px solid #ddd;">
-                                Attachments:
-                                </th>
-                                </tr>
-                                </thead>
-                                <tbody id="viewattachments">
-                                <tr style=" border: 1px solid #ddd;">
-                                <td style="padding: 8px;" id="filename"></td>
-                                <td style="text-align: center;" id="filebuttons1">
-
-                                </td>
-                                <td style="text-align: center;" id="filebuttons2">
-
-                                </td>
-                                </tr>
-
-                                <tr style=" border: 1px solid #ddd;">
-                                <td style="padding: 8px;">file1.png</td>
-                                <td style="text-align: center;">
-                                <a href="~/images/sample data/sampleimage.png" title="View Image">
-                                <i class="fas fa-eye" style="font-size: 16px; color: blue;"></i>
-                                </a>
-                                </td>
-                                <td style="text-align: center;">
-                                <a href="~/images/sample data/sampleimage.png" download="sampleimage.png" title="Download Image">
-                                <i class="fas fa-download" style="font-size: 16px; color: green;"></i>
-                                </a>
-                                </td>
-                                </tr>
-                                </tbody>
-                                </table>
-
-
-                                </div>
-                                </div> *@
-                                @*          <div class="box" style="background-color: #ffffff;border: 1px solid #ddd;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);height:50%">
-                                <div class="conversation">
-                                <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-                                <thead>
-                                <tr>
-                                <th colspan="3" style="text-align: left; padding: 10px; font-size: larger; font-weight: bold; border: 1px solid #ddd;">
-                                Conversation:
-                                </th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr style=" border: 1px solid #ddd;">
-                                <td class="conversation-item" style="padding: 8px;">  <i class="fas fa-paper-plane" style="color: blue; font-size: 16px;" title="Sent"></i></td>
-                                <td style="text-align:left;">
-                                29/09/2024
-                                </td>
-                                </tr>
-                                <tr style=" border: 1px solid #ddd;">
-                                <td class="conversation-item" style="padding: 8px;">  <i class="fas fa-envelope" style="color: green; font-size: 16px;" title="Received"></i></td>
-                                <td style="text-align: left;">
-                                30/09/2024
-                                </td>
-                                </tr>
-                                </tbody>
-                                </table>
-                                </div>
-                                </div> *@
-
-
-
                             </div>
-
-
                         </div>
-
-                        @*  <div class="buttons">
-                        <button class="btn btn-danger" onclick="CancelData()" type="button" data-dismiss="modal">Close</button>
-                        </div> *@
                     </div>
                 </div>
             </div>
@@ -704,8 +375,51 @@
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+
+    $(document).ready(function () {
+
+        $("#custom-search").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+
+            $("#enquirytablebody tr, #claimtablebody tr, #attachmenttablebody tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+            });
+        });
+
+
+
+        // Extract URL parameters
+        var urlParams = new URLSearchParams(window.location.search);
+        var client = urlParams.get('client');
+
+
+        // Match the text in the dropdown options and set the value
+        if (client) {
+            $('#clientDropdown1 option').each(function () {
+                if ($(this).text() == client) {
+                    $('#clientDropdown1').val($(this).val());
+                }
+            });
+        }
+        var tab = urlParams.get('tab');
+        var email = urlParams.get('email');
+
+        // if (tab == "Insurance") {
+        //     tab = "client";
+        // }
+        // // $('#' + tab + '-tab').attr('class', 'nav-link active');
+
+        // $('#enquiry-tab').attr('class', 'nav-link active');
+
+        // $('#detailsgridname').css('display', 'block');
+        // var tab = "enquiry";
+
+        show(2025, client, email, tab);
+    });
+</script>
+
+@* <script>
 
     // initializeDataTable('#dataTable2', 'dataTable2-custom-pagination');
     //                                  $('#table_length_select2').change();
@@ -723,33 +437,33 @@
 
 
         // Extract URL parameters
-        var urlParams = new URLSearchParams(window.location.search);
-        var client = urlParams.get('client');
+         var urlParams = new URLSearchParams(window.location.search);
+         var client = urlParams.get('client');
 
 
-        // Match the text in the dropdown options and set the value
-        if (client) {
-            $('#clientDropdown option').each(function () {
-                if ($(this).text() == client) {
-                    $('#clientDropdown').val($(this).val());
-                    $('#clientDropdown1').val($(this).val());
-                }
-            });
-        }
-        var tab = urlParams.get('tab');
-        var email = urlParams.get('email');
+        // // Match the text in the dropdown options and set the value
+        // if (client) {
+        //     $('#clientDropdown option').each(function () {
+        //         if ($(this).text() == client) {
+        //             $('#clientDropdown').val($(this).val());
+        //             $('#clientDropdown1').val($(this).val());
+        //         }
+        //     });
+        // }
+        // var tab = urlParams.get('tab');
+         var email = urlParams.get('email');
 
-        if (tab == "Insurance") {
-            tab = "client";
-        }
-        // $('#' + tab + '-tab').attr('class', 'nav-link active');
+        // if (tab == "Insurance") {
+        //     tab = "client";
+        // }
+        // // $('#' + tab + '-tab').attr('class', 'nav-link active');
 
-        $('#enquiry-tab').attr('class', 'nav-link active');
+        // $('#enquiry-tab').attr('class', 'nav-link active');
 
-        $('#detailsgridname').css('display', 'block');
-        var tab = "enquiry";
+        // $('#detailsgridname').css('display', 'block');
+         var tab = "enquiry";
 
-        show(2025, client, email, tab);
+         show(2025, client, email, tab);
     });
     function downloadFile(filePath) {
         console.log("Original File Path:", filePath); // Log the input
@@ -2252,6 +1966,6 @@
     }
 
 
-</script>
+</script> *@
 
 

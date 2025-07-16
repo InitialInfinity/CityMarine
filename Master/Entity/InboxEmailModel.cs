@@ -18,5 +18,6 @@ namespace Master.Entity
         public string? i_type { get; set; }
         public string? i_generaltype {  get; set; }
         public string? i_claimno {  get; set; }
+        public string? i_enquiryno {  get; set; }
     }
 }

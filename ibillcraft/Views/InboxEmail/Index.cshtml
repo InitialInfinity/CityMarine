@@ -9,70 +9,10 @@
     ViewBag.Header = "Inbox Email";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="~/jsfiles/inboxemail/inboxemailjs.js"></script>
+<link href="~/css/emailview.css" rel="stylesheet" />
 
-<style>
-    * {
-        box-sizing: border-box;
-    }
-
-    .flex-container {
-        display: flex;
-        width: 100%;
-        gap: 10px;
-    }
-
-    .box {
-        padding: 15px;
-        border: 1px solid;
-    }
-
-        .box:first-child {
-            flex: 2; /* First box will take twice the space compared to the second */
-        }
-
-        .box:nth-child(2) {
-            flex: 1; /* Second box will take normal space */
-        }
-
-    .buttons {
-        margin-top: 20px;
-        padding-left: 40%;
-    }
-
-    .attachments, .conversation {
-        margin-top: 20px;
-    }
-    /* arrow */
-    .arrow-container {
-        background-color: #4a4747;
-        padding: 10px;
-        width: 100px;
-        color: white;
-        font-family: Arial, sans-serif;
-    }
-
-    .arrow-item {
-        background-color: #d3d3d3;
-        color: black;
-        padding: 4px;
-        position: relative;
-        margin-bottom: 15px;
-        font-size: 14px;
-        text-align: center;
-        border-radius: 3px;
-    }
-
-        .arrow-item::after {
-            content: '';
-            position: absolute;
-            top: 53%;
-            right: -26px;
-            transform: translateY(-50%);
-            border-width: 14px;
-            border-style: solid;
-            border-color: transparent transparent transparent #d3d3d3;
-        }
-</style>
 
 <div class="card shadow mb-4">
     <div class="card-header py-3">
@@ -90,32 +30,29 @@
                 </button>
             </div>
             <div class="col-auto d-flex flex-wrap toggle">
-                @*     <a class="btn btn-md text-light float-end bg-success mt-3 mt-lg-0 mt-md-0 ml-2" asp-action="Index" asp-controller="InboxEmail" *@
                 <a class="btn btn-md text-light float-end bg-success mt-3 mt-lg-0 mt-md-0 ml-2" onclick="fetchemail()"
                    title="Sync" type="button">
                     <i class="fas fa-sync-alt" style="font-size:18px"></i>
                 </a>
-
-
-
             </div>
-
         </div>
     </div>
 
     <ul class="nav nav-tabs" id="tabMenu" role="tablist">
         <li class="nav-item">
-            <button class="nav-link active" id="client-tab" data-bs-toggle="tab" data-bs-target="#client" type="button" role="tab" aria-controls="client" onclick="return clienttab()">
+            <button class="nav-link" id="client-tab" data-bs-toggle="tab" data-bs-target="#client" type="button" role="tab" aria-controls="client" onclick="return clienttab()">
                 Client
             </button>
         </li>
         <li class="nav-item">
-            <button class="nav-link" id="enquiry-tab" data-bs-toggle="tab" data-bs-target="#enquiry" type="button" role="tab" aria-controls="enquiry" onclick="return enquiryonetab()">
+            <button class="nav-link" id="enquiry-tab" data-bs-toggle="tab" data-bs-target="#enquiry" type="button" role="tab" 
+            aria-controls="enquiry" onclick="return enquirytab()">
                 Enquiry
             </button>
         </li>
         <li class="nav-item">
-            <button class="nav-link" id="claim-tab" data-bs-toggle="tab" data-bs-target="#claim" type="button" role="tab" aria-controls="claim" onclick="return claimonetab()">
+            <button class="nav-link" id="claim-tab" data-bs-toggle="tab" data-bs-target="#claim" type="button" role="tab" aria-controls="claim" 
+            onclick="return claimtab()">
                 Claim
             </button>
         </li>
@@ -126,53 +63,7 @@
         </li>
     </ul>
 
-    @* <div id="typetab" style="display:none">
-    <div class="col-lg-1 col-md-1">
-    <label for="name" class="form-label float-lg-end">@Localizer["Type"]:</label>
-    </div>
-    <div class="col-lg-2 col-md-2">
-    <select id="typedropdown" class="form-select" placeholder="select type" asp-items="@(new SelectList(ViewBag.type,"Id","Value"))" onchange="return typechange()">
-    <option value="">--Select--</option>
-    </select>
-    </div>
-    </div> *@
-
-
-    <div class="row align-items-center" id="typetab" style="display:none">
-        <div class="col-lg-1 col-md-1 ">
-            <label for="name" class="form-label float-lg-end">@Localizer["Type"]:</label>
-        </div>
-        <div class="col-lg-2 col-md-2">
-            <select id="typedropdown" class="form-select" placeholder="select type" asp-items="@(new SelectList(ViewBag.type,"Id","Value"))" onchange="return typechange()">
-                <option value="">--Select--</option>
-            </select>
-        </div>
-    </div>
-
-    <div class="row align-items-center" id="claimnodiv" style="display:none;">
-        <div class="col-lg-1 col-md-1">
-            <label for="name" class="form-label float-lg-end">@Localizer["Claim No"]:</label>
-        </div>
-        <div class="col-md-2 justify-content-lg-end justify-content-md-end justify-content-center mt-lg-0 mt-md-0 mt-3">
-            <select id="claimdropdown" class="form-select" asp-items="@(new SelectList(ViewBag.claimno,"Id","Value"))" onchange="return claimdropdown()">
-                <option value="">--Select Claim No--</option>
-                <!-- You can dynamically add more options here if needed -->
-            </select>
-        </div>
-    </div>
-    <div class="row align-items-center" id="enquirynodiv" style="display:none;">
-        <div class="col-lg-1 col-md-1">
-            <label for="name" class="form-label float-lg-end">@Localizer["Enquiry No"]:</label>
-        </div>
-        <div class="col-md-2 justify-content-lg-end justify-content-md-end justify-content-center mt-lg-0 mt-md-0 mt-3">
-            <select id="enquirydropdown" class="form-select" asp-items="@(new SelectList(ViewBag.enquiryno,"Id","Value"))" onchange="return enquirydropdown()">
-                <option value="">--Select Enquiry No--</option>
-                <!-- You can dynamically add more options here if needed -->
-            </select>
-        </div>
-    </div>
-
-
+    @*start filter model*@
 
     <div class="modal fade" id="addfilter" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
          style="display:none">
@@ -185,9 +76,7 @@
                             data-bs-dismiss="modal"
                             aria-label="Close"></button>
                 </div>
-                <div class="modal-body text-dark" style=" background-color: #f8f9fa;padding: 15px;border-radius: 8px;">
-                    @*   <div class="flex-container"> *@
-                    @*  <div class="box" style="background-color: #ffffff;border: 1px solid #ddd;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);"> *@
+                <div class="modal-body text-dark" style=" background-color: #f8f9fa;padding: 15px;border-radius: 8px;">                    
                     <div class="row">
                         <div class="col-xs-6 col-sm-6 col-md-12 ">
                             <div class="form-group form-group-sm">
@@ -225,14 +114,13 @@
                             <div class="form-group form-group-sm">
                                 <label class="control-label fw-bold" style="font-size: larger;" for="subject">Search</label>
                                 <select class="form-select" id="i_tab">
-                                    <option value="client">Client</option>
-                                    @*  <option value="enquiry">Enquiry</option>
-                                    <option value="claim">Claim</option> *@
-                                    <option value="general">General</option>
+                                    <option value="Client">Client</option>
+                                    <option value="Enquiry">Enquiry</option>
+                                    <option value="Claim">Claim</option>
+                                    <option value="General">General</option>
                                 </select>
                             </div>
                         </div>
-                        @*     </div> *@
                     </div>
 
                 </div>
@@ -244,109 +132,7 @@
         </div>
     </div>
 
-    @*  <div class="modal fade" id="addSubscription" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    <div class="modal-dialog modal-xl" role="document">
-    <div class="modal-content">
-    <div class="modal-header">
-    <h5 class="modal-title text-dark fw-bold" style="font-size: larger;" id="exampleModalLabel">Email</h5>
-    <button type="button"
-    class="btn-close bg-danger modal-close"
-    data-bs-dismiss="modal"
-    aria-label="Close"></button>
-    </div>
-    <div class="modal-body text-dark" style=" background-color: #f8f9fa;padding: 15px;border-radius: 8px;">
-    <div class="flex-container">
-    <div class="box" style="background-color: #ffffff;border: 1px solid #ddd;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);">
-    <div class="form-group">
-    <label class="control-label fw-bold" style="font-size: larger;" for="from">From:</label>
-    <span style="padding-left:40px"><label id="ic_fromlabel" value="" style="font-size:medium"></label></span>
-    </div>
-
-    <div class="form-group">
-    <label class="control-label fw-bold" style="font-size: larger;" for="to">To:</label>
-    <span style="padding-left:59px"><label id="ic_tolabel" value="" style="font-size:medium"></label></span>
-    </div>
-
-    <div class="form-group">
-    <label class="control-label fw-bold" style="font-size: larger;" for="subject">Subject:</label>
-    <span style="padding-left:23px"><label id="ic_subjectlabel" value="" style="font-size:medium"></label></span>
-    </div>
-
-    <div class="form-group">
-    <label class="control-label fw-bold" for="message" style="display: inline-block; vertical-align: top; margin-right: 10px;font-size: larger;">Message:</label>
-    <textarea rows="20" cols="85" readonly id="ic_bodylabel" style="font-size:medium"></textarea>
-    </div>
-
-    </div>
-    <div class="box" style="background-color: #ffffff;border: 1px solid #ddd;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);">
-    <div class="box" style="background-color: #ffffff;border: 1px solid #ddd;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);height:50%">
-    <div class="attachments">
-    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-    <thead>
-    <tr>
-    <th colspan="3" style="text-align: left; padding: 10px; font-size: larger; font-weight: bold; border: 1px solid #ddd;">
-    Attachments:
-    </th>
-    </tr>
-    </thead>
-    <tbody id="viewattachments">
-    <tr style=" border: 1px solid #ddd;">
-    <td style="padding: 8px;" id="filename"></td>
-    <td style="text-align: center;" id="filebuttons1">
-    </td>
-    <td style="text-align: center;" id="filebuttons2">
-    </td>
-    </tr>
-
-    </tbody>
-    </table>
-
-
-    </div>
-    </div>
-    <div class="box" style="background-color: #ffffff;border: 1px solid #ddd;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);height:50%">
-    <div class="conversation">
-    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-    <thead>
-    <tr>
-    <th colspan="3" style="text-align: left; padding: 10px; font-size: larger; font-weight: bold; border: 1px solid #ddd;">
-    Conversation:
-    </th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr style=" border: 1px solid #ddd;">
-    <td class="conversation-item" style="padding: 8px;">  <i class="fas fa-paper-plane" style="color: blue; font-size: 16px;" title="Sent"></i></td>
-    <td style="text-align:left;">
-    29/09/2024
-    </td>
-    </tr>
-    <tr style=" border: 1px solid #ddd;">
-    <td class="conversation-item" style="padding: 8px;">  <i class="fas fa-envelope" style="color: green; font-size: 16px;" title="Received"></i></td>
-    <td style="text-align: left;">
-    30/09/2024
-    </td>
-    </tr>
-    </tbody>
-    </table>
-    </div>
-    </div>
-
-
-
-    </div>
-
-
-    </div>
-
-    <div class="buttons">
-    <button class="btn btn-danger" onclick="CancelData()" type="button" data-dismiss="modal">Close</button>
-    </div>
-    </div>
-    </div>
-    </div>
-    </div> *@
-
+    @*end filter model*@
 
     @* Start view model *@
     <div class="modal fade" id="addSubscription" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
@@ -363,11 +149,6 @@
                     <div class="flex-container">
                         <div style="background-color: #4a4747;border: 1px solid #ddd;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);margin-bottom: 15px;padding: 15px;width: 11%;max-width: 800px;">
                             <div class="arrow-container" id="arrow-container">
-                                @*   <div class="arrow-item" id="date1" ></div>
-                                <div style="padding:12px"></div>
-                                <div class="arrow-item" id="date2" ></div>
-                                <div style="padding:12px"></div>
-                                <div class="arrow-item" id="date3" ></div> *@
                             </div>
                         </div>
                         <div class="box" style="background-color: #ffffff;border: 1px solid #ddd;box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);width: 800px">
@@ -392,19 +173,8 @@
 
 
                             <div class="form-group">
-                                @*  <label class="control-label fw-bold" for="message" style="display: inline-block; vertical-align: top; margin-right: 10px;font-size: larger;">Message:</label> *@
-                                @*   <textarea rows="20" cols="105" readonly id="ic_bodylabel" style="font-size:medium;border:none"></textarea> *@
                                 <div id="ic_bodyhtml" style="font-size:medium;border:none"></div>
                             </div>
-
-                            @* <div class="attachments" id="attachdiv">
-                            <button id="viewattachments" style="display: inline-block;">
-                            <div style="padding: 8px;" id="filename"></div>
-                            </button>
-                            <button style="display: inline-block;height: 42px;width: 40px;">
-                            <div style="text-align: center; display: inline-block; " id="filebuttons2"></div>
-                            </button>
-                            </div>*@
 
                             <div class="attachments" id="attachdiv" style="display: none;">
                                 <button id="viewattachments" style="display: inline-block; padding: 8px;">
@@ -421,10 +191,6 @@
 
 
                     </div>
-
-                    @*  <div class="buttons">
-                    <button class="btn btn-danger" onclick="Cancel()" type="button" data-dismiss="modal">Close</button>
-                    </div> *@
                 </div>
             </div>
         </div>
@@ -433,1115 +199,206 @@
 
     @* End view model *@
 
+
     <div class="card-body">
-        <div class="table-responsive" id="print">
-            <table class="table table-bordered" id="dataTable1" width="100%" cellspacing="0">
-                <thead id="tabhead">
-                    <tr>
-                        <th width="6%">Sr.No</th>
-                        <th>Client Name</th>
-                        <th>Last Updated</th>
-                    </tr>
-                </thead>
-                <thead id="tabhead1" style="display:none">
-                    <tr>
 
-                        <th style="width:6%">Sr.No</th>
-                        <th style="display:none">Id</th>
-                        <th style="width: 12%">From</th>
-                        <th style="width: 12%">To</th>
-                        <th style="width:10%">Subject</th>
-
-                        <th style=" width:4%">Attachment</th>
-                        <th style="width: 12%">Date</th>
-                        <td style="display:none; width:6%">View</td>
-                    </tr>
-                </thead>
-                <tbody id="tabtable">
-                    @{
-                        int itemNumber = 1;
-                    }
-                    @foreach (var item in Model)
-                    {
+        <div class="card-body" id="clientgeneral">
+            <div class="table-responsive" id="print">
+                <table class="table table-bordered" id="dataTable1" width="100%" cellspacing="0">
+                    <thead>
                         <tr>
-                            <td>@itemNumber</td>
-                            <td>
-                                <a href="/InboxClient?email=@item.i_from&client=@item.i_fromname&tab=@item.i_type" class="text-primary">
-                                    @Html.DisplayFor(modelItem => item.i_fromname)
-                                </a>
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.i_receiveddate)
-                            </td>
+                            <th style="width:6%">Sr.No</th>
+                            <th style="display:none">Id</th>
+                            <th style="width: 12%">From</th>
+                            <th style="width: 12%">To</th>
+                            <th style="width:10%">Subject</th>
+                            <th style=" width:4%">Attachment</th>
+                            <th style="width: 12%">Date</th>
+                            <td style="width:6%"></td>
                         </tr>
-                        itemNumber++;
-                    }
-                </tbody>
-            </table>
-        </div>
-        <!-- End Griddata-->
-        <!-- start Pagination-->
-        <div class="row mt-3">
-            <div class="col-lg-5 col-md-5 col-12 ">
-                <div class="row ">
-                    <div class="col-lg-3 col-md-3 col-12 d-flex justify-content-lg-start justify-content-md-start justify-content-center ">
-                        <h6 class="mt-2"> @Localizer["Show"]</h6>&nbsp;&nbsp;
-                        <select name="table_id_length" id="table_length_select" aria-controls="table_id" class="form-select w-auto">
-                            <option value="10">10</option>
-                            <option value="25">25</option>
-                            <option value="50">50</option>
-                            <option value="100">100</option>
-                        </select>
-                        &nbsp;&nbsp;
-                        <h6 class="mt-2"> @Localizer["entries"]</h6>
-                    </div>
-                </div>
+                    </thead>
+                    <tbody id="clientgeneralbody">
+                        @{
+                            int itemNumber = 1;
+                        }
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td onclick="inboxmsg(@Html.DisplayFor(modelItem => item.i_id)">@itemNumber</td>
+                                <td style="display:none">
+                                    @Html.DisplayFor(modelItem => item.i_id)
+                                </td>
+                                <td onclick="inboxmsg(@Html.DisplayFor(modelItem => item.i_id)">
+                                    @Html.DisplayFor(modelItem => item.i_from)
+                                </td>
+                                <td onclick="inboxmsg(@Html.DisplayFor(modelItem => item.i_id)">
+                                    @Html.DisplayFor(modelItem => item.i_to)
+                                </td>
+                                <td onclick="inboxmsg(@Html.DisplayFor(modelItem => item.i_id)">
+                                    @Html.DisplayFor(modelItem => item.i_subject)
+                                </td>
+                                <td onclick="inboxmsg(@Html.DisplayFor(modelItem => item.i_id)">
+                                    @if (item.i_attachment != null && item.i_attachment.ToString() != "No attachments available." && item.i_attachment.ToString() != "null")
+                                    {
+                                        <i class="fa fa-paperclip" aria-hidden="true"></i>
+                                    }
+                                    else
+                                    { }
+                                </td>
+                                <td onclick="inboxmsg(@Html.DisplayFor(modelItem => item.i_id)">
+                                    @Html.DisplayFor(modelItem => item.i_receiveddate)
+                                </td>
+                                <td onclick="inboxmsg(@Html.DisplayFor(modelItem => item.i_id)">
+                                    <i class="fas fa-eye text-primary"></i>
+                                </td>
+                            </tr>
+                            itemNumber++;
+                        }
+                    </tbody>
+                </table>
             </div>
-            <div class="col-lg-2 col-md-2"></div>
-            <div class="col-lg-5 col-md-5 col-12 mt-lg-0 mt-md-0 mt-3">
-                <nav aria-label="Page navigation example">
-                    <div id="table_id_length">
 
-                        <div id="custom-pagination" class=" d-flex text-center text-lg-end justify-content-end  text-end float-end">
-                            <ul class="pagination justify-content-lg-end justify-content-md-end justify-content-center">
-                                <li class="page-item disabled">
-                                    <button class="page-link" href="#" aria-label="Previous" data-page="0"> <span aria-hidden="true">&laquo;</span></button>
-                                </li>
-                                <li class="page-item active"><button class="page-link" href="#" data-page="1">1</button></li>
-
-                                <li class="page-item "><button class="page-link" href="#" data-page="2" aria-label="Next">  <span aria-hidden="true">&raquo;</span></button></li>
-
-                            </ul>
+            <!-- start Pagination-->
+            <div class="row mt-3">
+                <div class="col-lg-5 col-md-5 col-12 ">
+                    <div class="row ">
+                        <div class="col-lg-3 col-md-3 col-12 d-flex justify-content-lg-start justify-content-md-start justify-content-center ">
+                            <h6 class="mt-2"> @Localizer["Show"]</h6>&nbsp;&nbsp;
+                            <select name="table_id_length" id="table_length_select" aria-controls="table_id" class="form-select w-auto">
+                                <option value="10">10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                            &nbsp;&nbsp;
+                            <h6 class="mt-2"> @Localizer["entries"]</h6>
                         </div>
                     </div>
-                </nav>
+                </div>
+                <div class="col-lg-2 col-md-2"></div>
+                <div class="col-lg-5 col-md-5 col-12 mt-lg-0 mt-md-0 mt-3">
+                    <nav aria-label="Page navigation example">
+                        <div id="table_id_length">
+
+                            <div id="custom-pagination" class=" d-flex text-center text-lg-end justify-content-end  text-end float-end">
+                                <ul class="pagination justify-content-lg-end justify-content-md-end justify-content-center">
+                                    <li class="page-item disabled">
+                                        <button class="page-link" href="#" aria-label="Previous" data-page="0"> <span aria-hidden="true">&laquo;</span></button>
+                                    </li>
+                                    <li class="page-item active"><button class="page-link" href="#" data-page="1">1</button></li>
+
+                                    <li class="page-item "><button class="page-link" href="#" data-page="2" aria-label="Next">  <span aria-hidden="true">&raquo;</span></button></li>
+
+                                </ul>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
             </div>
+            <!-- end Pagination-->
         </div>
-        <!-- end Pagination-->
+
+
+        <div class="card-body" id="enquiryclaim">
+            <div class="table-responsive" id="print">
+                <table class="table table-bordered" id="dataTable2" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th width="6%">Sr.No</th>
+                            <th>Client Name</th>
+                            <th>Last Updated</th>
+                        </tr>
+                    </thead>
+                    <tbody id="enquiryclaimbody">
+                        @{
+                            int itemNumber1 = 1;
+                        }
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@itemNumber1</td>
+                                <td>
+                                    <a href="/InboxClient?email=@item.i_from&client=@item.i_fromname&tab=@item.i_type" class="text-primary">
+                                        @Html.DisplayFor(modelItem => item.i_fromname)
+                                    </a>
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.i_receiveddate)
+                                </td>
+                            </tr>
+                            itemNumber1++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- start Pagination-->
+            <div class="row mt-3">
+                <div class="col-lg-5 col-md-5 col-12 ">
+                    <div class="row ">
+                        <div class="col-lg-3 col-md-3 col-12 d-flex justify-content-lg-start justify-content-md-start justify-content-center ">
+                            <h6 class="mt-2"> @Localizer["Show"]</h6>&nbsp;&nbsp;
+                            <select name="table_id_length" id="table_length_select" aria-controls="table_id" class="form-select w-auto">
+                                <option value="10">10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                            &nbsp;&nbsp;
+                            <h6 class="mt-2"> @Localizer["entries"]</h6>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-2"></div>
+                <div class="col-lg-5 col-md-5 col-12 mt-lg-0 mt-md-0 mt-3">
+                    <nav aria-label="Page navigation example">
+                        <div id="table_id_length">
+
+                            <div id="custom-pagination" class=" d-flex text-center text-lg-end justify-content-end  text-end float-end">
+                                <ul class="pagination justify-content-lg-end justify-content-md-end justify-content-center">
+                                    <li class="page-item disabled">
+                                        <button class="page-link" href="#" aria-label="Previous" data-page="0"> <span aria-hidden="true">&laquo;</span></button>
+                                    </li>
+                                    <li class="page-item active"><button class="page-link" href="#" data-page="1">1</button></li>
+
+                                    <li class="page-item "><button class="page-link" href="#" data-page="2" aria-label="Next">  <span aria-hidden="true">&raquo;</span></button></li>
+
+                                </ul>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+            <!-- end Pagination-->
+        </div>
+
     </div>
+
 </div>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
 <script>
     $(document).ready(function () {
         //  $('#dataTable1').DataTable();
 
-         $("#custom-search").on("keyup", function () {
+        $("#custom-search").on("keyup", function () {
             var value = $(this).val().toLowerCase();
             $("#tabtable tr").filter(function () {
                 $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
             });
         });
 
-        var url = window.location.href;
-        var urlParams = new URLSearchParams(window.location.search);
-        var tab = urlParams.get('tab');       
+        $("#custom-search").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+
+            $("#enquiryclaimbody tr, #clientgeneralbody tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+            });
+        });
+
+        $("#enquiryclaim").css("display", "none");
 
     });
     myFunction();
-    $('#table_length_select').change();  
-
-
-    function Cancel() {
-        $("#addSubscription").modal("hide");
-    }
-
-    function clienttab() {
-        $('#custom-search').val('');
-        $('#typetab').css('display', 'none');
-        $('#claimnodiv').css('display', 'none');
-        $('#enquirynodiv').css('display', 'none'); 
-        
-        
-        var tab = "Insurance";
-        $('#enquiry-tab').attr('aria-selected', 'false');
-        $('#client-tab').attr('aria-selected', 'true');
-        $('#claim-tab').attr('aria-selected', 'false');
-        $('#general-tab').attr('aria-selected', 'false');
-
-        $('#enquiry-tab').attr('class', 'nav-link');
-        $('#client-tab').attr('class', 'nav-link active');
-        $('#claim-tab').attr('class', 'nav-link');
-        $('#general-tab').attr('class', 'nav-link');
-
-        $.ajax({
-            url: '/InboxEmail/Tab?tab=' + tab, // Controller action URL
-            type: 'POST',             // HTTP method
-            data: { tab: tab },      // Data to send (query parameter)
-            success: function (response) {
-                // Handle success - update the page dynamically
-                console.log('Response:', response);
-                $('#tabhead').css('display', 'contents');
-                $('#tabhead1').css('display', 'none');
-                $('#tabtable').html('');
-                var htmltab = '';
-                for (var i = 0; i < response.length; i++) {
-                    htmltab += '<tr>';
-                    htmltab += '<td>' + (i + 1) + '</td>';
-                    let i_from = response[i].i_from.trim();
-                    htmltab += '<td><a href="/InboxClient?email=' + response[i].i_from + '&client=' + response[i].i_fromname + '&tab=' + tab + '">' + response[i].i_fromname + '</a></td>';
-
-                    htmltab += '<td>' + response[i].i_receiveddate + '</td>';
-                    htmltab += '</tr>';
-                }
-                $('#tabtable').html(htmltab);
-
-                // Example: Update a specific section with the response data
-                $('#content-area').html(response);
-            },
-            error: function (xhr, status, error) {
-                // Handle errors
-                console.error('Error:', error);
-            }
-        });
-    }
-
-    function enquirytab() {
-        var tab = "enquiry";
-        $('#typetab').css('display', 'none');
-        $('#claimnodiv').css('display', 'none');
-        $('#enquirynodiv').css('display', 'none');
-
-
-        $('#enquiry-tab').attr('aria-selected', 'true');
-        $('#client-tab').attr('aria-selected', 'false');
-        $('#claim-tab').attr('aria-selected', 'false');
-        $('#general-tab').attr('aria-selected', 'false');
-
-        $('#enquiry-tab').attr('class', 'nav-link active');
-        $('#client-tab').attr('class', 'nav-link');
-        $('#claim-tab').attr('class', 'nav-link');
-        $('#general-tab').attr('class', 'nav-link');
-
-        $.ajax({
-            url: '/InboxEmail/Tab?tab=' + tab, // Controller action URL
-            type: 'POST',             // HTTP method
-            data: { tab: tab },      // Data to send (query parameter)
-            success: function (response) {
-                // Handle success - update the page dynamically
-                console.log('Response:', response);
-                $('#tabhead').css('display', 'contents');
-                $('#tabhead1').css('display', 'none');
-                $('#tabtable').html('');
-                var htmltab = '';
-                for (var i = 0; i < response.length; i++) {
-                    htmltab += '<tr>';
-                    htmltab += '<td>' + (i + 1) + '</td>'; // Serial number
-                    let i_from = response[i].i_from.trim();
-                    htmltab += '<td><a href="/InboxClient?email=' + response[i].i_from + '&client=' + response[i].i_fromname + '&tab=' + tab + '">' + response[i].i_fromname + '</a></td>';
-                    htmltab += '<td>' + response[i].i_attachment + '</td>';
-                    htmltab += '<td>' + response[i].i_receiveddate + '</td>';
-                    htmltab += '</tr>';
-                }
-                $('#tabtable').html(htmltab);
-
-                // Example: Update a specific section with the response data
-                $('#content-area').html(response);
-            },
-            error: function (xhr, status, error) {
-                // Handle errors
-                console.error('Error:', error);
-            }
-        });
-    }
-
-    function claimtab() {
-        var tab = "claim";
-        $('#typetab').css('display', 'none');
-        $('#claimnodiv').css('display', 'none');
-        $('#enquirynodiv').css('display', 'none'); 
-
-
-        $('#enquiry-tab').attr('aria-selected', 'false');
-        $('#client-tab').attr('aria-selected', 'false');
-        $('#claim-tab').attr('aria-selected', 'true');
-        $('#general-tab').attr('aria-selected', 'true');
-
-        $.ajax({
-            url: '/InboxEmail/Tab?tab=' + tab, // Controller action URL
-            type: 'POST',             // HTTP method
-            data: { tab: tab },      // Data to send (query parameter)
-            success: function (response) {
-                // Handle success - update the page dynamically
-                console.log('Response:', response);
-                $('#tabhead').css('display', 'contents');
-                $('#tabhead1').css('display', 'none');
-                $('#tabtable').html('');
-                var htmltab = '';
-                for (var i = 0; i < response.length; i++) {
-                    htmltab += '<tr>';
-                    htmltab += '<td>' + (i + 1) + '</td>'; // Serial number
-                    let i_from = response[i].i_from.trim();
-                    htmltab += '<td><a href="/InboxClient?email=' + response[i].i_from + '&client=' + response[i].i_fromname + '&tab=' + tab + '">' + response[i].i_fromname + '</a></td>';
-                    htmltab += '<td>' + response[i].i_attachment + '</td>';
-                    htmltab += '<td>' + response[i].i_receiveddate + '</td>';
-
-                    htmltab += '</tr>';
-                }
-                $('#tabtable').html(htmltab);
-
-                // Example: Update a specific section with the response data
-                $('#content-area').html(response);
-            },
-            error: function (xhr, status, error) {
-                // Handle errors
-                console.error('Error:', error);
-            }
-        });
-    }
-
-    function generaltab() {
-        var tab = "General";
-        $('#custom-search').val('');
-
-       // $('#typetab').css('display', 'flex');
-        $('#typetab').css('display', 'none');
-         $('#claimnodiv').css('display', 'none');
-            $('#enquirynodiv').css('display', 'none');
-
-
-        $('#enquiry-tab').attr('aria-selected', 'false');
-        $('#client-tab').attr('aria-selected', 'false');
-        $('#claim-tab').attr('aria-selected', 'false');
-        $('#general-tab').attr('aria-selected', 'true');
-
-        $.ajax({
-            url: '/InboxEmail/general?tab=' + tab, // Controller action URL
-            type: 'POST',             // HTTP method
-            data: { tab: tab },      // Data to send (query parameter)
-            success: function (response) {
-                // Handle success - update the page dynamically
-                console.log('Response:', response);
-                $('#tabhead').css('display', 'none');
-                $('#tabhead1').css('display', 'contents');
-                $('#tabtable').html('');
-                var htmltab = '';
-                for (var i = 0; i < response.sentemailList.length; i++) {
-                    htmltab += '<tr>';
-                    htmltab += '<td style="width:6%" onclick="inboxmsg(' + response.sentemailList[i].i_id + ')">' + (i + 1) + '</td>';
-                    htmltab += '<td style="display:none">' + response.sentemailList[i].i_id + '</td>';
-                    htmltab += '<td  style="width:12%" onclick="inboxmsg(' + response.sentemailList[i].i_id + ')">' + response.sentemailList[i].i_from + '</td>';
-                    htmltab += '<td  style="width:12%" onclick="inboxmsg(' + response.sentemailList[i].i_id + ')">' + response.sentemailList[i].i_to + '</td>';
-                    htmltab += '<td style="width:10%" onclick="inboxmsg(' + response.sentemailList[i].i_id + ')">' + response.sentemailList[i].i_subject + '</td>';
-
-
-                    if (response.sentemailList[i].i_attachment != "No attachments available." && response.sentemailList[i].i_attachment !== "null" && response.sentemailList[i].i_attachment !== null) {
-                        htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
-                    }
-                    else {
-                        htmltab += '<td style="width:4%"></td>';
-                    }
-
-
-                    htmltab += '<td  style="width:12%" onclick="inboxmsg(' + response.sentemailList[i].i_id + ')">' + response.sentemailList[i].i_receiveddate + '</td>';
-                    htmltab += '<td style="display:none"><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response.sentemailList[i].i_id + ')"></i></td>';
-                    htmltab += '</tr>';
-                }
-                $('#tabtable').html(htmltab);
-
-                // Example: Update a specific section with the response data
-                $('#content-area').html(response);
-            },
-            error: function (xhr, status, error) {
-                // Handle errors
-                console.error('Error:', error);
-            }
-        });
-    }
-    function enquiryonetab() {
-        var tab = "Enquiry one";
-        $('#custom-search').val('');
-
-        $('#typetab').css('display', 'none');
-        $('#claimnodiv').css('display', 'none');
-        $('#enquirynodiv').css('display', 'contents'); 
-
-
-
-        $('#enquiry-tab').attr('aria-selected', 'false');
-        $('#client-tab').attr('aria-selected', 'false');
-        $('#claim-tab').attr('aria-selected', 'false');
-        $('#general-tab').attr('aria-selected', 'true');
-
-        $.ajax({
-            url: '/InboxEmail/general?tab=' + tab, // Controller action URL
-            type: 'POST',             // HTTP method
-            data: { tab: tab },      // Data to send (query parameter)
-            success: function (response) {
-                // Handle success - update the page dynamically
-                console.log('Response:', response);
-                $('#tabhead').css('display', 'none');
-                $('#tabhead1').css('display', 'contents');
-                $('#tabtable').html('');
-                var htmltab = '';
-                for (var i = 0; i < response.sentemailList.length; i++) {
-                    htmltab += '<tr>';
-                    htmltab += '<td style="width:6%" onclick="inboxmsg(' + response.sentemailList[i].i_id + ')">' + (i + 1) + '</td>';
-                    htmltab += '<td style="display:none">' + response.sentemailList[i].i_id + '</td>';
-                    htmltab += '<td  style="width:12%" onclick="inboxmsg(' + response.sentemailList[i].i_id + ')">' + response.sentemailList[i].i_from + '</td>';
-                    htmltab += '<td  style="width:12%" onclick="inboxmsg(' + response.sentemailList[i].i_id + ')">' + response.sentemailList[i].i_to + '</td>';
-                    htmltab += '<td style="width:10%" onclick="inboxmsg(' + response.sentemailList[i].i_id + ')">' + response.sentemailList[i].i_subject + '</td>';
-
-
-                    if (response.sentemailList[i].i_attachment != "No attachments available." && response.sentemailList[i].i_attachment !== "null" && response.sentemailList[i].i_attachment !== null) {
-                        htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
-                    }
-                    else {
-                        htmltab += '<td style="width:4%"></td>';
-                    }
-
-
-                    htmltab += '<td  style="width:12%" onclick="inboxmsg(' + response.sentemailList[i].i_id + ')">' + response.sentemailList[i].i_receiveddate + '</td>';
-                    htmltab += '<td style="display:none"><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response.sentemailList[i].i_id + ')"></i></td>';
-                    htmltab += '</tr>';
-
-                    const enquiryDropdown = document.getElementById('enquirydropdown');
-
-                    $('#enquirydropdown').html('<option>--Select--</option>');
-
-
-                    // Loop through the claimno array and add each as an option to the dropdown
-                    response.enquiryno.forEach(claim => {
-                        const option = document.createElement('option');
-
-                        option.value = claim.id;  // Set the id as the value of the option
-                        option.text = claim.value;  // Set the value as the display text
-                        enquiryDropdown.appendChild(option);
-                    });
-                }
-                $('#tabtable').html(htmltab);
-
-                // Example: Update a specific section with the response data
-                $('#content-area').html(response);
-            },
-            error: function (xhr, status, error) {
-                // Handle errors
-                console.error('Error:', error);
-            }
-        });
-    }
-
-    function claimonetab() {
-        var tab = "Claim one";
-        $('#custom-search').val('');
-
-        $('#typetab').css('display', 'none');
-         $('#claimnodiv').css('display', 'contents');
-         $('#enquirynodiv').css('display', 'none'); 
-
-
-        $('#enquiry-tab').attr('aria-selected', 'false');
-        $('#client-tab').attr('aria-selected', 'false');
-        $('#claim-tab').attr('aria-selected', 'false');
-        $('#general-tab').attr('aria-selected', 'true');
-
-        $.ajax({
-            url: '/InboxEmail/general?tab=' + tab, // Controller action URL
-            type: 'POST',             // HTTP method
-            data: { tab: tab },      // Data to send (query parameter)
-            success: function (response) {
-                // Handle success - update the page dynamically
-                console.log('Response:', response);
-                $('#tabhead').css('display', 'none');
-                $('#tabhead1').css('display', 'contents');
-                $('#tabtable').html('');
-                var htmltab = '';
-                for (var i = 0; i < response.sentemailList.length; i++) {
-                    htmltab += '<tr>';
-                    htmltab += '<td style="width:6%" onclick="inboxmsg(' + response.sentemailList[i].i_id + ')">' + (i + 1) + '</td>';
-                    htmltab += '<td style="display:none">' + response.sentemailList[i].i_id + '</td>';
-                    htmltab += '<td  style="width:12%" onclick="inboxmsg(' + response.sentemailList[i].i_id + ')">' + response.sentemailList[i].i_from + '</td>';
-                    htmltab += '<td  style="width:12%" onclick="inboxmsg(' + response.sentemailList[i].i_id + ')">' + response.sentemailList[i].i_to + '</td>';
-                    htmltab += '<td style="width:10%" onclick="inboxmsg(' + response.sentemailList[i].i_id + ')">' + response.sentemailList[i].i_subject + '</td>';
-
-
-                    if (response.sentemailList[i].i_attachment !== "No attachments available." && response.sentemailList[i].i_attachment !== "null" && response.sentemailList[i].i_attachment !== null) {
-                        htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
-                    }
-                    else {
-                        htmltab += '<td style="width:4%"></td>';
-                    }
-
-
-                    htmltab += '<td  style="width:12%" onclick="inboxmsg(' + response.sentemailList[i].i_id + ')">' + response.sentemailList[i].i_receiveddate + '</td>';
-                    htmltab += '<td style="display:none"><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response.sentemailList[i].i_id + ')"></i></td>';
-                    htmltab += '</tr>';
-
-
-                    const claimDropdown = document.getElementById('claimdropdown');
-
-                    $('#claimdropdown').html('<option>--Select--</option>');
-
-
-                    // Loop through the claimno array and add each as an option to the dropdown
-                    response.claimno.forEach(claim => {
-                        const option = document.createElement('option');
-
-                        option.value = claim.id;  // Set the id as the value of the option
-                        option.text = claim.value;  // Set the value as the display text
-                        claimDropdown.appendChild(option);
-                    });
-
-                }
-                $('#tabtable').html(htmltab);
-
-                // Example: Update a specific section with the response data
-                $('#content-area').html(response);
-            },
-            error: function (xhr, status, error) {
-                // Handle errors
-                console.error('Error:', error);
-            }
-        });
-    }
-
-    function inboxmsg(id) {
-
-
-        // Show the modal
-        $("#addSubscription").modal("show");
-
-        // Data payload for the request
-        var data = { id: id };
-
-        // Perform AJAX POST request
-        $.ajax({
-            url: '/InboxEmail/showdetails', // Controller action URL
-            type: 'POST',                   // HTTP method
-            data: data,                     // Data to send
-            success: function (response) {
-                console.log(response);
-
-                if (response) {
-                    const attachmentsContainer = document.getElementById("attachdiv");
-
-                    // Clear previous content before updating
-                    attachmentsContainer.innerHTML = '';
-
-                    if (response.i_attachment != "No attachments available." && response.i_attachment !== "null" && response.i_attachment !== null) {
-                        // const fileName = response.i_attachment.split(/[/\\]/).pop();
-
-
-                        const attachments = response.i_attachment;
-                        if (attachments) {
-                            // Split attachments using a comma
-                            const attachmentArray = attachments.trim().split(',').map(a => a.trim()); // Trim extra spaces
-
-                            console.log("Raw Attachments:", attachments);
-                            console.log("Split Attachments Array:", attachmentArray); // Debugging
-
-                            // Generate the HTML
-                            let attachmentHTML = '';
-
-                            attachmentArray.forEach((attachmentPath) => {
-                                if (!attachmentPath) return; // Ignore empty values
-
-                                const fileName = attachmentPath.split(/[/\\]/).pop(); // Extract filename
-                                const safeAttachmentPath = encodeURIComponent(attachmentPath); // Encode for safety
-
-                                attachmentHTML += `
-                                    <div class="attachments" style="margin: 8px 0;">
-                                        <!-- Button for filename -->
-                                        <button style="display: inline-block; padding: 8px; margin-right: 8px;" title="${fileName}">
-                                            ${fileName}
-                                        </button>
-                                        <!-- Button for download -->
-                                        <button style="display: inline-block; height: 42px; width: auto;"
-                                                onclick="downloadFile('${safeAttachmentPath}')">
-                                            <i class="fa-solid fa-chevron-down" style="font-size: 16px; color: black;"></i>
-                                        </button>
-                                    </div>`;
-                            });
-
-                            // Inject into the DOM
-                            // document.getElementById("attachments-container").innerHTML = attachmentHTML;
-                            document.getElementById('attachdiv').innerHTML = attachmentHTML;
-
-                            // Show the attachment container
-                            document.getElementById('attachdiv').style.display = 'block';
-                        }
-
-                        // Insert the generated HTML into a container
-
-
-                    } else {
-                        $('#attachdiv').hide();
-                    }
-
-
-                    $('#ic_tolabel').text(response.i_to || 'N/A');
-                    $('#ic_fromlabel').text(response.i_from || 'N/A');
-                    $('#ic_subjectlabel').text(response.i_subject || 'N/A');
-
-                    // const formattedBody = (response.i_body || '').replace(/<br\s*\/?>/gi, "\n").replace(/<\/?[^>]+(>|$)/g, "");
-                    // $('#ic_bodylabel').val(formattedBody);
-
-                    //$('#ic_bodylabel').html(response.i_body || '');
-                    var bodyh = '' + response.i_body + '';
-                    $('#ic_bodyhtml').html(bodyh || '');
-
-
-
-
-                    // Optional: Update a specific content area with additional information
-                    $('#content-area').html(response.content || 'No content available.');
-
-
-                    $.ajax({
-                        url: '/InboxEmail/inboxdates', // Controller action URL
-                        type: 'POST',                   // HTTP method
-                        data: data,                     // Data to send
-                        success: function (response) {
-                            console.log(response);
-                            // $('#date1').show();
-                            // $('#date2').show();
-                            // $('#date3').show();
-
-                            // for (var i = 0; i < response.length; i++) {
-                            //     if (response.length == "1") {
-                            //         const date1 = response[0].i_receiveddate;
-                            //         $('#date1').val(response[0].i_id);
-                            //         $('#date1').attr('onclick', `inboxmsg('${response[0].i_id}')`);
-                            //         $('#date1').text(date1);
-                            //         $('#date2').hide();
-                            //         $('#date3').hide();
-                            //     }
-                            //     else {
-                            //         const date1 = response[0].i_receiveddate;
-                            //         const date2 = response[1].i_receiveddate;
-                            //         const date3 = response[2].i_receiveddate;
-
-                            //         $('#date1').val(response[0].i_id);
-                            //         $('#date2').val(response[1].i_id);
-                            //         $('#date3').val(response[2].i_id);
-
-
-                            //         $('#date1').attr('onclick', `inboxmsg('${response[0].i_id}')`);
-                            //         $('#date2').attr('onclick', `inboxmsg('${response[1].i_id}')`);
-                            //         $('#date3').attr('onclick', `inboxmsg('${response[2].i_id}')`);
-
-
-
-                            //         $('#date1').text(date1);
-                            //         $('#date2').text(date2);
-                            //         $('#date3').text(date3);
-                            //         break;
-                            //     }
-                            // }
-
-
-                            $('#arrow-container').empty();
-
-                            // Iterate through the response and dynamically create elements
-                            response.forEach((item, index) => {
-                                const date = item.i_receiveddate; // Get the date
-                                const id = item.i_id; // Get the ID
-
-                                // Create a new arrow div
-                                const arrowDiv = $(`<div class="arrow-item" id="date${index + 1}" onclick="inboxmsg('${id}')">${date}</div>`);
-
-                                // Append the arrow div to the container
-                                $('#arrow-container').append(arrowDiv);
-
-                                // Add spacing if needed
-                                $('#arrow-container').append('<div style="padding:12px"></div>');
-                            });
-
-
-
-
-
-
-                            // Optional: Update a specific content area with additional information
-                            $('#content-area').html(response.content || 'No content available.');
-
-
-
-
-
-
-
-                        },
-                        error: function (xhr, status, error) {
-                            // Display error notification
-                            console.error('Error:', error);
-                            alert('An error occurred while fetching the message details. Please try again later.');
-                        }
-                    });
-
-
-
-                } else {
-                    console.error('Empty response received');
-                    alert('No data available.');
-                }
-            },
-            error: function (xhr, status, error) {
-                // Display error notification
-                console.error('Error:', error);
-                alert('An error occurred while fetching the message details. Please try again later.');
-            }
-        });
-    }
-
-    // function downloadfile(filePath) {
-    //   //  const filePath = $('#filebuttons2').val();
-
-    //     // Encode the file path to make it safe for URLs
-    //     const encodedPath = encodeURIComponent(filePath);
-
-    //     // Construct the URL to call the controller
-    //     const url = `/InboxClient/DownloadFile?filePath=${filePath}`;
-
-    //     // Open the file in a new tab or start downloading
-    //     window.open(url, "_blank");
-    // }
-
-    function downloadFile(filePath) {
-        console.log("Original File Path:", filePath); // Log the input
-
-        try {
-            // Trim and encode the file path
-            const trimmedPath = filePath.trim();
-            const encodedPath = encodeURIComponent(trimmedPath);
-            console.log("Encoded File Path:", encodedPath); // Log the encoded path
-
-            // Construct the URL
-            const url = `/InboxClient/DownloadFile?filePath=${encodedPath}`;
-            console.log("Download URL:", url); // Log the final URL
-
-            // Open the file in a new tab
-            window.open(url, "_blank");
-        } catch (error) {
-            console.error("Error during file download:", error); // Log any errors
-        }
-    }
-
-    // function downloadfile(filePath) {
-    //     console.log("Original File Path:", filePath); // Log the input
-
-    //     try {
-    //         // Trim and encode the file path
-    //         const trimmedPath = filePath.trim();
-    //         const encodedPath = encodeURIComponent(trimmedPath);
-    //         console.log("Encoded File Path:", encodedPath); // Log the encoded path
-
-    //         // Construct the URL
-    //         const url = `/InboxClient/DownloadFile?filePath=${encodedPath}`;
-    //         console.log("Download URL:", url); // Log the final URL
-
-    //         // Open the file in a new tab
-    //         window.open(url, "_blank");
-    //     } catch (error) {
-    //         console.error("Error during file download:", error); // Log any errors
-    //     }
-    // }
-    // function downloadfile(filePath) {
-    //     console.log("Original File Path:", filePath); // Log the input
-
-    //     try {
-    //         // Trim and encode the file path
-    //         const trimmedPath = filePath.trim();
-    //         const encodedPath = encodeURIComponent(trimmedPath);
-    //         console.log("Encoded File Path:", encodedPath); // Log the encoded path
-
-    //         // Construct the URL
-    //         const url = `/InboxClient/DownloadFile?filePath=${encodedPath}`;
-    //         console.log("Download URL:", url); // Log the final URL
-
-    //         // Test if the URL is accessible
-    //         fetch(url, { method: 'HEAD' })
-    //             .then((response) => {
-    //                 if (response.ok) {
-    //                     console.log("File is available for download.");
-    //                     window.open(url, "_blank"); // Download the file
-    //                 } else {
-    //                     console.error(`Error: Server responded with status ${response.status}`);
-    //                 }
-    //             })
-    //             .catch((error) => {
-    //                 console.error("Error testing file availability:", error);
-    //             });
-    //     } catch (error) {
-    //         console.error("Error during file download:", error); // Log any errors
-    //     }
-    // }
-
-    function viewfile() {
-        const filePath = $('#filebuttons1').val();
-
-        // Encode the file path to make it safe for URLs
-        const encodedPath = encodeURIComponent(filePath);
-
-        // Construct the URL to call the controller
-        const url = `/InboxClient/ViewFile?filePath=${encodedPath}`;
-
-        // Open the file in a new tab or start downloading
-        window.open(url, "_blank");
-    }
-
-    // function downloadfile(filename) {
-    // // Remove any unwanted whitespace or line breaks from the filePath
-    // const cleanedFilePath = filePath.trim();
-
-    // // Encode the file path to make it safe for URLs
-    // const encodedPath = encodeURIComponent(cleanedFilePath);
-
-    // // Construct the URL to call the controller
-    // const url = `/InboxClient/DownloadFile?filePath=${encodedPath}`;
-
-    // // Open the file in a new tab or start downloading
-    // window.open(url, "_blank");
-
-    // console.log("Download URL:", url); // Debugging
-
-    //   alert("hello");
-    //}
-
-    function filter() {
-        $("#addfilter").modal("show");
-    }
-
-    function submitfilter() {
-
-
-
-        $('#enquiry-tab').attr('aria-selected', 'false');
-        $('#client-tab').attr('aria-selected', 'false');
-        $('#claim-tab').attr('aria-selected', 'false');
-        $('#general-tab').attr('aria-selected', 'false');
-
-
-        $('#enquiry-tab').attr('class', 'nav-link');
-        $('#client-tab').attr('class', 'nav-link');
-        $('#claim-tab').attr('class', 'nav-link');
-        $('#general-tab').attr('class', 'nav-link');
-
-        $('#' + tab + '-tab').attr('aria-selected', 'true');
-        $('#' + tab + '-tab').attr('class', 'nav-link active');
-
-
-        if (tab == 'client') {
-            tab = "insurance";
-        }
-
-        $("#addfilter").modal("hide");
-        var from = $('#i_from').val();
-        var to = $('#i_to').val();
-        var subject = $('#i_subject').val();
-        var hasthewords = $('#i_hasthewords').val();
-        var tab = $('#i_tab').val();
-
-        $('#client-tab').attr('aria-selected', 'true');
-        $('#client-tab').attr('class', 'nav-link active');
-
-        if (tab != 'general') {
-            var data = {
-                from: from,
-                to: to,
-                subject: subject,
-                hasthewords: hasthewords,
-                tab: tab,
-
-            };
-
-            $.ajax({
-                url: '/InboxEmail/filter?from=' + from + 'to=' + to + 'subject' + subject + 'hasthewords=' + hasthewords + 'tab=' + tab, // Controller action URL
-                type: 'POST',             // HTTP method
-                data: data,      // Data to send (query parameter)
-                success: function (response) {
-                    // Handle success - update the page dynamically
-                    console.log('Response:', response);
-                    $('#tabhead').css('display', 'contents');
-                    $('#tabhead1').css('display', 'none');
-                    $('#tabtable').html('');
-                    var htmltab = '';
-                    for (var i = 0; i < response.length; i++) {
-                        htmltab += '<tr>';
-                        htmltab += '<td>' + (i + 1) + '</td>'; // Serial number
-                        let i_from = response[i].i_from.trim();
-                        htmltab += '<td><a href="/InboxClient?email=' + response[i].i_from + '&client=' + response[i].i_fromname + '&tab=' + tab + '">' + response[i].i_fromname + '</a></td>';
-                        htmltab += '<td>' + response[i].i_receiveddate + '</td>';
-                        htmltab += '</tr>';
-                    }
-                    $('#tabtable').html(htmltab);
-
-                    // Example: Update a specific section with the response data
-                    $('#content-area').html(response);
-                },
-                error: function (xhr, status, error) {
-                    // Handle errors
-                    console.error('Error:', error);
-                }
-            });
-            $('#i_from').val('');
-            $('#i_to').val('');
-            $('#i_subject').val('');
-            $('#i_hasthewords').val('');
-            $('#i_tab').val('');
-
-        }
-        else {
-            //$('#typetab').css('display', 'content');
-            $('#typetab').css('display', 'none');
-            $('#claimnodiv').css('display', 'none');
-            $('#enquirynodiv').css('display', 'none');
-
-
-            $('#general-tab').attr('aria-selected', 'true');
-            $('#general-tab').attr('class', 'nav-link active');
-
-            var data = {
-                from: from,
-                to: to,
-                subject: subject,
-                hasthewords: hasthewords,
-                tab: tab,
-
-            };
-
-            $.ajax({
-                url: '/InboxEmail/Generalfilter?from=' + from + 'to=' + to + 'subject' + subject + 'hasthewords=' + hasthewords + 'tab=' + tab, // Controller action URL
-                type: 'POST',             // HTTP method
-                data: data,      // Data to send (query parameter)
-                success: function (response) {
-                    // Handle success - update the page dynamically
-                    console.log('Response:', response);
-                    $('#tabhead').css('display', 'none');
-                    $('#tabhead1').css('display', 'contents');
-                    $('#tabtable').html('');
-                    var htmltab = '';
-                    for (var i = 0; i < response.length; i++) {
-                        htmltab += '<tr>';
-                        htmltab += '<td style="width:6%"  onclick="inboxmsg(' + response[i].i_id + ')">' + (i + 1) + '</td>'; // Serial number
-                        let i_from = response[i].i_from.trim();
-                        htmltab += '<td  style="width:12%" onclick="inboxmsg(' + response[i].i_id + ')">' + response[i].i_fromname + '</a></td>';
-                        htmltab += '<td style="width:12%"  onclick="inboxmsg(' + response[i].i_id + ')">' + response[i].i_to + '</a></td>';
-                        htmltab += '<td style="width:10%" onclick="inboxmsg(' + response[i].i_id + ')">' + response[i].i_subject + '</td>';
-                        // htmltab += '<td style="width:20px" >' + response[i].i_attachment + '</td>';
-
-
-
-                        if (response[i].i_attachment != "No attachments available." && response[i].i_attachment !== "null" && response[i].i_attachment !== null) {
-                            htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
-                        }
-                        else {
-                            htmltab += '<td style="width:4%"></td>';
-                        }
-
-
-                        htmltab += '<td  style="width:12%" onclick="inboxmsg(' + response[i].i_id + ')">' + response[i].i_receiveddate + '</td>';
-                        htmltab += '<td style="display:none"><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].i_id + ')"></i></td>';
-                        htmltab += '</tr>';
-                    }
-                    $('#tabtable').html(htmltab);
-
-                    // Example: Update a specific section with the response data
-                    $('#content-area').html(response);
-                },
-                error: function (xhr, status, error) {
-                    // Handle errors
-                    console.error('Error:', error);
-                }
-            });
-            $('#i_from').val('');
-            $('#i_to').val('');
-            $('#i_subject').val('');
-            $('#i_hasthewords').val('');
-            $('#i_tab').val('');
-        }
-    }
-
-    function addorder() {
-        window.location.href = "/InboxEmail/Index";
-    }
-
-    function fetchemail() {
-        window.location.href = "/InboxEmail/FetchEmails";
-    }
-
-    function typechange() {
-
-        var type = $('#typedropdown option:selected').text();
-
-        $.ajax({
-            url: '/InboxEmail/generaltype?type=' + type, // Controller action URL
-            type: 'POST',             // HTTP method
-            data: { type: type },      // Data to send (query parameter)
-            success: function (response) {
-                // Handle success - update the page dynamically
-                console.log('Response:', response);
-                $('#tabhead').css('display', 'none');
-                $('#tabhead1').css('display', 'contents');
-                $('#tabtable').html('');
-                var htmltab = '';
-                for (var i = 0; i < response.length; i++) {
-                    htmltab += '<tr>';
-                    htmltab += '<td style="width:6%" onclick="inboxmsg(' + response[i].i_id + ')">' + (i + 1) + '</td>';
-                    htmltab += '<td style="display:none">' + response[i].i_id + '</td>';
-                    htmltab += '<td  style="width:12%" onclick="inboxmsg(' + response[i].i_id + ')">' + response[i].i_from + '</td>';
-                    htmltab += '<td  style="width:12%" onclick="inboxmsg(' + response[i].i_id + ')">' + response[i].i_to + '</td>';
-                    htmltab += '<td style="width:10%" onclick="inboxmsg(' + response[i].i_id + ')">' + response[i].i_subject + '</td>';
-
-
-                    if (response[i].i_attachment != "No attachments available." && response[i].i_attachment !== "null" && response[i].i_attachment !== null) {
-                        htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
-                    }
-                    else {
-                        htmltab += '<td style="width:4%"></td>';
-                    }
-
-
-                    htmltab += '<td  style="width:12%" onclick="inboxmsg(' + response[i].i_id + ')">' + response[i].i_receiveddate + '</td>';
-                    htmltab += '<td style="display:none"><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].i_id + ')"></i></td>';
-                    htmltab += '</tr>';
-                }
-                $('#tabtable').html(htmltab);
-
-                // Example: Update a specific section with the response data
-                $('#content-area').html(response);
-            },
-            error: function (xhr, status, error) {
-                // Handle errors
-                console.error('Error:', error);
-            }
-        });
-
-    }
-
-    function claimdropdown() {
-
-        //var year = '2025';
-        var claim = $('#claimdropdown option:selected').text();
-
-      
-        var tab = "Claim one";
-       // var clientid = $('#clientDropdown1').val();
-        // var data = {
-        //     clientid: clientid,
-        //     tab: tab,
-        //     year: year,
-        //     claim: claim,
-        // };
-        var data={
-            tab:tab,
-            claim:claim,
-        }
-
-
-      
-           
-           // $('#dataTable4').show();
-
-            $.ajax({
-                url: '/InboxEmail/ClaimoneNo', // Controller action URL
-                type: 'POST',             // HTTP method
-                data: data,
-                success: function (response) {
-                    console.log(response);
-
-                $('#tabhead').css('display', 'none');
-                $('#tabhead1').css('display', 'contents');
-                $('#tabtable').html('');
-
-            
-
-                    var htmltab = '';
-                for (var i = 0; i < response.sentemailList.length; i++) {
-                    htmltab += '<tr>';
-                    htmltab += '<td style="width:6%" onclick="inboxmsg(' + response.sentemailList[i].i_id + ')">' + (i + 1) + '</td>';
-                    htmltab += '<td style="display:none">' + response.sentemailList[i].i_id + '</td>';
-                    htmltab += '<td  style="width:12%" onclick="inboxmsg(' + response.sentemailList[i].i_id + ')">' + response.sentemailList[i].i_from + '</td>';
-                    htmltab += '<td  style="width:12%" onclick="inboxmsg(' + response.sentemailList[i].i_id + ')">' + response.sentemailList[i].i_to + '</td>';
-                    htmltab += '<td style="width:10%" onclick="inboxmsg(' + response.sentemailList[i].i_id + ')">' + response.sentemailList[i].i_subject + '</td>';
-
-
-                    if (response.sentemailList[i].i_attachment !== "No attachments available." && response.sentemailList[i].i_attachment !== "null" && response.sentemailList[i].i_attachment !== null) {
-                        htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
-                    }
-                    else {
-                        htmltab += '<td style="width:4%"></td>';
-                    }
-
-
-                    htmltab += '<td  style="width:12%" onclick="inboxmsg(' + response.sentemailList[i].i_id + ')">' + response.sentemailList[i].i_receiveddate + '</td>';
-                    htmltab += '<td style="display:none"><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response.sentemailList[i].i_id + ')"></i></td>';
-                    htmltab += '</tr>';
-                    }
-
-                $('#tabtable').html(htmltab);
-
-                    // Example: Update a specific section with the response data (if any)
-                    $('#content-area').html(response);
-                },
-                error: function (xhr, status, error) {
-                    // Handle errors
-                    console.error('Error:', error);
-                }
-            });            
-    }
-
-    function enquirydropdown(){
-        //var year = '2025';
-        var enquiry = $('#enquirydropdown option:selected').text();
-
-
-        var tab = "Enquiry one";
-        var data = {
-            tab: tab,
-            claim: enquiry,
-        }
-
-
-
-
-        // $('#dataTable4').show();
-
-        $.ajax({
-            url: '/InboxEmail/ClaimoneNo', // Controller action URL
-            type: 'POST',             // HTTP method
-            data: data,
-            success: function (response) {
-                console.log(response);
-
-                $('#tabhead').css('display', 'none');
-                $('#tabhead1').css('display', 'contents');
-                $('#tabtable').html('');
-
-
-
-                var htmltab = '';
-                for (var i = 0; i < response.sentemailList.length; i++) {
-                    htmltab += '<tr>';
-                    htmltab += '<td style="width:6%" onclick="inboxmsg(' + response.sentemailList[i].i_id + ')">' + (i + 1) + '</td>';
-                    htmltab += '<td style="display:none">' + response.sentemailList[i].i_id + '</td>';
-                    htmltab += '<td  style="width:12%" onclick="inboxmsg(' + response.sentemailList[i].i_id + ')">' + response.sentemailList[i].i_from + '</td>';
-                    htmltab += '<td  style="width:12%" onclick="inboxmsg(' + response.sentemailList[i].i_id + ')">' + response.sentemailList[i].i_to + '</td>';
-                    htmltab += '<td style="width:10%" onclick="inboxmsg(' + response.sentemailList[i].i_id + ')">' + response.sentemailList[i].i_subject + '</td>';
-
-
-                    if (response.sentemailList[i].i_attachment !== "No attachments available." && response.sentemailList[i].i_attachment !== "null" && response.sentemailList[i].i_attachment !== null) {
-                        htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
-                    }
-                    else {
-                        htmltab += '<td style="width:4%"></td>';
-                    }
-
-
-                    htmltab += '<td  style="width:12%" onclick="inboxmsg(' + response.sentemailList[i].i_id + ')">' + response.sentemailList[i].i_receiveddate + '</td>';
-                    htmltab += '<td style="display:none"><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response.sentemailList[i].i_id + ')"></i></td>';
-                    htmltab += '</tr>';
-                }
-
-                $('#tabtable').html(htmltab);
-
-                // Example: Update a specific section with the response data (if any)
-                $('#content-area').html(response);
-            },
-            error: function (xhr, status, error) {
-                // Handle errors
-                console.error('Error:', error);
-            }
-        });
-    }
-
+    $('#table_length_select').change();
 </script>

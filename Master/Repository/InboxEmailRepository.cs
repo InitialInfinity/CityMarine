@@ -24,7 +24,7 @@ namespace Master.Repository
                 {
                     var sqlConnection = (Microsoft.Data.SqlClient.SqlConnection)connection;
                     await sqlConnection.OpenAsync();
-                    var queryResult = await connection.QueryMultipleAsync("proc_InboxEmail", SetParameter(model), commandType: CommandType.StoredProcedure);
+                    var queryResult = await connection.QueryMultipleAsync("proc_InboxEmailNew", SetParameter(model), commandType: CommandType.StoredProcedure);
                     var Model = queryResult.Read<Object>();
                     var outcome = queryResult.ReadSingleOrDefault<Outcome>();
                     var outcomeId = outcome?.OutcomeId ?? 0;
@@ -65,7 +65,7 @@ namespace Master.Repository
                 {
                     var sqlConnection = (Microsoft.Data.SqlClient.SqlConnection)connection;
                     await sqlConnection.OpenAsync();
-                    var queryResult = await connection.QueryMultipleAsync("proc_InboxEmail", SetParameter(model), commandType: CommandType.StoredProcedure);
+                    var queryResult = await connection.QueryMultipleAsync("proc_InboxEmailNew", SetParameter(model), commandType: CommandType.StoredProcedure);
                     var Model = queryResult.ReadSingleOrDefault<Object>();
                     var outcome = queryResult.ReadSingleOrDefault<Outcome>();
                     var outcomeId = outcome?.OutcomeId ?? 0;

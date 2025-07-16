@@ -24,7 +24,7 @@ namespace Master.Repository
                 {
                     var sqlConnection = (Microsoft.Data.SqlClient.SqlConnection)connection;
                     await sqlConnection.OpenAsync();
-                    var queryResult = await connection.QueryMultipleAsync("proc_InboxEmail", SetParameter(model), commandType: CommandType.StoredProcedure);
+                    var queryResult = await connection.QueryMultipleAsync("proc_InboxEmailNew", SetParameter(model), commandType: CommandType.StoredProcedure);
                     var Model = queryResult.Read<Object>();
                     var outcome = queryResult.ReadSingleOrDefault<Outcome>();
                     var outcomeId = outcome?.OutcomeId ?? 0;
@@ -65,7 +65,7 @@ namespace Master.Repository
                 {
                     var sqlConnection = (Microsoft.Data.SqlClient.SqlConnection)connection;
                     await sqlConnection.OpenAsync();
-                    var queryResult = await connection.QueryMultipleAsync("proc_InboxEmail", SetParameter(model), commandType: CommandType.StoredProcedure);
+                    var queryResult = await connection.QueryMultipleAsync("proc_InboxEmailNew", SetParameter(model), commandType: CommandType.StoredProcedure);
                     var Model = queryResult.ReadSingleOrDefault<Object>();
                     var outcome = queryResult.ReadSingleOrDefault<Outcome>();
                     var outcomeId = outcome?.OutcomeId ?? 0;
@@ -115,6 +115,7 @@ namespace Master.Repository
             parameters.Add("@ic_attachment", user.ic_attachment, DbType.String);
             parameters.Add("@ic_receiveddate", user.ic_receiveddate, DbType.String);            
             parameters.Add("@ic_claimno", user.ic_claimno, DbType.String);            
+            parameters.Add("@ic_enquiryno", user.ic_enquiryno, DbType.String);            
             parameters.Add("@OutcomeId", dbType: DbType.Int32, direction: ParameterDirection.Output);
             parameters.Add("@OutcomeDetail", dbType: DbType.String, size: 4000, direction: ParameterDirection.Output);
             return parameters;

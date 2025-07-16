@@ -38,19 +38,14 @@ namespace ibillcraft.Controllers
             _logger = logger;
             _localizer = localizer;
         }
+
         public IActionResult Index(string email, string tab)
         {
-            if (tab == null)
-            {
-                tab = "Enquiry";
-            }
-
             GetCookies gk = new GetCookies();
             CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
 
             if (string.IsNullOrEmpty(CUtility.comid))
             {
-                // Handle missing session data
                 return RedirectToAction("Index", "CompanyLoginRegistration");
             }
 
@@ -62,7 +57,6 @@ namespace ibillcraft.Controllers
             var rootObject = JsonConvert.DeserializeObject<List<FillDropdown>>(data1);
             ViewBag.customer = rootObject;
 
-
             string geurl = $"{_httpClient.BaseAddress}/ViewBag/GetViewBag?userId&sTableName=tbl_ParameterValueMaster&sValue=pv_parametervalue&id=pv_id&IsActiveColumn=pv_isactive&sCoulmnName=pv_parameterid&sColumnValue=ce8449d3-24fb-49c4-8dd8-6a6093d7607c";
             HttpResponseMessage geresponseView = _httpClient.GetAsync(geurl).Result;
             dynamic gedata = geresponseView.Content.ReadAsStringAsync().Result;
@@ -71,7 +65,7 @@ namespace ibillcraft.Controllers
 
 
 
-            if (tab == "claim")
+            if (tab == "Claim")
             {
                 string claimnourl = $"{_httpClient.BaseAddress}/InboxClient/dropdownclaimno?UserId={UserId}&ic_from={email}&ic_type={tab}";
                 HttpResponseMessage claimnoresponseView = _httpClient.GetAsync(claimnourl).Result;
@@ -85,11 +79,90 @@ namespace ibillcraft.Controllers
             }
 
 
+            if (tab == "Enquiry")
+            {
+                string enquirynourl = $"{_httpClient.BaseAddress}/InboxClient/dropdownenquiryno?UserId={UserId}&ic_from={email}&ic_type={tab}";
+                HttpResponseMessage enquirynoresponseView = _httpClient.GetAsync(enquirynourl).Result;
+                dynamic enquirynodata = enquirynoresponseView.Content.ReadAsStringAsync().Result;
+                var enquiryResponse = JsonConvert.DeserializeObject<InboxClientModel>(enquirynodata);
+                ViewBag.enquiryno = enquiryResponse.Data;
+            }
+            else
+            {
+                ViewBag.enquiryno = "";
+            }
+
+
+            return View();
+        }
+        public JsonResult GetEnquiryClaimMail(string? ic_year, string? ic_from, string? tab)
+        {
+            
+            GetCookies gk = new GetCookies();
+            CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
+            ViewBag.Format = CUtility.format;
+            Guid? UserId = new Guid(CUtility.userid);
+
+            ViewBag.claimno = "";
+
+
+            // Handle the case when tab is 'claim'
+            if (tab == "Claim")
+            {
+                string claimnourl = $"{_httpClient.BaseAddress}/InboxClient/dropdownclaimno?UserId={UserId}&ic_from={ic_from}&ic_type={tab}";
+                HttpResponseMessage claimnoresponseView = _httpClient.GetAsync(claimnourl).Result;
+                dynamic claimnodata = claimnoresponseView.Content.ReadAsStringAsync().Result;
+                var claimResponse = JsonConvert.DeserializeObject<InboxClientModel>(claimnodata);
+                ViewBag.claimno = claimResponse.Data;
+            }
+            if (tab == "Enquiry")
+            {
+                string enquirynourl = $"{_httpClient.BaseAddress}/InboxClient/dropdownenquiryno?UserId={UserId}&ic_from={ic_from}&ic_type={tab}";
+                HttpResponseMessage enquirynoresponseView = _httpClient.GetAsync(enquirynourl).Result;
+                dynamic enquirynodata = enquirynoresponseView.Content.ReadAsStringAsync().Result;
+                var enquiryResponse = JsonConvert.DeserializeObject<InboxClientModel>(enquirynodata);
+                ViewBag.enquiryno = enquiryResponse.Data;
+            }
+
             var sentclientDataList = new List<InboxClientModel>();
             var sentclientList = new List<InboxClientModel>();
 
+            string sentclienturl = $"{_httpClient.BaseAddress}/InboxClient/GetEnquiryClaimMail?UserId={UserId}&ic_year={ic_year}&ic_from={ic_from}&ic_type={tab}";
+            HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
 
-            string sentclienturl = $"{_httpClient.BaseAddress}/InboxClient/GetAll?UserId={UserId}&ic_from={email}&ic_type={tab}";
+            if (response.IsSuccessStatusCode)
+            {
+                dynamic data = response.Content.ReadAsStringAsync().Result;
+                var dataObject = new { data = new List<InboxClientModel>() };
+                var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
+                sentclientList = response2.data;
+
+                // return Json(sentclientList);
+                return Json(new
+                {
+                    sentclientList = sentclientList,
+                    claimno = ViewBag.claimno
+                });
+            }
+            return Json(new
+            {
+                sentclientList = sentclientList,
+                claimno = ViewBag.claimno
+            });
+        }
+
+        public JsonResult FetchAttachments(string? tab, string? ic_year, string ic_from)
+        {
+            GetCookies gk = new GetCookies();
+            CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
+
+            ViewBag.Format = CUtility.format;
+            Guid? UserId = new Guid(CUtility.userid);
+
+
+            var sentclientDataList = new List<InboxClientModel>();
+            var sentclientList = new List<InboxClientModel>();
+            string sentclienturl = $"{_httpClient.BaseAddress}/InboxClient/GetAllAttchment?UserId={UserId}&ic_year={ic_year}&ic_type={tab}&ic_from={ic_from}";
             HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
             if (response.IsSuccessStatusCode)
             {
@@ -97,23 +170,272 @@ namespace ibillcraft.Controllers
                 var dataObject = new { data = new List<InboxClientModel>() };
                 var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
                 sentclientList = response2.data;
-                //ViewBag.sc_to = sentclientList[0].sc_to;
-                //ViewBag.sc_email = sentclientList[0].sc_email;
-                //ViewBag.sc_toemail = sentclientList[0].sc_toemail;
-
+                //ViewBag.sc_to = sentclientList.sc_to;
 
                 if (sentclientList != null)
                 {
-                    return View(sentclientList);
+                    return Json(sentclientList);
                 }
                 else
                 {
                     var sentclientList1 = new List<InboxClientModel>();
-                    return View(sentclientList1);
+                    return Json(sentclientList1);
                 }
             }
-            return View(sentclientDataList);
+            return Json(sentclientDataList);
         }
+
+
+        public JsonResult ClaimNo(string? clientid, string? tab, string? year, string? claim)
+        {
+
+            GetCookies gk = new GetCookies();
+            CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
+
+            ViewBag.Format = CUtility.format;
+            Guid? UserId = new Guid(CUtility.userid);
+
+            var sentclientDataList = new List<InboxClientModel>();
+            var sentclientList = new List<InboxClientModel>();
+            string sentclienturl = $"{_httpClient.BaseAddress}/InboxClient/ClaimNo?UserId={UserId}&clientid={clientid}&ic_type={tab}&ic_year={year}&ic_claimno={claim}";
+            HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                dynamic data = response.Content.ReadAsStringAsync().Result;
+                var dataObject = new { data = new List<InboxClientModel>() };
+                var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
+                sentclientList = response2.data;
+
+                if (sentclientList != null)
+                {
+                    return Json(sentclientList);
+                }
+                else
+                {
+                    var sentclientList1 = new List<InboxClientModel>();
+                    return Json(sentclientList1);
+                }
+            }
+            return Json(sentclientDataList);
+        }
+
+        public JsonResult EnquiryNo(string? clientid, string? tab, string? year, string? enquiry)
+        {
+
+            GetCookies gk = new GetCookies();
+            CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
+
+            ViewBag.Format = CUtility.format;
+            Guid? UserId = new Guid(CUtility.userid);
+
+            var sentclientDataList = new List<InboxClientModel>();
+            var sentclientList = new List<InboxClientModel>();
+            string sentclienturl = $"{_httpClient.BaseAddress}/InboxClient/EnquiryNo?UserId={UserId}&clientid={clientid}&ic_type={tab}&ic_year={year}&ic_enquiryno={enquiry}";
+            HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                dynamic data = response.Content.ReadAsStringAsync().Result;
+                var dataObject = new { data = new List<InboxClientModel>() };
+                var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
+                sentclientList = response2.data;
+
+                if (sentclientList != null)
+                {
+                    return Json(sentclientList);
+                }
+                else
+                {
+                    var sentclientList1 = new List<InboxClientModel>();
+                    return Json(sentclientList1);
+                }
+            }
+            return Json(sentclientDataList);
+        }
+
+        public JsonResult Clientchange1(string? clientid, string? tab, string? year)
+        {
+            GetCookies gk = new GetCookies();
+            CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
+
+            ViewBag.Format = CUtility.format;
+            Guid? UserId = new Guid(CUtility.userid);
+
+            var sentclientDataList = new List<InboxClientModel>();
+            var sentclientList = new List<InboxClientModel>();
+            string sentclienturl = $"{_httpClient.BaseAddress}/InboxClient/Clientchange1?UserId={UserId}&clientid={clientid}&ic_type={tab}&ic_year={year}";
+            HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                dynamic data = response.Content.ReadAsStringAsync().Result;
+                var dataObject = new { data = new List<InboxClientModel>() };
+                var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
+                sentclientList = response2.data;
+
+                if (sentclientList != null)
+                {
+                    return Json(sentclientList);
+                }
+                else
+                {
+                    var sentclientList1 = new List<InboxClientModel>();
+                    return Json(sentclientList1);
+                }
+            }
+            return Json(sentclientDataList);
+        }
+
+        public JsonResult filter(string from, string to, string subject, string hasthewords, string year, string? tab)
+        {
+            GetCookies gk = new GetCookies();
+            CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
+
+            ViewBag.Format = CUtility.format;
+
+            Guid? UserId = new Guid(CUtility.userid);
+            var sentemailDataList = new List<InboxClientModel>();
+            var sentemailList = new List<InboxClientModel>();
+
+            string sentemailurl = $"{_httpClient.BaseAddress}/InboxClient/filter?UserId={UserId}&from={from}&to={to}&subject={subject}&hasthewords={hasthewords}&ic_year={year}&type={tab}";
+            HttpResponseMessage response = _httpClient.GetAsync(sentemailurl).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                dynamic data = response.Content.ReadAsStringAsync().Result;
+                var dataObject = new { data = new List<InboxClientModel>() };
+                var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
+                sentemailList = response2.data;
+
+                if (sentemailList != null)
+                {
+                    return Json(sentemailList);
+                }
+                else
+                {
+                    var sentemailList1 = new List<InboxClientModel>();
+                    return Json(sentemailList1);
+                }
+            }
+            return Json(sentemailDataList);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+        public JsonResult Clientchange(string? clientid, string? tab)
+        {
+            GetCookies gk = new GetCookies();
+            CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
+
+            ViewBag.Format = CUtility.format;
+            Guid? UserId = new Guid(CUtility.userid);
+
+            var sentclientDataList = new List<InboxClientModel>();
+            var sentclientList = new List<InboxClientModel>();
+            string sentclienturl = $"{_httpClient.BaseAddress}/InboxClient/Clientchange?UserId={UserId}&clientid={clientid}&ic_type={tab}";
+            HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                dynamic data = response.Content.ReadAsStringAsync().Result;
+                var dataObject = new { data = new List<InboxClientModel>() };
+                var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
+                sentclientList = response2.data;
+
+                if (sentclientList != null)
+                {
+                    return Json(sentclientList);
+                }
+                else
+                {
+                    var sentclientList1 = new List<InboxClientModel>();
+                    return Json(sentclientList1);
+                }
+            }
+            return Json(sentclientDataList);
+        }
+
+        //public IActionResult Index(string email, string tab)
+        //{
+        //    if (tab == null)
+        //    {
+        //        tab = "Enquiry";
+        //    }
+
+        //    GetCookies gk = new GetCookies();
+        //    CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
+
+        //    if (string.IsNullOrEmpty(CUtility.comid))
+        //    {
+        //        // Handle missing session data
+        //        return RedirectToAction("Index", "CompanyLoginRegistration");
+        //    }
+
+        //    ViewBag.Format = CUtility.format;
+        //    Guid? UserId = new Guid(CUtility.userid);
+        //    string url = $"{_httpClient.BaseAddress}/ViewBag/GetViewBag?userId&sTableName=tbl_Customermaster&sValue=c_name&id=c_id&IsActiveColumn=c_isactive";
+        //    HttpResponseMessage responseView = _httpClient.GetAsync(url).Result;
+        //    dynamic data1 = responseView.Content.ReadAsStringAsync().Result;
+        //    var rootObject = JsonConvert.DeserializeObject<List<FillDropdown>>(data1);
+        //    ViewBag.customer = rootObject;
+
+
+        //    string geurl = $"{_httpClient.BaseAddress}/ViewBag/GetViewBag?userId&sTableName=tbl_ParameterValueMaster&sValue=pv_parametervalue&id=pv_id&IsActiveColumn=pv_isactive&sCoulmnName=pv_parameterid&sColumnValue=ce8449d3-24fb-49c4-8dd8-6a6093d7607c";
+        //    HttpResponseMessage geresponseView = _httpClient.GetAsync(geurl).Result;
+        //    dynamic gedata = geresponseView.Content.ReadAsStringAsync().Result;
+        //    var gerootObject = JsonConvert.DeserializeObject<List<FillDropdown>>(gedata);
+        //    ViewBag.year = gerootObject;
+
+
+
+        //    if (tab == "claim")
+        //    {
+        //        string claimnourl = $"{_httpClient.BaseAddress}/InboxClient/dropdownclaimno?UserId={UserId}&ic_from={email}&ic_type={tab}";
+        //        HttpResponseMessage claimnoresponseView = _httpClient.GetAsync(claimnourl).Result;
+        //        dynamic claimnodata = claimnoresponseView.Content.ReadAsStringAsync().Result;
+        //        var claimResponse = JsonConvert.DeserializeObject<InboxClientModel>(claimnodata);
+        //        ViewBag.claimno = claimResponse.Data;
+        //    }
+        //    else
+        //    {
+        //        ViewBag.claimno = "";
+        //    }
+
+
+        //    var sentclientDataList = new List<InboxClientModel>();
+        //    var sentclientList = new List<InboxClientModel>();
+
+
+        //    string sentclienturl = $"{_httpClient.BaseAddress}/InboxClient/GetAll?UserId={UserId}&ic_from={email}&ic_type={tab}";
+        //    HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        dynamic data = response.Content.ReadAsStringAsync().Result;
+        //        var dataObject = new { data = new List<InboxClientModel>() };
+        //        var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
+        //        sentclientList = response2.data;
+        //        //ViewBag.sc_to = sentclientList[0].sc_to;
+        //        //ViewBag.sc_email = sentclientList[0].sc_email;
+        //        //ViewBag.sc_toemail = sentclientList[0].sc_toemail;
+
+
+        //        if (sentclientList != null)
+        //        {
+        //            return View(sentclientList);
+        //        }
+        //        else
+        //        {
+        //            var sentclientList1 = new List<InboxClientModel>();
+        //            return View(sentclientList1);
+        //        }
+        //    }
+        //    return View(sentclientDataList);
+        //}
 
         public JsonResult Tab(string email, string tab)
         {
@@ -174,148 +496,8 @@ namespace ibillcraft.Controllers
             }
             return Json(sentclientDataList);
         }
-        public JsonResult FetchAttachments(string? tab, string? ic_year, string ic_from)
-        {
-            GetCookies gk = new GetCookies();
-            CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
-
-            ViewBag.Format = CUtility.format;
-            Guid? UserId = new Guid(CUtility.userid);
-
-
-            var sentclientDataList = new List<InboxClientModel>();
-            var sentclientList = new List<InboxClientModel>();
-            string sentclienturl = $"{_httpClient.BaseAddress}/InboxClient/GetAllAttchment?UserId={UserId}&ic_year={ic_year}&ic_type={tab}&ic_from={ic_from}";
-            HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
-            if (response.IsSuccessStatusCode)
-            {
-                dynamic data = response.Content.ReadAsStringAsync().Result;
-                var dataObject = new { data = new List<InboxClientModel>() };
-                var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
-                sentclientList = response2.data;
-                //ViewBag.sc_to = sentclientList.sc_to;
-
-                if (sentclientList != null)
-                {
-                    return Json(sentclientList);
-                }
-                else
-                {
-                    var sentclientList1 = new List<InboxClientModel>();
-                    return Json(sentclientList1);
-                }
-            }
-            return Json(sentclientDataList);
-        }
-        //public JsonResult fetchdetails(string? ic_year, string? ic_from, string? tab)
-        //{
-        //    GetCookies gk = new GetCookies();
-        //    CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
-
-        //    ViewBag.Format = CUtility.format;
-        //    Guid? UserId = new Guid(CUtility.userid);
-
-        //    ViewBag.claimno = "";
-
-        //    if (tab == "claim")
-        //    {
-        //        string claimnourl = $"{_httpClient.BaseAddress}/InboxClient/dropdownclaimno?UserId={UserId}&ic_from={ic_from}&ic_type={tab}";
-        //        HttpResponseMessage claimnoresponseView = _httpClient.GetAsync(claimnourl).Result;
-        //        dynamic claimnodata = claimnoresponseView.Content.ReadAsStringAsync().Result;
-        //        var claimResponse = JsonConvert.DeserializeObject<InboxClientModel>(claimnodata);
-        //        ViewBag.claimno = claimResponse.Data;
-        //    }
-        //    else
-        //    {
-        //        //string claimnourl = $"{_httpClient.BaseAddress}/ViewBag/GetViewBag4?userId&sTableName=tbl_inboxemail&sValue=i_subject&id=i_subject";
-        //        //HttpResponseMessage claimnoresponseView = _httpClient.GetAsync(claimnourl).Result;
-        //        //dynamic claimnodata = claimnoresponseView.Content.ReadAsStringAsync().Result;
-        //        //var claimnorootObject = JsonConvert.DeserializeObject<List<FillDropdown>>(claimnodata);
-        //        //ViewBag.claimno = claimnorootObject;
-        //        ViewBag.claimno = "";
-        //    }
-
-        //    var sentclientDataList = new List<InboxClientModel>();
-        //    var sentclientList = new List<InboxClientModel>();
-        //    string sentclienturl = $"{_httpClient.BaseAddress}/InboxClient/GetDetails?UserId={UserId}&ic_year={ic_year}&ic_from={ic_from}&ic_type={tab}";
-        //    HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
-        //    if (response.IsSuccessStatusCode)
-        //    {
-        //        dynamic data = response.Content.ReadAsStringAsync().Result;
-        //        var dataObject = new { data = new List<InboxClientModel>() };
-        //        var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
-        //        sentclientList = response2.data;
-        //        //ViewBag.sc_to = sentclientList.sc_to;
-
-        //        if (sentclientList != null)
-        //        {
-        //            //  return Json(sentclientList);
-        //            return Json(new
-        //            {
-        //                sentclientList = sentclientList,
-        //                claimno = ViewBag.claimno
-        //            });
-        //        }
-        //        else
-        //        {
-        //            var sentclientList1 = new List<InboxClientModel>();
-        //            return Json(sentclientList1);
-        //        }
-        //    }
-        //    return Json(sentclientDataList);
-        //}
-
-
-        public JsonResult fetchdetails(string? ic_year, string? ic_from, string? tab)
-        {
-            // Initialize cookies and user data
-            GetCookies gk = new GetCookies();
-            CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
-            ViewBag.Format = CUtility.format;
-            Guid? UserId = new Guid(CUtility.userid);
-
-            ViewBag.claimno = "";
-
-
-            // Handle the case when tab is 'claim'
-            if (tab == "claim")
-            {
-                string claimnourl = $"{_httpClient.BaseAddress}/InboxClient/dropdownclaimno?UserId={UserId}&ic_from={ic_from}&ic_type={tab}";
-                HttpResponseMessage claimnoresponseView = _httpClient.GetAsync(claimnourl).Result;
-                dynamic claimnodata = claimnoresponseView.Content.ReadAsStringAsync().Result;
-                var claimResponse = JsonConvert.DeserializeObject<InboxClientModel>(claimnodata);
-                ViewBag.claimno = claimResponse.Data;
-            }
-
-            var sentclientDataList = new List<InboxClientModel>();
-            var sentclientList = new List<InboxClientModel>();
-
-            string sentclienturl = $"{_httpClient.BaseAddress}/InboxClient/GetDetails?UserId={UserId}&ic_year={ic_year}&ic_from={ic_from}&ic_type={tab}";
-            HttpResponseMessage response =  _httpClient.GetAsync(sentclienturl).Result;
-
-            if (response.IsSuccessStatusCode)
-            {
-                dynamic data = response.Content.ReadAsStringAsync().Result;
-                var dataObject = new { data = new List<InboxClientModel>() };
-                var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
-                sentclientList = response2.data;
-
-                // return Json(sentclientList);
-                return Json(new
-                {
-                    sentclientList = sentclientList,
-                    claimno = ViewBag.claimno
-                });
-            }
-
-
-            return Json(new
-            {
-                sentclientList = sentclientList,
-                claimno = ViewBag.claimno
-            });
-
-        }
+     
+        
 
         public async Task <IActionResult> Claimnoassign(string? ic_year, string? ic_from, string? tab)
         {
@@ -369,70 +551,9 @@ namespace ibillcraft.Controllers
             return Json(sentclientDataList);
         }
 
-        public JsonResult Clientchange(string? clientid, string? tab)
-        {
-            GetCookies gk = new GetCookies();
-            CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
+        
 
-            ViewBag.Format = CUtility.format;
-            Guid? UserId = new Guid(CUtility.userid);
-
-            var sentclientDataList = new List<InboxClientModel>();
-            var sentclientList = new List<InboxClientModel>();
-            string sentclienturl = $"{_httpClient.BaseAddress}/InboxClient/Clientchange?UserId={UserId}&clientid={clientid}&ic_type={tab}";
-            HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
-            if (response.IsSuccessStatusCode)
-            {
-                dynamic data = response.Content.ReadAsStringAsync().Result;
-                var dataObject = new { data = new List<InboxClientModel>() };
-                var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
-                sentclientList = response2.data;
-
-                if (sentclientList != null)
-                {
-                    return Json(sentclientList);
-                }
-                else
-                {
-                    var sentclientList1 = new List<InboxClientModel>();
-                    return Json(sentclientList1);
-                }
-            }
-            return Json(sentclientDataList);
-        }
-
-        public JsonResult filter(string from, string to, string subject, string hasthewords, string year, string? tab)
-        {          
-            GetCookies gk = new GetCookies();
-            CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
-
-            ViewBag.Format = CUtility.format;
-
-            Guid? UserId = new Guid(CUtility.userid);
-            var sentemailDataList = new List<InboxClientModel>();
-            var sentemailList = new List<InboxClientModel>();
-
-            string sentemailurl = $"{_httpClient.BaseAddress}/InboxClient/GetEmail?UserId={UserId}&from={from}&to={to}&subject={subject}&hasthewords={hasthewords}&ic_year={year}&type={tab}";
-            HttpResponseMessage response = _httpClient.GetAsync(sentemailurl).Result;
-            if (response.IsSuccessStatusCode)
-            {
-                dynamic data = response.Content.ReadAsStringAsync().Result;
-                var dataObject = new { data = new List<InboxClientModel>() };
-                var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
-                sentemailList = response2.data;
-
-                if (sentemailList != null)
-                {
-                    return Json(sentemailList);
-                }
-                else
-                {
-                    var sentemailList1 = new List<InboxClientModel>();
-                    return Json(sentemailList1);
-                }
-            }
-            return Json(sentemailDataList);
-        }
+        
 
         public JsonResult general(string tab)
         {
@@ -571,70 +692,8 @@ namespace ibillcraft.Controllers
             }
         }
 
-        public JsonResult Clientchange1(string? clientid, string? tab, string? year)
-        {
-            GetCookies gk = new GetCookies();
-            CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
+    
 
-            ViewBag.Format = CUtility.format;
-            Guid? UserId = new Guid(CUtility.userid);
-
-            var sentclientDataList = new List<InboxClientModel>();
-            var sentclientList = new List<InboxClientModel>();
-            string sentclienturl = $"{_httpClient.BaseAddress}/InboxClient/Clientchange1?UserId={UserId}&clientid={clientid}&ic_type={tab}&ic_year={year}";
-            HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
-            if (response.IsSuccessStatusCode)
-            {
-                dynamic data = response.Content.ReadAsStringAsync().Result;
-                var dataObject = new { data = new List<InboxClientModel>() };
-                var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
-                sentclientList = response2.data;
-
-                if (sentclientList != null)
-                {
-                    return Json(sentclientList);
-                }
-                else
-                {
-                    var sentclientList1 = new List<InboxClientModel>();
-                    return Json(sentclientList1);
-                }
-            }
-            return Json(sentclientDataList);
-        }
-
-
-        public JsonResult ClaimNo(string? clientid, string? tab, string? year, string? claim)
-        {
-
-            GetCookies gk = new GetCookies();
-            CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
-
-            ViewBag.Format = CUtility.format;
-            Guid? UserId = new Guid(CUtility.userid);
-
-            var sentclientDataList = new List<InboxClientModel>();
-            var sentclientList = new List<InboxClientModel>();
-            string sentclienturl = $"{_httpClient.BaseAddress}/InboxClient/ClaimNo?UserId={UserId}&clientid={clientid}&ic_type={tab}&ic_year={year}&ic_claimno={claim}";
-            HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
-            if (response.IsSuccessStatusCode)
-            {
-                dynamic data = response.Content.ReadAsStringAsync().Result;
-                var dataObject = new { data = new List<InboxClientModel>() };
-                var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
-                sentclientList = response2.data;
-
-                if (sentclientList != null)
-                {
-                    return Json(sentclientList);
-                }
-                else
-                {
-                    var sentclientList1 = new List<InboxClientModel>();
-                    return Json(sentclientList1);
-                }
-            }
-            return Json(sentclientDataList);
-        }
+       
     }
 }

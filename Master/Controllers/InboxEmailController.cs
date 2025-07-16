@@ -45,8 +45,78 @@ namespace Master.Controllers
             }
         }
 
-        [HttpGet("GetEmail")]
-        public async Task<IActionResult> GetEmail(Guid? UserId, string? from, string? to, string? subject, string? hasthewords, string? type)
+
+        [HttpGet("EnquiryClaim")]
+        public async Task<IActionResult> EnquiryClaim(Guid UserId, string type)
+        {
+            try
+            {
+                InboxEmailModel user = new InboxEmailModel();
+                user.UserId = UserId;
+                user.i_type = type;
+                if (user.BaseModel == null)
+                {
+                    user.BaseModel = new BaseModel();
+                }
+                user.BaseModel.OperationType = "GetEnquiryClaim";
+                var createduser = await _sentemail.InboxEmail(user);
+                var data = ((Microsoft.AspNetCore.Mvc.ObjectResult)createduser).Value;
+                return Ok(data);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [HttpGet("Showdetails")]
+        public async Task<IActionResult> Showdetails(Guid UserId, string i_id)
+        {
+            try
+            {
+                InboxEmailModel user = new InboxEmailModel();
+                user.UserId = UserId;
+                user.i_id = i_id;
+                if (user.BaseModel == null)
+                {
+                    user.BaseModel = new BaseModel();
+                }
+                user.BaseModel.OperationType = "Showdetails";
+                var createduser = await _sentemail.Get(user);
+                var data = ((Microsoft.AspNetCore.Mvc.ObjectResult)createduser).Value;
+                return Ok(data);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [HttpGet("inboxdates")]
+        public async Task<IActionResult> inboxdates(Guid UserId, string id)
+        {
+            try
+            {
+                InboxEmailModel user = new InboxEmailModel();
+                user.UserId = UserId;
+                user.i_id = id;
+                if (user.BaseModel == null)
+                {
+                    user.BaseModel = new BaseModel();
+                }
+                user.BaseModel.OperationType = "inboxdates";
+                var createduser = await _sentemail.InboxEmail(user);
+                var data = ((Microsoft.AspNetCore.Mvc.ObjectResult)createduser).Value;
+                return Ok(data);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [HttpGet("EnquiryClaimfilter")]
+        public async Task<IActionResult> EnquiryClaimfilter(Guid? UserId, string? from, string? to, string? subject, string? hasthewords, string? type)
         {
             try
             {
@@ -61,7 +131,7 @@ namespace Master.Controllers
                 {
                     user.BaseModel = new BaseModel();
                 }
-                user.BaseModel.OperationType = "GetEmail";
+                user.BaseModel.OperationType = "EnquiryClaimfilter";
                 var createduser = await _sentemail.InboxEmail(user);
                 var data = ((Microsoft.AspNetCore.Mvc.ObjectResult)createduser).Value;
                 return Ok(data);
@@ -71,6 +141,46 @@ namespace Master.Controllers
                 throw;
             }
         }
+        [HttpGet("Generalfilter")]
+        public async Task<IActionResult> Generalfilter(Guid? UserId, string? from, string? to, string? subject, string? hasthewords, string? type)
+        {
+            try
+            {
+                InboxEmailModel user = new InboxEmailModel();
+                user.UserId = UserId;
+                user.i_from = from;
+                user.i_to = to;
+                user.i_subject = subject;
+                user.i_body = hasthewords;
+                user.i_type = type;
+                if (user.BaseModel == null)
+                {
+                    user.BaseModel = new BaseModel();
+                }
+                user.BaseModel.OperationType = "Generalfilter";
+                var createduser = await _sentemail.InboxEmail(user);
+                var data = ((Microsoft.AspNetCore.Mvc.ObjectResult)createduser).Value;
+                return Ok(data);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         [HttpGet("General")]
         public async Task<IActionResult> General(Guid UserId, string type)
@@ -120,77 +230,9 @@ namespace Master.Controllers
             }
         }
 
-        [HttpGet("Generalfilter")]
-        public async Task<IActionResult> Generalfilter(Guid? UserId, string? from, string? to, string? subject, string? hasthewords, string? type)
-        {
-            try
-            {
-                InboxEmailModel user = new InboxEmailModel();
-                user.UserId = UserId;
-                user.i_from = from;
-                user.i_to = to;
-                user.i_subject = subject;
-                user.i_body = hasthewords;
-                user.i_type = type;
-                if (user.BaseModel == null)
-                {
-                    user.BaseModel = new BaseModel();
-                }
-                user.BaseModel.OperationType = "Generalfilter";
-                var createduser = await _sentemail.InboxEmail(user);
-                var data = ((Microsoft.AspNetCore.Mvc.ObjectResult)createduser).Value;
-                return Ok(data);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-        [HttpGet("Get")]
-        public async Task<IActionResult> Get(Guid UserId, string i_id)
-        {
-            try
-            {
-                InboxEmailModel user = new InboxEmailModel();
-                user.UserId = UserId;
-                user.i_id = i_id;
-                if (user.BaseModel == null)
-                {
-                    user.BaseModel = new BaseModel();
-                }
-                user.BaseModel.OperationType = "GetClientFile";
-                var createduser = await _sentemail.Get(user);
-                var data = ((Microsoft.AspNetCore.Mvc.ObjectResult)createduser).Value;
-                return Ok(data);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
+        
 
-        [HttpGet("inboxdates")]
-        public async Task<IActionResult> inboxdates(Guid UserId, string id)
-        {
-            try
-            {
-                InboxEmailModel user = new InboxEmailModel();
-                user.UserId = UserId;
-                user.i_id = id;
-                if (user.BaseModel == null)
-                {
-                    user.BaseModel = new BaseModel();
-                }
-                user.BaseModel.OperationType = "inboxdates";
-                var createduser = await _sentemail.InboxEmail(user);
-                var data = ((Microsoft.AspNetCore.Mvc.ObjectResult)createduser).Value;
-                return Ok(data);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
+       
 
         [HttpGet("dropdownclaimno")]
         public async Task<IActionResult> dropdownclaimno(Guid UserId, string i_type)

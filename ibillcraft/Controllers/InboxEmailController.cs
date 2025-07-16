@@ -60,11 +60,12 @@ namespace ibillcraft.Controllers
             _logger = logger;
             _localizer = localizer;
         }
+
         public IActionResult Index(string tab)
         {
             if (tab == null)
             {
-                tab = "Insurance";
+                tab = "Client";
             }
 
             GetCookies gk = new GetCookies();
@@ -79,65 +80,78 @@ namespace ibillcraft.Controllers
             ViewBag.Format = CUtility.format;
 
             Guid? UserId = new Guid(CUtility.userid);
-            var sentemailDataList = new List<InboxEmailModel>();
-            var sentemailList = new List<InboxEmailModel>();
+            var inboxemailDataList = new List<InboxEmailModel>();
+            var inboxemailList = new List<InboxEmailModel>();
 
 
-            //string geurl = $"{_httpClient.BaseAddress}/ViewBag/GetViewBag?userId&sTableName=tbl_ParameterValueMaster&sValue=pv_parametervalue&id=pv_id&IsActiveColumn=pv_isactive&sCoulmnName=pv_parameterid&sColumnValue=3a6b099f-4045-4eac-891a-c2f701c45d86";
-            //HttpResponseMessage geresponseView = _httpClient.GetAsync(geurl).Result;
-            //dynamic gedata = geresponseView.Content.ReadAsStringAsync().Result;
-            //var gerootObject = JsonConvert.DeserializeObject<List<FillDropdown>>(gedata);
-            //ViewBag.type = gerootObject;
-
-            string geurl = $"{_httpClient.BaseAddress}/ViewBag/GetViewBag?userId&sTableName=tbl_EmailRuleConfg&sValue=E_value&id=E_id&IsActiveColumn=E_isactive&sCoulmnName=E_category&sColumnValue=b98e01a4-adf6-4c31-a41b-3572c8ea6cd3";
-            HttpResponseMessage geresponseView = _httpClient.GetAsync(geurl).Result;
-            dynamic gedata = geresponseView.Content.ReadAsStringAsync().Result;
-            var gerootObject = JsonConvert.DeserializeObject<List<FillDropdown>>(gedata);
-            ViewBag.type = gerootObject;
-
-
-                string claimnourl1 = $"{_httpClient.BaseAddress}/InboxEmail/dropdownclaimno?UserId={UserId}&i_type={tab}";
-                HttpResponseMessage claimnoresponseView1 = _httpClient.GetAsync(claimnourl1).Result;
-                dynamic claimnodata1 = claimnoresponseView1.Content.ReadAsStringAsync().Result;
-                var claimResponse1 = JsonConvert.DeserializeObject<InboxClientModel>(claimnodata1);
-                ViewBag.enquiryno = claimResponse1.Data;
-            
-
-                string claimnourl = $"{_httpClient.BaseAddress}/InboxEmail/dropdownclaimno?UserId={UserId}&i_type={tab}";
-                HttpResponseMessage claimnoresponseView = _httpClient.GetAsync(claimnourl).Result;
-                dynamic claimnodata = claimnoresponseView.Content.ReadAsStringAsync().Result;
-                var claimResponse = JsonConvert.DeserializeObject<InboxClientModel>(claimnodata);
-                ViewBag.claimno = claimResponse.Data;
-            
-
-
-            string sentemailurl = $"{_httpClient.BaseAddress}/InboxEmail/GetAll?UserId={UserId}&type={tab}";
-            HttpResponseMessage response = _httpClient.GetAsync(sentemailurl).Result;
+            string inboxemailurl = $"{_httpClient.BaseAddress}/InboxEmail/GetAll?UserId={UserId}&type={tab}";
+            HttpResponseMessage response = _httpClient.GetAsync(inboxemailurl).Result;
             if (response.IsSuccessStatusCode)
             {
                 dynamic data = response.Content.ReadAsStringAsync().Result;
                 var dataObject = new { data = new List<InboxEmailModel>() };
                 var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
-                sentemailList = response2.data;
+                inboxemailList = response2.data;
 
-                if (sentemailList != null)
+                if (inboxemailList != null)
                 {
-                    return View(sentemailList);
+                    return View(inboxemailList);
                 }
                 else
                 {
-                    var sentemailList1 = new List<InboxEmailModel>();
-                    return View(sentemailList1);
+                    var inboxemailList1 = new List<InboxEmailModel>();
+                    return View(inboxemailList1);
                 }
             }
-            return View(sentemailDataList);
+            return View(inboxemailDataList);
         }
 
-        public JsonResult Tab(string tab)
+
+        public JsonResult ClientGenaral(string tab)
         {
             if (tab == null)
             {
-                tab = "Insurance";
+                tab = "Client";
+            }
+
+            GetCookies gk = new GetCookies();
+            CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
+
+            ViewBag.Format = CUtility.format;
+
+            Guid? UserId = new Guid(CUtility.userid);
+            var inboxemailDataList = new List<InboxEmailModel>();
+            var inboxemailList = new List<InboxEmailModel>();
+
+
+            string inboxemailurl = $"{_httpClient.BaseAddress}/InboxEmail/GetAll?UserId={UserId}&type={tab}";
+            HttpResponseMessage response = _httpClient.GetAsync(inboxemailurl).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                dynamic data = response.Content.ReadAsStringAsync().Result;
+                var dataObject = new { data = new List<InboxEmailModel>() };
+                var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
+                inboxemailList = response2.data;
+
+                if (inboxemailList != null)
+                {
+                    return Json(inboxemailList);
+                }
+                else
+                {
+                    var inboxemailList1 = new List<InboxEmailModel>();
+                    return Json(inboxemailList1);
+                }
+            }
+            return Json(inboxemailDataList);
+        }
+
+
+        public JsonResult EnquiryClaim(string tab)
+        {
+            if (tab == null)
+            {
+                tab = "Enquiry";
             }
 
             GetCookies gk = new GetCookies();
@@ -148,7 +162,7 @@ namespace ibillcraft.Controllers
             Guid? UserId = new Guid(CUtility.userid);
             var sentemailDataList = new List<InboxEmailModel>();
             var sentemailList = new List<InboxEmailModel>();
-            string sentemailurl = $"{_httpClient.BaseAddress}/InboxEmail/GetAll?UserId={UserId}&type={tab}";
+            string sentemailurl = $"{_httpClient.BaseAddress}/InboxEmail/EnquiryClaim?UserId={UserId}&type={tab}";
             HttpResponseMessage response = _httpClient.GetAsync(sentemailurl).Result;
             if (response.IsSuccessStatusCode)
             {
@@ -170,199 +184,72 @@ namespace ibillcraft.Controllers
             return Json(sentemailDataList);
         }
 
-        //public JsonResult General(string tab)
-        //{
-        //    if (tab == null)
-        //    {
-        //        tab = "General";
-        //    }
-
-        //    GetCookies gk = new GetCookies();
-        //    CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
-
-        //    ViewBag.Format = CUtility.format;
-
-        //    Guid? UserId = new Guid(CUtility.userid);
-        //    var sentemailDataList = new List<InboxEmailModel>();
-        //    var sentemailList = new List<InboxEmailModel>();
-
-        //    if (tab == "Enquiry one")
-        //    {
-        //        string claimnourl = $"{_httpClient.BaseAddress}/InboxEmail/dropdownclaimno?UserId={UserId}&i_type={tab}";
-        //        HttpResponseMessage claimnoresponseView = _httpClient.GetAsync(claimnourl).Result;
-        //        dynamic claimnodata = claimnoresponseView.Content.ReadAsStringAsync().Result;
-        //        var claimResponse = JsonConvert.DeserializeObject<InboxClientModel>(claimnodata);
-        //        ViewBag.enquiryno = claimResponse.Data;
-        //    }
-        //     if (tab == "Claim one")
-        //    {
-        //        string claimnourl = $"{_httpClient.BaseAddress}/InboxEmail/dropdownclaimno?UserId={UserId}&i_type={tab}";
-        //        HttpResponseMessage claimnoresponseView = _httpClient.GetAsync(claimnourl).Result;
-        //        dynamic claimnodata = claimnoresponseView.Content.ReadAsStringAsync().Result;
-        //        var claimResponse = JsonConvert.DeserializeObject<InboxClientModel>(claimnodata);
-        //        ViewBag.claimno = claimResponse.Data;
-        //    }
-
-        //    string sentemailurl = $"{_httpClient.BaseAddress}/InboxEmail/General?UserId={UserId}&type={tab}";
-        //    HttpResponseMessage response = _httpClient.GetAsync(sentemailurl).Result;
-        //    if (response.IsSuccessStatusCode)
-        //    {
-        //        dynamic data = response.Content.ReadAsStringAsync().Result;
-        //        var dataObject = new { data = new List<InboxEmailModel>() };
-        //        var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
-        //        sentemailList = response2.data;
-
-        //        if (sentemailList != null)
-        //        {
-        //            //return Json(sentemailList);
-        //            if (tab == "Claim one")
-        //            {
-        //                return Json(new
-        //                {
-        //                    sentemailList = sentemailList,
-        //                    claimno = ViewBag.claimno
-        //                });
-        //            }
-        //            else if(tab =="enquiry one")
-        //            {
-        //                return Json(new
-        //                {
-        //                    sentemailList = sentemailList,
-        //                    enquiryno = ViewBag.enquiryno
-        //                });
-        //            }
-
-        //        }
-        //        else
-        //        {
-        //            var sentemailList1 = new List<InboxEmailModel>();
-        //            //return Json(sentemailList1);
-        //            //return Json(new
-        //            //{
-        //            //    sentemailList = sentemailList,
-        //            //    claimno = ViewBag.claimno
-        //            //});
-        //            if (tab == "Claim one")
-        //            {
-        //                return Json(new
-        //                {
-        //                    sentemailList = sentemailList,
-        //                    claimno = ViewBag.claimno
-        //                });
-        //            }
-        //            else if (tab == "enquiry one")
-        //            {
-        //                return Json(new
-        //                {
-        //                    sentemailList = sentemailList,
-        //                    enquiryno = ViewBag.enquiryno
-        //                });
-        //            }
-        //        }
-        //    }
-        //    //return Json(sentemailDataList);
-        //    //return Json(new
-        //    //{
-        //    //    sentemailList = sentemailList,
-        //    //    claimno = ViewBag.claimno
-        //    //});
-        //    if (tab == "Claim one")
-        //    {
-        //        return Json(new
-        //        {
-        //            sentemailList = sentemailList,
-        //            claimno = ViewBag.claimno
-        //        });
-        //    }
-        //    else if (tab == "enquiry one")
-        //    {
-        //        return Json(new
-        //        {
-        //            sentemailList = sentemailList,
-        //            enquiryno = ViewBag.enquiryno
-        //        });
-        //    }
-        //}
-
-        public JsonResult General(string tab)
+        public JsonResult Showdetails(string id)
         {
-            tab ??= "General";  // Null coalescing assignment
+            GetCookies gk = new GetCookies();
+            CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
 
-            var gk = new GetCookies();
-            var cUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
-            ViewBag.Format = cUtility.format;
+            ViewBag.Format = CUtility.format;
+            Guid? UserId = new Guid(CUtility.comid);
 
-            Guid userId = new Guid(cUtility.userid);
-            var sentemailList = new List<InboxEmailModel>();
-
-            if (tab == "Claim one" )
+            var sentclientDataList = new InboxEmailModel();
+            var sentclientList = new InboxEmailModel();
+            string sentclienturl = $"{_httpClient.BaseAddress}/InboxEmail/Showdetails?UserId={UserId}&i_id={id}";
+            HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
+            if (response.IsSuccessStatusCode)
             {
-                string claimNoUrl = $"{_httpClient.BaseAddress}/InboxEmail/dropdownclaimno?UserId={userId}&i_type={tab}";
-                var claimNoResponse = _httpClient.GetAsync(claimNoUrl).Result;
+                dynamic data = response.Content.ReadAsStringAsync().Result;
+                var dataObject = new { data = new InboxEmailModel() };
+                var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
+                sentclientList = response2.data;
 
-                if (claimNoResponse.IsSuccessStatusCode)
+                if (sentclientList != null)
                 {
-                    var claimData = claimNoResponse.Content.ReadAsStringAsync().Result;
-                    var claimResponse = JsonConvert.DeserializeObject<InboxClientModel>(claimData);
-
-
-                    ViewBag.claimno = claimResponse.Data;
+                    return Json(sentclientList);
+                }
+                else
+                {
+                    var sentclientList1 = new List<InboxEmailModel>();
+                    return Json(sentclientList1);
                 }
             }
-            if (tab == "Enquiry one")
-            {
-                string enquiryNoUrl = $"{_httpClient.BaseAddress}/InboxEmail/dropdownenquiryno?UserId={userId}&i_type={tab}";
-                var enquiryNoResponse = _httpClient.GetAsync(enquiryNoUrl).Result;
-
-                    if (enquiryNoResponse.IsSuccessStatusCode)
-                    {
-                        var claimData = enquiryNoResponse.Content.ReadAsStringAsync().Result;
-                        var claimResponse = JsonConvert.DeserializeObject<InboxClientModel>(claimData);
-
-
-                        ViewBag.enquiryno = claimResponse.Data;
-                    }
-            }
-
-            // Fetch emails
-            string emailUrl = $"{_httpClient.BaseAddress}/InboxEmail/General?UserId={userId}&type={tab}";
-            var emailResponse = _httpClient.GetAsync(emailUrl).Result;
-
-            if (emailResponse.IsSuccessStatusCode)
-            {
-                var data = emailResponse.Content.ReadAsStringAsync().Result;
-                var parsed = JsonConvert.DeserializeAnonymousType(data, new { data = new List<InboxEmailModel>() });
-                sentemailList = parsed.data ?? new List<InboxEmailModel>();
-            }
-
-            // Final JSON return
-            if (tab == "Claim one")
-            {
-                return Json(new
-                {
-                    sentemailList,
-                    claimno = ViewBag.claimno
-                });
-            }
-            else if (tab == "Enquiry one")
-            {
-                return Json(new
-                {
-                    sentemailList,
-                    enquiryno = ViewBag.enquiryno
-                });
-            }
-            else
-            {
-                return Json(new
-                {
-                    sentemailList
-                });
-            }
+            return Json(sentclientDataList);
         }
 
+        public JsonResult Inboxdates(string id)
+        {
 
-        public JsonResult filter(string? from, string? to, string? subject, string? hasthewords, string? tab)
+            GetCookies gk = new GetCookies();
+            CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
+
+            ViewBag.Format = CUtility.format;
+
+            Guid? UserId = new Guid(CUtility.userid);
+            var sentemailDataList = new List<InboxEmailModel>();
+            var sentemailList = new List<InboxEmailModel>();
+            string sentemailurl = $"{_httpClient.BaseAddress}/InboxEmail/inboxdates?UserId={UserId}&id={id}";
+            HttpResponseMessage response = _httpClient.GetAsync(sentemailurl).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                dynamic data = response.Content.ReadAsStringAsync().Result;
+                var dataObject = new { data = new List<InboxEmailModel>() };
+                var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
+                sentemailList = response2.data;
+
+                if (sentemailList != null)
+                {
+                    return Json(sentemailList);
+                }
+                else
+                {
+                    var sentemailList1 = new List<InboxEmailModel>();
+                    return Json(sentemailList1);
+                }
+            }
+            return Json(sentemailDataList);
+        }
+
+        public JsonResult EnquiryClaimfilter(string? from, string? to, string? subject, string? hasthewords, string? tab)
         {
             GetCookies gk = new GetCookies();
             CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
@@ -372,7 +259,7 @@ namespace ibillcraft.Controllers
             Guid? UserId = new Guid(CUtility.userid);
             var sentemailDataList = new List<InboxEmailModel>();
             var sentemailList = new List<InboxEmailModel>();
-            string sentemailurl = $"{_httpClient.BaseAddress}/InboxEmail/GetEmail?UserId={UserId}&from={from}&to={to}&subject={subject}&hasthewords={hasthewords}&type={tab}";
+            string sentemailurl = $"{_httpClient.BaseAddress}/InboxEmail/EnquiryClaimfilter?UserId={UserId}&from={from}&to={to}&subject={subject}&hasthewords={hasthewords}&type={tab}";
             HttpResponseMessage response = _httpClient.GetAsync(sentemailurl).Result;
             if (response.IsSuccessStatusCode)
             {
@@ -426,146 +313,411 @@ namespace ibillcraft.Controllers
             return Json(sentemailDataList);
         }
 
-        public JsonResult showdetails(string id)
-        {
-            GetCookies gk = new GetCookies();
-            CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
-
-            ViewBag.Format = CUtility.format;
-            Guid? UserId = new Guid(CUtility.comid);
-
-            var sentclientDataList = new InboxEmailModel();
-            var sentclientList = new InboxEmailModel();
-            string sentclienturl = $"{_httpClient.BaseAddress}/InboxEmail/Get?UserId={UserId}&i_id={id}";
-            HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
-            if (response.IsSuccessStatusCode)
-            {
-                dynamic data = response.Content.ReadAsStringAsync().Result;
-                var dataObject = new { data = new InboxEmailModel() };
-                var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
-                sentclientList = response2.data;
-
-                if (sentclientList != null)
-                {
-                    return Json(sentclientList);
-                }
-                else
-                {
-                    var sentclientList1 = new List<InboxEmailModel>();
-                    return Json(sentclientList1);
-                }
-            }
-            return Json(sentclientDataList);
-        }
-
-        public JsonResult Generaltype(string type)
-        {
-            //if (tab == null)
-            //{
-            //    tab = "General";
-            //}
-            //  string connectionString = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
-
-            GetCookies gk = new GetCookies();
-            CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
-
-            ViewBag.Format = CUtility.format;
-
-            Guid? UserId = new Guid(CUtility.userid);
-            var sentemailDataList = new List<InboxEmailModel>();
-            var sentemailList = new List<InboxEmailModel>();
-
-            string encodedType = Uri.EscapeDataString(type);
 
 
 
-            //using (SqlConnection conn = new SqlConnection(connectionString))
-            //{
-            //    conn.Open();
-
-            //    string query = @"INSERT INTO dbo.tbl_testvalues (labelname,value)
-            //             VALUES (@labelname,@value)";
-
-            //    using (SqlCommand cmd1 = new SqlCommand(query, conn))
-            //    {
-            //        // Add parameters to the insert query
-            //        cmd1.Parameters.AddWithValue("@labelname", encodedType);
-            //        cmd1.Parameters.AddWithValue("@value", type);
-
-            //        // Execute the query to insert the email into the database
-            //        cmd1.ExecuteNonQuery();
-            //    }
-            //    conn.Close();
-            //}
 
 
-            string sentemailurl = $"{_httpClient.BaseAddress}/InboxEmail/Generaltype?UserId={UserId}&i_generaltype={encodedType}&tab=general";
-            HttpResponseMessage response = _httpClient.GetAsync(sentemailurl).Result;
-            if (response.IsSuccessStatusCode)
-            {
-                dynamic data = response.Content.ReadAsStringAsync().Result;
-                var dataObject = new { data = new List<InboxEmailModel>() };
-                var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
-                sentemailList = response2.data;
-
-                if (sentemailList != null)
-                {
-                    return Json(sentemailList);
-                }
-                else
-                {
-                    var sentemailList1 = new List<InboxEmailModel>();
-                    return Json(sentemailList1);
-                }
-            }
-            return Json(sentemailDataList);
-        }
 
 
-        public JsonResult ClaimoneNo( string? tab,  string? claim)
-        {
 
-            GetCookies gk = new GetCookies();
-            CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
 
-            ViewBag.Format = CUtility.format;
-            Guid? UserId = new Guid(CUtility.userid);
 
-            var sentemailDataList = new List<InboxEmailModel>();
-            var sentemailList = new List<InboxEmailModel>();
-            string sentclienturl = $"{_httpClient.BaseAddress}/InboxEmail/ClaimoneNo?UserId={UserId}&i_type={tab}&i_claimno={claim}";
-            HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
-            if (response.IsSuccessStatusCode)
-            {
-                dynamic data = response.Content.ReadAsStringAsync().Result;
-                var dataObject = new { data = new List<InboxEmailModel>() };
-                var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
-                sentemailList = response2.data;
 
-                if (sentemailList != null)
-                {
-                    //return Json(sentemailList);
-                    return Json(new
-                    {
-                        sentemailList
-                    });
-                }
-                else
-                {
-                    var sentemailList1 = new List<InboxEmailModel>();
-                    //return Json(sentemailList1);
-                    return Json(new
-                    {
-                        sentemailList1
-                    });
-                }
-            }
-            //return Json(sentemailDataList);
-            return Json(new
-            {
-                sentemailDataList
-            });
-        }
+        //public IActionResult Index(string tab)
+        //{
+        //    if (tab == null)
+        //    {
+        //        tab = "Insurance";
+        //    }
+
+        //    GetCookies gk = new GetCookies();
+        //    CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
+
+        //    if (string.IsNullOrEmpty(CUtility.comid))
+        //    {
+        //        // Handle missing session data
+        //        return RedirectToAction("Index", "CompanyLoginRegistration");
+        //    }
+
+        //    ViewBag.Format = CUtility.format;
+
+        //    Guid? UserId = new Guid(CUtility.userid);
+        //    var sentemailDataList = new List<InboxEmailModel>();
+        //    var sentemailList = new List<InboxEmailModel>();
+
+
+        //    //string geurl = $"{_httpClient.BaseAddress}/ViewBag/GetViewBag?userId&sTableName=tbl_ParameterValueMaster&sValue=pv_parametervalue&id=pv_id&IsActiveColumn=pv_isactive&sCoulmnName=pv_parameterid&sColumnValue=3a6b099f-4045-4eac-891a-c2f701c45d86";
+        //    //HttpResponseMessage geresponseView = _httpClient.GetAsync(geurl).Result;
+        //    //dynamic gedata = geresponseView.Content.ReadAsStringAsync().Result;
+        //    //var gerootObject = JsonConvert.DeserializeObject<List<FillDropdown>>(gedata);
+        //    //ViewBag.type = gerootObject;
+
+        //    string geurl = $"{_httpClient.BaseAddress}/ViewBag/GetViewBag?userId&sTableName=tbl_EmailRuleConfg&sValue=E_value&id=E_id&IsActiveColumn=E_isactive&sCoulmnName=E_category&sColumnValue=b98e01a4-adf6-4c31-a41b-3572c8ea6cd3";
+        //    HttpResponseMessage geresponseView = _httpClient.GetAsync(geurl).Result;
+        //    dynamic gedata = geresponseView.Content.ReadAsStringAsync().Result;
+        //    var gerootObject = JsonConvert.DeserializeObject<List<FillDropdown>>(gedata);
+        //    ViewBag.type = gerootObject;
+
+
+        //        string claimnourl1 = $"{_httpClient.BaseAddress}/InboxEmail/dropdownclaimno?UserId={UserId}&i_type={tab}";
+        //        HttpResponseMessage claimnoresponseView1 = _httpClient.GetAsync(claimnourl1).Result;
+        //        dynamic claimnodata1 = claimnoresponseView1.Content.ReadAsStringAsync().Result;
+        //        var claimResponse1 = JsonConvert.DeserializeObject<InboxClientModel>(claimnodata1);
+        //        ViewBag.enquiryno = claimResponse1.Data;
+
+
+        //        string claimnourl = $"{_httpClient.BaseAddress}/InboxEmail/dropdownclaimno?UserId={UserId}&i_type={tab}";
+        //        HttpResponseMessage claimnoresponseView = _httpClient.GetAsync(claimnourl).Result;
+        //        dynamic claimnodata = claimnoresponseView.Content.ReadAsStringAsync().Result;
+        //        var claimResponse = JsonConvert.DeserializeObject<InboxClientModel>(claimnodata);
+        //        ViewBag.claimno = claimResponse.Data;
+
+
+
+        //    string sentemailurl = $"{_httpClient.BaseAddress}/InboxEmail/GetAll?UserId={UserId}&type={tab}";
+        //    HttpResponseMessage response = _httpClient.GetAsync(sentemailurl).Result;
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        dynamic data = response.Content.ReadAsStringAsync().Result;
+        //        var dataObject = new { data = new List<InboxEmailModel>() };
+        //        var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
+        //        sentemailList = response2.data;
+
+        //        if (sentemailList != null)
+        //        {
+        //            return View(sentemailList);
+        //        }
+        //        else
+        //        {
+        //            var sentemailList1 = new List<InboxEmailModel>();
+        //            return View(sentemailList1);
+        //        }
+        //    }
+        //    return View(sentemailDataList);
+        //}
+
+        //public JsonResult Tab(string tab)
+        //{
+        //    if (tab == null)
+        //    {
+        //        tab = "Insurance";
+        //    }
+
+        //    GetCookies gk = new GetCookies();
+        //    CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
+
+        //    ViewBag.Format = CUtility.format;
+
+        //    Guid? UserId = new Guid(CUtility.userid);
+        //    var sentemailDataList = new List<InboxEmailModel>();
+        //    var sentemailList = new List<InboxEmailModel>();
+        //    string sentemailurl = $"{_httpClient.BaseAddress}/InboxEmail/GetAll?UserId={UserId}&type={tab}";
+        //    HttpResponseMessage response = _httpClient.GetAsync(sentemailurl).Result;
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        dynamic data = response.Content.ReadAsStringAsync().Result;
+        //        var dataObject = new { data = new List<InboxEmailModel>() };
+        //        var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
+        //        sentemailList = response2.data;
+
+        //        if (sentemailList != null)
+        //        {
+        //            return Json(sentemailList);
+        //        }
+        //        else
+        //        {
+        //            var sentemailList1 = new List<InboxEmailModel>();
+        //            return Json(sentemailList1);
+        //        }
+        //    }
+        //    return Json(sentemailDataList);
+        //}
+
+
+
+        //public JsonResult General(string tab)
+        //{
+        //    tab ??= "General";  // Null coalescing assignment
+
+        //    var gk = new GetCookies();
+        //    var cUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
+        //    ViewBag.Format = cUtility.format;
+
+        //    Guid userId = new Guid(cUtility.userid);
+        //    var sentemailList = new List<InboxEmailModel>();
+
+        //    if (tab == "Claim one" )
+        //    {
+        //        string claimNoUrl = $"{_httpClient.BaseAddress}/InboxEmail/dropdownclaimno?UserId={userId}&i_type={tab}";
+        //        var claimNoResponse = _httpClient.GetAsync(claimNoUrl).Result;
+
+        //        if (claimNoResponse.IsSuccessStatusCode)
+        //        {
+        //            var claimData = claimNoResponse.Content.ReadAsStringAsync().Result;
+        //            var claimResponse = JsonConvert.DeserializeObject<InboxClientModel>(claimData);
+
+
+        //            ViewBag.claimno = claimResponse.Data;
+        //        }
+        //    }
+        //    if (tab == "Enquiry one")
+        //    {
+        //        string enquiryNoUrl = $"{_httpClient.BaseAddress}/InboxEmail/dropdownenquiryno?UserId={userId}&i_type={tab}";
+        //        var enquiryNoResponse = _httpClient.GetAsync(enquiryNoUrl).Result;
+
+        //            if (enquiryNoResponse.IsSuccessStatusCode)
+        //            {
+        //                var claimData = enquiryNoResponse.Content.ReadAsStringAsync().Result;
+        //                var claimResponse = JsonConvert.DeserializeObject<InboxClientModel>(claimData);
+
+
+        //                ViewBag.enquiryno = claimResponse.Data;
+        //            }
+        //    }
+
+        //    // Fetch emails
+        //    string emailUrl = $"{_httpClient.BaseAddress}/InboxEmail/General?UserId={userId}&type={tab}";
+        //    var emailResponse = _httpClient.GetAsync(emailUrl).Result;
+
+        //    if (emailResponse.IsSuccessStatusCode)
+        //    {
+        //        var data = emailResponse.Content.ReadAsStringAsync().Result;
+        //        var parsed = JsonConvert.DeserializeAnonymousType(data, new { data = new List<InboxEmailModel>() });
+        //        sentemailList = parsed.data ?? new List<InboxEmailModel>();
+        //    }
+
+        //    // Final JSON return
+        //    if (tab == "Claim one")
+        //    {
+        //        return Json(new
+        //        {
+        //            sentemailList,
+        //            claimno = ViewBag.claimno
+        //        });
+        //    }
+        //    else if (tab == "Enquiry one")
+        //    {
+        //        return Json(new
+        //        {
+        //            sentemailList,
+        //            enquiryno = ViewBag.enquiryno
+        //        });
+        //    }
+        //    else
+        //    {
+        //        return Json(new
+        //        {
+        //            sentemailList
+        //        });
+        //    }
+        //}
+
+
+        //public JsonResult filter(string? from, string? to, string? subject, string? hasthewords, string? tab)
+        //{
+        //    GetCookies gk = new GetCookies();
+        //    CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
+
+        //    ViewBag.Format = CUtility.format;
+
+        //    Guid? UserId = new Guid(CUtility.userid);
+        //    var sentemailDataList = new List<InboxEmailModel>();
+        //    var sentemailList = new List<InboxEmailModel>();
+        //    string sentemailurl = $"{_httpClient.BaseAddress}/InboxEmail/GetEmail?UserId={UserId}&from={from}&to={to}&subject={subject}&hasthewords={hasthewords}&type={tab}";
+        //    HttpResponseMessage response = _httpClient.GetAsync(sentemailurl).Result;
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        dynamic data = response.Content.ReadAsStringAsync().Result;
+        //        var dataObject = new { data = new List<InboxEmailModel>() };
+        //        var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
+        //        sentemailList = response2.data;
+
+        //        if (sentemailList != null)
+        //        {
+        //            return Json(sentemailList);
+        //        }
+        //        else
+        //        {
+        //            var sentemailList1 = new List<InboxEmailModel>();
+        //            return Json(sentemailList1);
+        //        }
+        //    }
+        //    return Json(sentemailDataList);
+        //}
+
+        //public JsonResult Generalfilter(string? from, string? to, string? subject, string? hasthewords, string? tab)
+        //{
+        //    GetCookies gk = new GetCookies();
+        //    CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
+
+        //    ViewBag.Format = CUtility.format;
+
+        //    Guid? UserId = new Guid(CUtility.userid);
+        //    var sentemailDataList = new List<InboxEmailModel>();
+        //    var sentemailList = new List<InboxEmailModel>();
+        //    string sentemailurl = $"{_httpClient.BaseAddress}/InboxEmail/Generalfilter?UserId={UserId}&from={from}&to={to}&subject={subject}&hasthewords={hasthewords}&type={tab}";
+        //    HttpResponseMessage response = _httpClient.GetAsync(sentemailurl).Result;
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        dynamic data = response.Content.ReadAsStringAsync().Result;
+        //        var dataObject = new { data = new List<InboxEmailModel>() };
+        //        var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
+        //        sentemailList = response2.data;
+
+        //        if (sentemailList != null)
+        //        {
+        //            return Json(sentemailList);
+        //        }
+        //        else
+        //        {
+        //            var sentemailList1 = new List<InboxEmailModel>();
+        //            return Json(sentemailList1);
+        //        }
+        //    }
+        //    return Json(sentemailDataList);
+        //}
+
+        //public JsonResult showdetails(string id)
+        //{
+        //    GetCookies gk = new GetCookies();
+        //    CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
+
+        //    ViewBag.Format = CUtility.format;
+        //    Guid? UserId = new Guid(CUtility.comid);
+
+        //    var sentclientDataList = new InboxEmailModel();
+        //    var sentclientList = new InboxEmailModel();
+        //    string sentclienturl = $"{_httpClient.BaseAddress}/InboxEmail/Get?UserId={UserId}&i_id={id}";
+        //    HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        dynamic data = response.Content.ReadAsStringAsync().Result;
+        //        var dataObject = new { data = new InboxEmailModel() };
+        //        var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
+        //        sentclientList = response2.data;
+
+        //        if (sentclientList != null)
+        //        {
+        //            return Json(sentclientList);
+        //        }
+        //        else
+        //        {
+        //            var sentclientList1 = new List<InboxEmailModel>();
+        //            return Json(sentclientList1);
+        //        }
+        //    }
+        //    return Json(sentclientDataList);
+        //}
+
+        //public JsonResult Generaltype(string type)
+        //{
+        //    //if (tab == null)
+        //    //{
+        //    //    tab = "General";
+        //    //}
+        //    //  string connectionString = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+
+        //    GetCookies gk = new GetCookies();
+        //    CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
+
+        //    ViewBag.Format = CUtility.format;
+
+        //    Guid? UserId = new Guid(CUtility.userid);
+        //    var sentemailDataList = new List<InboxEmailModel>();
+        //    var sentemailList = new List<InboxEmailModel>();
+
+        //    string encodedType = Uri.EscapeDataString(type);
+
+
+
+        //    //using (SqlConnection conn = new SqlConnection(connectionString))
+        //    //{
+        //    //    conn.Open();
+
+        //    //    string query = @"INSERT INTO dbo.tbl_testvalues (labelname,value)
+        //    //             VALUES (@labelname,@value)";
+
+        //    //    using (SqlCommand cmd1 = new SqlCommand(query, conn))
+        //    //    {
+        //    //        // Add parameters to the insert query
+        //    //        cmd1.Parameters.AddWithValue("@labelname", encodedType);
+        //    //        cmd1.Parameters.AddWithValue("@value", type);
+
+        //    //        // Execute the query to insert the email into the database
+        //    //        cmd1.ExecuteNonQuery();
+        //    //    }
+        //    //    conn.Close();
+        //    //}
+
+
+        //    string sentemailurl = $"{_httpClient.BaseAddress}/InboxEmail/Generaltype?UserId={UserId}&i_generaltype={encodedType}&tab=general";
+        //    HttpResponseMessage response = _httpClient.GetAsync(sentemailurl).Result;
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        dynamic data = response.Content.ReadAsStringAsync().Result;
+        //        var dataObject = new { data = new List<InboxEmailModel>() };
+        //        var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
+        //        sentemailList = response2.data;
+
+        //        if (sentemailList != null)
+        //        {
+        //            return Json(sentemailList);
+        //        }
+        //        else
+        //        {
+        //            var sentemailList1 = new List<InboxEmailModel>();
+        //            return Json(sentemailList1);
+        //        }
+        //    }
+        //    return Json(sentemailDataList);
+        //}
+
+
+        //public JsonResult ClaimoneNo( string? tab,  string? claim)
+        //{
+
+        //    GetCookies gk = new GetCookies();
+        //    CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
+
+        //    ViewBag.Format = CUtility.format;
+        //    Guid? UserId = new Guid(CUtility.userid);
+
+        //    var sentemailDataList = new List<InboxEmailModel>();
+        //    var sentemailList = new List<InboxEmailModel>();
+        //    string sentclienturl = $"{_httpClient.BaseAddress}/InboxEmail/ClaimoneNo?UserId={UserId}&i_type={tab}&i_claimno={claim}";
+        //    HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        dynamic data = response.Content.ReadAsStringAsync().Result;
+        //        var dataObject = new { data = new List<InboxEmailModel>() };
+        //        var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
+        //        sentemailList = response2.data;
+
+        //        if (sentemailList != null)
+        //        {
+        //            //return Json(sentemailList);
+        //            return Json(new
+        //            {
+        //                sentemailList
+        //            });
+        //        }
+        //        else
+        //        {
+        //            var sentemailList1 = new List<InboxEmailModel>();
+        //            //return Json(sentemailList1);
+        //            return Json(new
+        //            {
+        //                sentemailList1
+        //            });
+        //        }
+        //    }
+        //    //return Json(sentemailDataList);
+        //    return Json(new
+        //    {
+        //        sentemailDataList
+        //    });
+        //}
 
         private string GetMimeType(string filePath)
         {
@@ -588,41 +740,7 @@ namespace ibillcraft.Controllers
             };
         }
 
-        //[HttpGet]
-        //public IActionResult DownloadFile(string filePath)
-        //{
-        //    // Check if the file path is provided
-        //    if (string.IsNullOrEmpty(filePath))
-        //    {
-        //        return BadRequest("File path cannot be null or empty.");
-        //    }
-
-        //    // Ensure the file exists
-        //    if (!System.IO.File.Exists(filePath))
-        //    {
-        //        return NotFound("File not found.");
-        //    }
-
-        //    try
-        //    {
-        //        // Get the file name
-        //        var fileName = Path.GetFileName(filePath);
-
-        //        // Determine the MIME type based on the file extension
-        //        var contentType = GetMimeType(filePath);
-
-        //        // Read the file into a byte array
-        //        var fileBytes = System.IO.File.ReadAllBytes(filePath);
-
-        //        // Return the file as a download
-        //        return File(fileBytes, contentType, fileName);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        // Handle errors (e.g., log the error)
-        //        return StatusCode(500, $"Internal server error: {ex.Message}");
-        //    }
-        //}
+   
 
         [HttpGet]
         public IActionResult DownloadFile(string filePath)
@@ -694,53 +812,10 @@ namespace ibillcraft.Controllers
             }
         }
 
-        public JsonResult Inboxdates(string id)
-        {
-
-            GetCookies gk = new GetCookies();
-            CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
-
-            ViewBag.Format = CUtility.format;
-
-            Guid? UserId = new Guid(CUtility.userid);
-            var sentemailDataList = new List<InboxEmailModel>();
-            var sentemailList = new List<InboxEmailModel>();
-            string sentemailurl = $"{_httpClient.BaseAddress}/InboxEmail/inboxdates?UserId={UserId}&id={id}";
-            HttpResponseMessage response = _httpClient.GetAsync(sentemailurl).Result;
-            if (response.IsSuccessStatusCode)
-            {
-                dynamic data = response.Content.ReadAsStringAsync().Result;
-                var dataObject = new { data = new List<InboxEmailModel>() };
-                var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
-                sentemailList = response2.data;
-
-                if (sentemailList != null)
-                {
-                    return Json(sentemailList);
-                }
-                else
-                {
-                    var sentemailList1 = new List<InboxEmailModel>();
-                    return Json(sentemailList1);
-                }
-            }
-            return Json(sentemailDataList);
-        }
+      
 
 
-        //protected override void OnStart(string[] args)
-        //{
-        //    WriteToFile("Service is started at " + DateTime.Now);
-        //    timer.Elapsed += new ElapsedEventHandler(OnElapsedTime);
-        //    timer.Interval = 60000; // 5 minutes
-        //    timer.Enabled = true;
-        //}
-
-        //protected override void OnStop()
-        //{
-        //    WriteToFile("Service is stopped at " + DateTime.Now);
-        //    timer.Enabled = false;
-        //}
+        
 
         private void OnElapsedTime(object source, ElapsedEventArgs e)
         {
