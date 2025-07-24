@@ -809,3 +809,19 @@ function downloadFile(filePath) {
         console.error("Error during file download:", error); // Log any errors
     }
 }
+function viewfile() {
+    const filePath = $('#filebuttons1').val();
+
+    // Encode the file path to make it safe for URLs
+    const encodedPath = encodeURIComponent(filePath);
+
+    // Construct the URL to call the controller
+    const url = `/InboxClient/ViewFile?filePath=${encodedPath}`;
+
+    // Open the file in a new tab or start downloading
+    window.open(url, "_blank");
+}
+
+function CancelData() {
+    $("#addSubscription").modal("hide");
+}

@@ -170,7 +170,7 @@ namespace ibillcraft.Controllers
 
 
 
-				string url = $"{_httpClient.BaseAddress}/CustomerMaster/GetDomain?UserId={UserId}&Server_Value={CUtility.serverValue}&comid={CUtility.comid}&c_domain={model.c_domain}&c_ccode={model.c_ccode}";
+				string url = $"{_httpClient.BaseAddress}/CustomerMaster/GetDomain?UserId={UserId}&Server_Value={CUtility.serverValue}&comid={CUtility.comid}&c_domain={model.c_domain}&c_email={model.c_email}&c_ccode={model.c_ccode}";
 				HttpResponseMessage response1 = _httpClient.GetAsync(url).Result;
 				if (response1.IsSuccessStatusCode)
 				{
@@ -193,8 +193,9 @@ namespace ibillcraft.Controllers
 						return Json(new
 						{
 							success = false,
-							message = "One or more domains already exist"
-						});
+							message = "It looks like this email or domain is already taken."
+
+                        });
 
 					}
 					//}

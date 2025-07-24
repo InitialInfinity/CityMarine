@@ -1,4 +1,14 @@
-﻿function clienttab() {
+﻿function addorder() {
+    window.location.href = "/InboxEmail/Index";
+}
+
+function fetchemail() {
+    window.location.href = "/InboxEmail/FetchEmails";
+}
+function Cancel() {
+    $("#addSubscription").modal("hide");
+}
+function clienttab() {
     var tab = "Client";
 
     $.ajax({
@@ -442,4 +452,38 @@ function submitfilter() {
     $('#i_subject').val('');
     $('#i_hasthewords').val('');
     $('#i_tab').val('');
+}
+
+
+function downloadFile(filePath) {
+    console.log("Original File Path:", filePath); // Log the input
+
+    try {
+        // Trim and encode the file path
+        const trimmedPath = filePath.trim();
+        const encodedPath = encodeURIComponent(trimmedPath);
+        console.log("Encoded File Path:", encodedPath); // Log the encoded path
+
+        // Construct the URL
+        const url = `/InboxClient/DownloadFile?filePath=${encodedPath}`;
+        console.log("Download URL:", url); // Log the final URL
+
+        // Open the file in a new tab
+        window.open(url, "_blank");
+    } catch (error) {
+        console.error("Error during file download:", error); // Log any errors
+    }
+}
+
+function viewfile() {
+    const filePath = $('#filebuttons1').val();
+
+    // Encode the file path to make it safe for URLs
+    const encodedPath = encodeURIComponent(filePath);
+
+    // Construct the URL to call the controller
+    const url = `/InboxClient/ViewFile?filePath=${encodedPath}`;
+
+    // Open the file in a new tab or start downloading
+    window.open(url, "_blank");
 }

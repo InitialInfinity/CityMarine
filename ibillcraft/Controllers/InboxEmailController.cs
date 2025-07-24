@@ -1687,7 +1687,7 @@ WHERE ',' + em.e_employee + ',' LIKE @searchPattern AND EXISTS ( SELECT 1 FROM t
 
 
                 //string query2 = @"SELECT COUNT(*) FROM [dbo].[tbl_customermaster] WHERE SUBSTRING(c_email, CHARINDEX('@', c_email) + 1, LEN(c_email)) = @Email";
-                string query2 = @"SELECT COUNT(*) FROM [dbo].[tbl_customermaster] WHERE EXISTS ( SELECT 1 FROM STRING_SPLIT(c_domain, ',') AS email
+                string query2 = @"SELECT COUNT(*) FROM [dbo].[tbl_customermaster] WHERE EXISTS ( SELECT 1 FROM STRING_SPLIT(c_emaildomain, ',') AS email
                 WHERE RIGHT(email.value, LEN(email.value) - CHARINDEX('@', email.value)) =  @Email);";
                 string domain = from.Substring(from.IndexOf('@') + 1);
 

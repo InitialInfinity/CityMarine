@@ -558,7 +558,7 @@ namespace Master.API.Controllers
         }
 
         [HttpGet("GetDomain")]
-        public async Task<IActionResult> GetDomain(Guid? UserId, string Server_Value, string? comid, string? c_domain,string? c_ccode)
+        public async Task<IActionResult> GetDomain(Guid? UserId, string Server_Value, string? comid, string? c_domain,string? c_email,string? c_ccode)
         {
             try
             {
@@ -566,6 +566,7 @@ namespace Master.API.Controllers
                 user.UserId = UserId;
                 user.c_com_id = comid;
                 user.c_domain = c_domain;
+                user.c_email = c_email;
                 user.c_ccode = c_ccode;
 
                 if (user.BaseModel == null)
