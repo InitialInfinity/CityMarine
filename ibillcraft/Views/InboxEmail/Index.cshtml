@@ -228,16 +228,16 @@
                                 <td style="display:none">
                                     @Html.DisplayFor(modelItem => item.i_id)
                                 </td>
-                                <td onclick="inboxmsg(@Html.DisplayFor(modelItem => item.i_id)">
+                                <td onclick="inboxmsg(@Html.DisplayFor(modelItem => item.i_id))">
                                     @Html.DisplayFor(modelItem => item.i_from)
                                 </td>
-                                <td onclick="inboxmsg(@Html.DisplayFor(modelItem => item.i_id)">
+                                <td onclick="inboxmsg(@Html.DisplayFor(modelItem => item.i_id))">
                                     @Html.DisplayFor(modelItem => item.i_to)
                                 </td>
-                                <td onclick="inboxmsg(@Html.DisplayFor(modelItem => item.i_id)">
+                                <td onclick="inboxmsg(@Html.DisplayFor(modelItem => item.i_id))">
                                     @Html.DisplayFor(modelItem => item.i_subject)
                                 </td>
-                                <td onclick="inboxmsg(@Html.DisplayFor(modelItem => item.i_id)">
+                                <td onclick="inboxmsg(@Html.DisplayFor(modelItem => item.i_id))">
                                     @if (item.i_attachment != null && item.i_attachment.ToString() != "No attachments available." && item.i_attachment.ToString() != "null")
                                     {
                                         <i class="fa fa-paperclip" aria-hidden="true"></i>
@@ -245,10 +245,10 @@
                                     else
                                     { }
                                 </td>
-                                <td onclick="inboxmsg(@Html.DisplayFor(modelItem => item.i_id)">
+                                <td onclick="inboxmsg(@Html.DisplayFor(modelItem => item.i_id))">
                                     @Html.DisplayFor(modelItem => item.i_receiveddate)
                                 </td>
-                                <td onclick="inboxmsg(@Html.DisplayFor(modelItem => item.i_id)">
+                                <td onclick="inboxmsg(@Html.DisplayFor(modelItem => item.i_id))">
                                     <i class="fas fa-eye text-primary"></i>
                                 </td>
                             </tr>
@@ -396,6 +396,8 @@
             });
         });
 
+        $("#client-tab").attr('aria-selected', 'true');
+        $("#client-tab").attr('class', 'nav-link active');
         $("#enquiryclaim").css("display", "none");
 
     });

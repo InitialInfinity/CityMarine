@@ -129,7 +129,8 @@ namespace Master.Controllers
             }
         }
 
-        public async Task<IActionResult> EnquiryNo(Guid UserId, string clientid, string ic_type, string ic_year, string ic_enquiryno)
+        [HttpGet("EnquiryNo")]
+        public async Task<IActionResult> EnquiryNo(Guid? UserId, string? clientid, string? ic_type, string? ic_year, string? ic_enquiryno)
         {
             try
             {

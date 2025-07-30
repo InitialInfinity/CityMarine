@@ -437,7 +437,7 @@ function enquirydropdown() {
             for (var i = 0; i < response.length; i++) {
                 htmltab += '<tr>';
                 htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + (i + 1) + '</td>';
-                htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + response[i].ic_claimno + '</td>';
+/*                htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + response[i].ic_claimno + '</td>';*/
                 htmltab += '<td style="display:none">' + response[i].ic_id + '</td>';
                 htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + response[i].ic_from + '</td>';
                 htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + response[i].ic_to + '</td>';
@@ -824,4 +824,157 @@ function viewfile() {
 
 function CancelData() {
     $("#addSubscription").modal("hide");
+}
+
+function inboxmsg(id) {
+
+    // Show the modal
+    $("#addSubscription").modal("show");
+
+    // Data payload for the request
+    var data = { id: id };
+
+    // Perform AJAX POST request
+    $.ajax({
+        url: '/InboxEmail/Showdetails', // Controller action URL
+        type: 'POST',                   // HTTP method
+        data: data,                     // Data to send
+        success: function (response) {
+            console.log(response);
+
+            if (response) {
+                const attachmentsContainer = document.getElementById("attachdiv");
+
+                // Clear previous content before updating
+                attachmentsContainer.innerHTML = '';
+
+                if (response.i_attachment != "No attachments available." && response.i_attachment !== "null" && response.i_attachment !== null) {
+                    // const fileName = response.i_attachment.split(/[/\\]/).pop();
+
+
+                    const attachments = response.i_attachment;
+                    if (attachments) {
+                        // Split attachments using a comma
+                        const attachmentArray = attachments.trim().split(',').map(a => a.trim()); // Trim extra spaces
+
+                        console.log("Raw Attachments:", attachments);
+                        console.log("Split Attachments Array:", attachmentArray); // Debugging
+
+                        // Generate the HTML
+                        let attachmentHTML = '';
+
+                        attachmentArray.forEach((attachmentPath) => {
+                            if (!attachmentPath) return; // Ignore empty values
+
+                            const fileName = attachmentPath.split(/[/\\]/).pop(); // Extract filename
+                            const safeAttachmentPath = encodeURIComponent(attachmentPath); // Encode for safety
+
+                            attachmentHTML += `
+                                    <div class="attachments" style="margin: 8px 0;">
+                                        <!-- Button for filename -->
+                                        <button style="display: inline-block; padding: 8px; margin-right: 8px;" title="${fileName}">
+                                            ${fileName}
+                                        </button>
+                                        <!-- Button for download -->
+                                        <button style="display: inline-block; height: 42px; width: auto;"
+                                                onclick="downloadFile('${safeAttachmentPath}')">
+                                            <i class="fa-solid fa-chevron-down" style="font-size: 16px; color: black;"></i>
+                                        </button>
+                                    </div>`;
+                        });
+
+                        // Inject into the DOM
+                        // document.getElementById("attachments-container").innerHTML = attachmentHTML;
+                        document.getElementById('attachdiv').innerHTML = attachmentHTML;
+
+                        // Show the attachment container
+                        document.getElementById('attachdiv').style.display = 'block';
+                    }
+
+                    // Insert the generated HTML into a container
+
+
+                } else {
+                    $('#attachdiv').hide();
+                }
+
+
+                $('#ic_tolabel').text(response.i_to || 'N/A');
+                $('#ic_fromlabel').text(response.i_from || 'N/A');
+                $('#ic_subjectlabel').text(response.i_subject || 'N/A');
+
+                // const formattedBody = (response.i_body || '').replace(/<br\s*\/?>/gi, "\n").replace(/<\/?[^>]+(>|$)/g, "");
+                // $('#ic_bodylabel').val(formattedBody);
+
+                //$('#ic_bodylabel').html(response.i_body || '');
+                var bodyh = '' + response.i_body + '';
+                $('#ic_bodyhtml').html(bodyh || '');
+
+
+
+
+                // Optional: Update a specific content area with additional information
+                $('#content-area').html(response.content || 'No content available.');
+
+
+                $.ajax({
+                    url: '/InboxEmail/inboxdates', // Controller action URL
+                    type: 'POST',                   // HTTP method
+                    data: data,                     // Data to send
+                    success: function (response) {
+                        console.log(response);
+
+
+                        $('#arrow-container').empty();
+
+                        // Iterate through the response and dynamically create elements
+                        response.forEach((item, index) => {
+                            const date = item.i_receiveddate; // Get the date
+                            const id = item.i_id; // Get the ID
+
+                            // Create a new arrow div
+                            const arrowDiv = $(`<div class="arrow-item" id="date${index + 1}" onclick="inboxmsg('${id}')">${date}</div>`);
+
+                            // Append the arrow div to the container
+                            $('#arrow-container').append(arrowDiv);
+
+                            // Add spacing if needed
+                            $('#arrow-container').append('<div style="padding:12px"></div>');
+                        });
+
+
+
+
+
+
+                        // Optional: Update a specific content area with additional information
+                        $('#content-area').html(response.content || 'No content available.');
+
+
+
+
+
+
+
+                    },
+                    error: function (xhr, status, error) {
+                        // Display error notification
+                        console.error('Error:', error);
+                        alert('An error occurred while fetching the message details. Please try again later.');
+                    }
+                });
+
+
+
+            } else {
+                console.error('Empty response received');
+                alert('No data available.');
+            }
+        },
+        error: function (xhr, status, error) {
+            // Display error notification
+            console.error('Error:', error);
+            alert('An error occurred while fetching the message details. Please try again later.');
+        }
+    });
 }
