@@ -18,6 +18,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Net;
 using System.Web.Helpers;
 using System.Security.Claims;
+using DocumentFormat.OpenXml.Drawing.Diagrams;
 
 
 
@@ -97,7 +98,7 @@ namespace ibillcraft.Controllers
         }
         public JsonResult GetEnquiryClaimMail(string? ic_year, string? ic_from, string? tab)
         {
-            
+
             GetCookies gk = new GetCookies();
             CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
             ViewBag.Format = CUtility.format;
@@ -254,6 +255,7 @@ namespace ibillcraft.Controllers
 
         public JsonResult Clientchange1(string? clientid, string? tab, string? year)
         {
+            string? email = "";
             GetCookies gk = new GetCookies();
             CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
 
@@ -262,6 +264,37 @@ namespace ibillcraft.Controllers
 
             var sentclientDataList = new List<InboxClientModel>();
             var sentclientList = new List<InboxClientModel>();
+            var sentclient = new InboxClientModel();
+
+
+            string sentclienturl1 = $"{_httpClient.BaseAddress}/InboxClient/customerdomain?UserId={UserId}&clientid={clientid}";
+            HttpResponseMessage response1 = _httpClient.GetAsync(sentclienturl1).Result;
+            if (response1.IsSuccessStatusCode)
+            {
+                dynamic data = response1.Content.ReadAsStringAsync().Result;
+                var dataObject = new { data = new InboxClientModel() };
+                var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
+                sentclient = response2.data;
+                email = sentclient.ic_email;
+            }
+
+            if (tab == "Claim")
+            {
+                string claimnourl = $"{_httpClient.BaseAddress}/InboxClient/dropdownclaimno?UserId={UserId}&ic_from={email}&ic_type={tab}";
+                HttpResponseMessage claimnoresponseView = _httpClient.GetAsync(claimnourl).Result;
+                dynamic claimnodata = claimnoresponseView.Content.ReadAsStringAsync().Result;
+                var claimResponse = JsonConvert.DeserializeObject<InboxClientModel>(claimnodata);
+                ViewBag.claimno = claimResponse.Data;
+            }
+            if (tab == "Enquiry")
+            {
+                string enquirynourl = $"{_httpClient.BaseAddress}/InboxClient/dropdownenquiryno?UserId={UserId}&ic_from={email}&ic_type={tab}";
+                HttpResponseMessage enquirynoresponseView = _httpClient.GetAsync(enquirynourl).Result;
+                dynamic enquirynodata = enquirynoresponseView.Content.ReadAsStringAsync().Result;
+                var enquiryResponse = JsonConvert.DeserializeObject<InboxClientModel>(enquirynodata);
+                ViewBag.enquiryno = enquiryResponse.Data;
+            }
+
             string sentclienturl = $"{_httpClient.BaseAddress}/InboxClient/Clientchange1?UserId={UserId}&clientid={clientid}&ic_type={tab}&ic_year={year}";
             HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
             if (response.IsSuccessStatusCode)
@@ -273,7 +306,23 @@ namespace ibillcraft.Controllers
 
                 if (sentclientList != null)
                 {
-                    return Json(sentclientList);
+                    if (tab == "Enquiry")
+                    {
+                        return Json(new
+                        {
+                            sentclientList = sentclientList,
+                            enquiryno = ViewBag.enquiryno,
+                        });
+                    }
+
+                    else if (tab == "Claim")
+                    {
+                        return Json(new
+                        {
+                            sentclientList = sentclientList,
+                            claimno = ViewBag.claimno,
+                        });
+                    }
                 }
                 else
                 {
@@ -496,10 +545,10 @@ namespace ibillcraft.Controllers
             }
             return Json(sentclientDataList);
         }
-     
-        
 
-        public async Task <IActionResult> Claimnoassign(string? ic_year, string? ic_from, string? tab)
+
+
+        public async Task<IActionResult> Claimnoassign(string? ic_year, string? ic_from, string? tab)
         {
             GetCookies gk = new GetCookies();
             CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
@@ -551,9 +600,9 @@ namespace ibillcraft.Controllers
             return Json(sentclientDataList);
         }
 
-        
 
-        
+
+
 
         public JsonResult general(string tab)
         {
@@ -692,8 +741,8 @@ namespace ibillcraft.Controllers
             }
         }
 
-    
 
-       
+
+
     }
 }

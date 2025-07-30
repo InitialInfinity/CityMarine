@@ -158,6 +158,29 @@ namespace Master.Controllers
                 throw;
             }
         }
+        [HttpGet("customerdomain")]
+        public async Task<IActionResult> customerdomain(Guid UserId, string clientid)
+        {
+            try
+            {
+                InboxClientModel user = new InboxClientModel();
+                user.UserId = UserId;
+                user.clientid = clientid;
+                if (user.BaseModel == null)
+                {
+                    user.BaseModel = new BaseModel();
+                }
+                user.BaseModel.OperationType = "customerdomain";
+                var createduser = await _sentclient.Get(user);
+                var data = ((Microsoft.AspNetCore.Mvc.ObjectResult)createduser).Value;
+                return Ok(data);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
 
         [HttpGet("dropdownclaimno")]
         public async Task<IActionResult> dropdownclaimno(Guid UserId, string ic_from, string ic_type)

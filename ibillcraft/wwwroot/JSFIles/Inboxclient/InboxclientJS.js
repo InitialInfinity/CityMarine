@@ -532,25 +532,39 @@ function clientchange1() {
                 $('#enquirytablebody').html('');  // Clear previous table content
 
                 var htmltab = '';
-                for (var i = 0; i < response.length; i++) {
+                for (var i = 0; i < response.sentclientList.length; i++) {
                     htmltab += '<tr>';
-                    htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + (i + 1) + '</td>';
-                    htmltab += '<td style="display:none">' + response[i].ic_id + '</td>';
-                    htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + response[i].ic_from + '</td>';
-                    htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + response[i].ic_to + '</td>';
-                    htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + response[i].ic_subject + '</td>';
-                    htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + response[i].ic_receiveddate + '</td>';
+                    htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].ic_id + ')">' + (i + 1) + '</td>';
+                 htmltab += '<td style="display:none">' + response.sentclientList[i].ic_id + '</td>';
+                    htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].ic_id + ')">' + response.sentclientList[i].ic_from + '</td>';
+                    htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].ic_id + ')">' + response.sentclientList[i].ic_to + '</td>';
+                    htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].ic_id + ')">' + response.sentclientList[i].ic_subject + '</td>';
+                    htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].ic_id + ')">' + response.sentclientList[i].ic_receiveddate + '</td>';
                     // htmltab += '<td >' + response[i].ic_attachment + '</td>';
 
-                    if (response[i].ic_attachment != "No attachments available." && response[i].ic_attachment != null) {
+                    if (response.sentclientList[i].ic_attachment != "No attachments available." && response.sentclientList[i].ic_attachment != null) {
                         htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
                     }
                     else {
                         htmltab += '<td style="width:4%"></td>';
                     }
 
-                    htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].ic_id + ')"></i></td>';
+                    htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response.sentclientList[i].ic_id + ')"></i></td>';
                     htmltab += '</tr>';
+
+                    const enquiryDropdown = document.getElementById('enquirydropdown');
+
+                    $('#enquirydropdown').html('<option>--Select--</option>');
+
+
+                    // Loop through the claimno array and add each as an option to the dropdown
+                    response.enquiryno.forEach(enquiry => {
+                        const option = document.createElement('option');
+
+                        option.value = enquiry.id;  // Set the id as the value of the option
+                        option.text = enquiry.value;  // Set the value as the display text
+                        enquiryDropdown.appendChild(option);
+                    });
                 }
 
                 // Update the table body with new data
@@ -602,26 +616,41 @@ function clientchange1() {
                 $('#claimtablebody').html('');  // Clear previous table content
 
                 var htmltab = '';
-                for (var i = 0; i < response.length; i++) {
+                for (var i = 0; i < response.sentclientList.length; i++) {
                     htmltab += '<tr>';
-                    htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + (i + 1) + '</td>';
-                    htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + response[i].ic_claimno + '</td>';
-                    htmltab += '<td style="display:none">' + response[i].ic_id + '</td>';
-                    htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + response[i].ic_from + '</td>';
-                    htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + response[i].ic_to + '</td>';
-                    htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + response[i].ic_subject + '</td>';
-                    htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + response[i].ic_receiveddate + '</td>';
+                    htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].ic_id + ')">' + (i + 1) + '</td>';
+                    htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].ic_id + ')">' + response.sentclientList[i].ic_claimno + '</td>';
+                 htmltab += '<td style="display:none">' + response.sentclientList[i].ic_id + '</td>';
+                    htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].ic_id + ')">' + response.sentclientList[i].ic_from + '</td>';
+                    htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].ic_id + ')">' + response.sentclientList[i].ic_to + '</td>';
+                    htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].ic_id + ')">' + response.sentclientList[i].ic_subject + '</td>';
+                    htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].ic_id + ')">' + response.sentclientList[i].ic_receiveddate + '</td>';
                     // htmltab += '<td >' + response[i].ic_attachment + '</td>';
 
-                    if (response[i].ic_attachment != "No attachments available." && response[i].ic_attachment != null) {
+                    if (response.sentclientList[i].ic_attachment != "No attachments available." && response.sentclientList[i].ic_attachment != null) {
                         htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
                     }
                     else {
                         htmltab += '<td style="width:4%"></td>';
                     }
 
-                    htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].ic_id + ')"></i></td>';
+                    htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response.sentclientList[i].ic_id + ')"></i></td>';
                     htmltab += '</tr>';
+
+
+                    const claimDropdown = document.getElementById('claimdropdown');
+
+                    $('#claimdropdown').html('<option>--Select--</option>');
+
+
+                    // Loop through the claimno array and add each as an option to the dropdown
+                    response.claimno.forEach(claim => {
+                        const option = document.createElement('option');
+
+                        option.value = claim.id;  // Set the id as the value of the option
+                        option.text = claim.value;  // Set the value as the display text
+                        claimDropdown.appendChild(option);
+                    });
                 }
 
                 // Update the table body with new data
@@ -657,7 +686,7 @@ function submitfilter1() {
     var urlParams = new URLSearchParams(window.location.search);
     //var email = $('#clientDropdown1 option:selected').text();
     var tab = urlParams.get('tab');
-    alert(tab);
+    //alert(tab);
 
     $("#addfilter").modal("hide");
     var from = $('#i_from').val() || "";
