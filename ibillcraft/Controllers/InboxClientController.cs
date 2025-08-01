@@ -96,7 +96,7 @@ namespace ibillcraft.Controllers
 
             return View();
         }
-        public JsonResult GetEnquiryClaimMail(string? ic_year, string? ic_from, string? tab)
+        public JsonResult GetEnquiryClaimMail(string? ic_year, string? ic_from, string? tab,string? dropvalue)
         {
 
             GetCookies gk = new GetCookies();
@@ -106,11 +106,24 @@ namespace ibillcraft.Controllers
 
             ViewBag.claimno = "";
 
+            var sentclient = new InboxClientModel();
+            string? email = "";
+
+            string sentclienturl1 = $"{_httpClient.BaseAddress}/InboxClient/customerdomain?UserId={UserId}&clientid={ic_from}";
+            HttpResponseMessage response1 = _httpClient.GetAsync(sentclienturl1).Result;
+            if (response1.IsSuccessStatusCode)
+            {
+                dynamic data = response1.Content.ReadAsStringAsync().Result;
+                var dataObject = new { data = new InboxClientModel() };
+                var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
+                sentclient = response2.data;
+                email = sentclient.ic_email;
+            }
 
             // Handle the case when tab is 'claim'
             if (tab == "Claim")
             {
-                string claimnourl = $"{_httpClient.BaseAddress}/InboxClient/dropdownclaimno?UserId={UserId}&ic_from={ic_from}&ic_type={tab}";
+                string claimnourl = $"{_httpClient.BaseAddress}/InboxClient/dropdownclaimno?UserId={UserId}&ic_from={email}&ic_type={tab}";
                 HttpResponseMessage claimnoresponseView = _httpClient.GetAsync(claimnourl).Result;
                 dynamic claimnodata = claimnoresponseView.Content.ReadAsStringAsync().Result;
                 var claimResponse = JsonConvert.DeserializeObject<InboxClientModel>(claimnodata);
@@ -118,7 +131,7 @@ namespace ibillcraft.Controllers
             }
             if (tab == "Enquiry")
             {
-                string enquirynourl = $"{_httpClient.BaseAddress}/InboxClient/dropdownenquiryno?UserId={UserId}&ic_from={ic_from}&ic_type={tab}";
+                string enquirynourl = $"{_httpClient.BaseAddress}/InboxClient/dropdownenquiryno?UserId={UserId}&ic_from={email}&ic_type={tab}";
                 HttpResponseMessage enquirynoresponseView = _httpClient.GetAsync(enquirynourl).Result;
                 dynamic enquirynodata = enquirynoresponseView.Content.ReadAsStringAsync().Result;
                 var enquiryResponse = JsonConvert.DeserializeObject<InboxClientModel>(enquirynodata);
@@ -127,8 +140,9 @@ namespace ibillcraft.Controllers
 
             var sentclientDataList = new List<InboxClientModel>();
             var sentclientList = new List<InboxClientModel>();
+           
 
-            string sentclienturl = $"{_httpClient.BaseAddress}/InboxClient/GetEnquiryClaimMail?UserId={UserId}&ic_year={ic_year}&ic_from={ic_from}&ic_type={tab}";
+            string sentclienturl = $"{_httpClient.BaseAddress}/InboxClient/GetEnquiryClaimMail?UserId={UserId}&ic_year={ic_year}&ic_from={email}&ic_type={tab}&dropvalue={dropvalue}";
             HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
 
             if (response.IsSuccessStatusCode)
@@ -163,7 +177,20 @@ namespace ibillcraft.Controllers
 
             var sentclientDataList = new List<InboxClientModel>();
             var sentclientList = new List<InboxClientModel>();
-            string sentclienturl = $"{_httpClient.BaseAddress}/InboxClient/GetAllAttchment?UserId={UserId}&ic_year={ic_year}&ic_type={tab}&ic_from={ic_from}";
+            var sentclient = new InboxClientModel();
+            string? email = "";
+
+            string sentclienturl1 = $"{_httpClient.BaseAddress}/InboxClient/customerdomain?UserId={UserId}&clientid={ic_from}";
+            HttpResponseMessage response1 = _httpClient.GetAsync(sentclienturl1).Result;
+            if (response1.IsSuccessStatusCode)
+            {
+                dynamic data = response1.Content.ReadAsStringAsync().Result;
+                var dataObject = new { data = new InboxClientModel() };
+                var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
+                sentclient = response2.data;
+                email = sentclient.ic_email;
+            }
+            string sentclienturl = $"{_httpClient.BaseAddress}/InboxClient/GetAllAttchment?UserId={UserId}&ic_year={ic_year}&ic_type={tab}&ic_from={email}";
             HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
             if (response.IsSuccessStatusCode)
             {
@@ -186,6 +213,52 @@ namespace ibillcraft.Controllers
             return Json(sentclientDataList);
         }
 
+        public JsonResult FetchAttachmentsDropDown(string? tab, string? ic_year, string ic_from,string enquirydropvalue)
+        {
+            GetCookies gk = new GetCookies();
+            CookiesUtility CUtility = gk.GetCookiesvalue(Request.Cookies["jwtToken"]);
+
+            ViewBag.Format = CUtility.format;
+            Guid? UserId = new Guid(CUtility.userid);
+
+
+            var sentclientDataList = new List<InboxClientModel>();
+            var sentclientList = new List<InboxClientModel>();
+            var sentclient = new InboxClientModel();
+            string? email = "";
+
+            string sentclienturl1 = $"{_httpClient.BaseAddress}/InboxClient/customerdomain?UserId={UserId}&clientid={ic_from}";
+            HttpResponseMessage response1 = _httpClient.GetAsync(sentclienturl1).Result;
+            if (response1.IsSuccessStatusCode)
+            {
+                dynamic data = response1.Content.ReadAsStringAsync().Result;
+                var dataObject = new { data = new InboxClientModel() };
+                var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
+                sentclient = response2.data;
+                email = sentclient.ic_email;
+            }
+            string sentclienturl = $"{_httpClient.BaseAddress}/InboxClient/FetchAttachmentsDropDown?UserId={UserId}&ic_year={ic_year}&ic_type={tab}&ic_from={email}&ic_claimno={enquirydropvalue}";
+            HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
+            if (response.IsSuccessStatusCode)
+            {
+                dynamic data = response.Content.ReadAsStringAsync().Result;
+                var dataObject = new { data = new List<InboxClientModel>() };
+                var response2 = JsonConvert.DeserializeAnonymousType(data, dataObject);
+                sentclientList = response2.data;
+                //ViewBag.sc_to = sentclientList.sc_to;
+
+                if (sentclientList != null)
+                {
+                    return Json(sentclientList);
+                }
+                else
+                {
+                    var sentclientList1 = new List<InboxClientModel>();
+                    return Json(sentclientList1);
+                }
+            }
+            return Json(sentclientDataList);
+        }
 
         public JsonResult ClaimNo(string? clientid, string? tab, string? year, string? claim)
         {
@@ -198,6 +271,8 @@ namespace ibillcraft.Controllers
 
             var sentclientDataList = new List<InboxClientModel>();
             var sentclientList = new List<InboxClientModel>();
+            
+
             string sentclienturl = $"{_httpClient.BaseAddress}/InboxClient/ClaimNo?UserId={UserId}&clientid={clientid}&ic_type={tab}&ic_year={year}&ic_claimno={claim}";
             HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
             if (response.IsSuccessStatusCode)
@@ -231,6 +306,9 @@ namespace ibillcraft.Controllers
 
             var sentclientDataList = new List<InboxClientModel>();
             var sentclientList = new List<InboxClientModel>();
+            var sentclient = new InboxClientModel();
+
+
             string sentclienturl = $"{_httpClient.BaseAddress}/InboxClient/EnquiryNo?UserId={UserId}&clientid={clientid}&ic_type={tab}&ic_year={year}&ic_enquiryno={enquiry}";
             HttpResponseMessage response = _httpClient.GetAsync(sentclienturl).Result;
             if (response.IsSuccessStatusCode)

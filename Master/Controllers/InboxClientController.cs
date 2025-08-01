@@ -25,7 +25,7 @@ namespace Master.Controllers
 
 
         [HttpGet("GetEnquiryClaimMail")]
-        public async Task<IActionResult> GetEnquiryClaimMail(Guid UserId, string ic_year, string ic_from, string ic_type)
+        public async Task<IActionResult> GetEnquiryClaimMail(Guid UserId, string ic_year, string ic_from, string ic_type,string? dropvalue)
         {
             try
             {
@@ -34,6 +34,7 @@ namespace Master.Controllers
                 user.ic_year = ic_year;
                 user.ic_from = ic_from;
                 user.ic_type = ic_type;
+                user.ic_claimno = dropvalue;
                 if (user.BaseModel == null)
                 {
                     user.BaseModel = new BaseModel();
@@ -64,6 +65,31 @@ namespace Master.Controllers
                     user.BaseModel = new BaseModel();
                 }
                 user.BaseModel.OperationType = "GetAllAttachment";
+                var createduser = await _sentclient.InboxClient(user);
+                var data = ((Microsoft.AspNetCore.Mvc.ObjectResult)createduser).Value;
+                return Ok(data);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        [HttpGet("FetchAttachmentsDropDown")]
+        public async Task<IActionResult> FetchAttachmentsDropDown(Guid UserId, string ic_type, string ic_year, string ic_from,string ic_claimno)
+        {
+            try
+            {
+                InboxClientModel user = new InboxClientModel();
+                user.UserId = UserId;
+                user.ic_year = ic_year;
+                user.ic_from = ic_from;
+                user.ic_type = ic_type;
+                user.ic_claimno = ic_claimno;
+                if (user.BaseModel == null)
+                {
+                    user.BaseModel = new BaseModel();
+                }
+                user.BaseModel.OperationType = "FetchAttachmentsDropDown";
                 var createduser = await _sentclient.InboxClient(user);
                 var data = ((Microsoft.AspNetCore.Mvc.ObjectResult)createduser).Value;
                 return Ok(data);

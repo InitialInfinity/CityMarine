@@ -9,12 +9,17 @@ function Cancel() {
     $("#addSubscription").modal("hide");
 }
 function clienttab() {
+    $("#clientnodiv").css("display", "flex");
     var tab = "Client";
+    var clientdropdownvalue = $("#clientdropdown").val();
 
     $.ajax({
-        url: '/InboxEmail/ClientGenaral?tab=' + tab, // Controller action URL
+        url: '/InboxEmail/ClientGenaral?tab=' + tab + 'dropdownvalue=' + clientdropdownvalue, // Controller action URL
         type: 'POST',             // HTTP method
-        data: { tab: tab },      // Data to send (query parameter)
+        data: {
+            tab: tab,
+            dropdownvalue: clientdropdownvalue
+        },      // Data to send (query parameter)
         success: function (response) {
             // Handle success - update the page dynamically
             console.log('Response:', response);
@@ -55,8 +60,10 @@ function clienttab() {
     });
 }
 
+
 function generaltab() {
     var tab = "General";
+    $("#clientnodiv").css("display", "none");
 
     $.ajax({
         url: '/InboxEmail/ClientGenaral?tab=' + tab, // Controller action URL
@@ -104,7 +111,7 @@ function generaltab() {
 
 function enquirytab() {
     var tab = "Enquiry";
-
+    $("#clientnodiv").css("display", "none");
     $.ajax({
         url: '/InboxEmail/EnquiryClaim?tab=' + tab, // Controller action URL
         type: 'POST',             // HTTP method
@@ -139,7 +146,7 @@ function enquirytab() {
 
 function claimtab() {
     var tab = "Claim";
-
+    $("#clientnodiv").css("display", "none");
     $.ajax({
         url: '/InboxEmail/EnquiryClaim?tab=' + tab, // Controller action URL
         type: 'POST',             // HTTP method
@@ -347,8 +354,12 @@ function submitfilter() {
 
     };
     if (tab == 'Enquiry' || tab == "Claim") {
+        $("#clientnodiv").css("display", "none");
         if (tab == "Enquiry") {
             $('#enquiry-tab').attr('class', 'nav-link active');
+            $('#claim-tab').attr('class', 'nav-link');
+            $('#general-tab').attr('class', 'nav-link');
+            $('#client-tab').attr('class', 'nav-link');
         }
         if (tab == "Claim") {
             $('#claim-tab').attr('class', 'nav-link active');
@@ -392,12 +403,14 @@ function submitfilter() {
     }
     else {
         if (tab == "General") {
+            $("#clientnodiv").css("display", "none");
             $('#general-tab').attr('class', 'nav-link active');
             $('#client-tab').attr('class', 'nav-link');
             $('#enquiry-tab').attr('class', 'nav-link');
             $('#claim-tab').attr('class', 'nav-link');
         }
         else {
+            $("#clientnodiv").css("display", "flex");
             $('#client-tab').attr('class', 'nav-link active');
             $('#general-tab').attr('class', 'nav-link');
             $('#enquiry-tab').attr('class', 'nav-link');

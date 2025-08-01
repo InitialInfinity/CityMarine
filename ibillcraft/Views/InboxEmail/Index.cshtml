@@ -45,14 +45,14 @@
             </button>
         </li>
         <li class="nav-item">
-            <button class="nav-link" id="enquiry-tab" data-bs-toggle="tab" data-bs-target="#enquiry" type="button" role="tab" 
-            aria-controls="enquiry" onclick="return enquirytab()">
+            <button class="nav-link" id="enquiry-tab" data-bs-toggle="tab" data-bs-target="#enquiry" type="button" role="tab"
+                    aria-controls="enquiry" onclick="return enquirytab()">
                 Enquiry
             </button>
         </li>
         <li class="nav-item">
-            <button class="nav-link" id="claim-tab" data-bs-toggle="tab" data-bs-target="#claim" type="button" role="tab" aria-controls="claim" 
-            onclick="return claimtab()">
+            <button class="nav-link" id="claim-tab" data-bs-toggle="tab" data-bs-target="#claim" type="button" role="tab" aria-controls="claim"
+                    onclick="return claimtab()">
                 Claim
             </button>
         </li>
@@ -62,6 +62,19 @@
             </button>
         </li>
     </ul>
+
+
+    <div class="row align-items-center" id="clientnodiv" style="padding-top:20px">
+        <div class="col-lg-1 col-md-1">
+            <label for="name" class="form-label float-lg-end">@Localizer["Client No"]:</label>
+        </div>
+        <div class="col-md-2 justify-content-lg-end justify-content-md-end justify-content-center mt-lg-0 mt-md-0 mt-3">
+            <select id="clientdropdown" class="form-select" asp-items="@(new SelectList(ViewBag.clientno,"Id","Value"))" onchange="return clienttab()">
+                <option value="">--Select Client No--</option>
+            </select>
+        </div>
+    </div>
+
 
     @*start filter model*@
 
@@ -76,7 +89,7 @@
                             data-bs-dismiss="modal"
                             aria-label="Close"></button>
                 </div>
-                <div class="modal-body text-dark" style=" background-color: #f8f9fa;padding: 15px;border-radius: 8px;">                    
+                <div class="modal-body text-dark" style=" background-color: #f8f9fa;padding: 15px;border-radius: 8px;">
                     <div class="row">
                         <div class="col-xs-6 col-sm-6 col-md-12 ">
                             <div class="form-group form-group-sm">

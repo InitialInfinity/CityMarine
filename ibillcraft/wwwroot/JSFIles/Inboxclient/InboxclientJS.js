@@ -19,18 +19,19 @@ function enquirymail() {
     $('#enquiry-tab').attr('class', 'nav-link active');
     $('#enquiry-atttab').attr('class', 'nav-link ');
 
-
-
-
     $("#enquirynodiv").css("display", "contents");
     var year = $('#yearDropdown option:selected').text();
     var urlParams = new URLSearchParams(window.location.search);
-    //var email = $('#clientDropdown1 option:selected').text();
-    var email = urlParams.get('email');
+    var email = $('#clientDropdown1 option:selected').val();
+    //var email = urlParams.get('email');
+
+    var enquirydropvalue = $("#enquirydropdown").val();
+
     var data = {
         ic_from: email,
         tab: tab,
         ic_year: year,
+        dropvalue: enquirydropvalue
     };
 
     $.ajax({
@@ -98,59 +99,117 @@ function enquiryattachment() {
     var tab = "Enquiry";
     // var email = $('#clientDropdown1 option:selected').text();
     var urlParams = new URLSearchParams(window.location.search);
-    var email = urlParams.get('email');
+    //var email = urlParams.get('email');
+    var email = $('#clientDropdown1 option:selected').val();
     var year = $('#yearDropdown option:selected').text();
 
-    var data = {
+    var enquirydropvalue = $("#enquirydropdown").val();
 
-        tab: tab,
-        ic_year: year,
-        ic_from: email
-    };
+    if (enquirydropvalue == "") {
+        var data = {
 
-    $.ajax({
-        url: '/InboxClient/FetchAttachments', // Controller action URL
-        type: 'POST',             // HTTP method
-        data: data,
-        // Data to send (query parameter)
-        success: function (response) {
-            // Handle success - update the page dynamically
-            console.log('Response:', response);
-            $("#enquiry").css("display", "contents");           //tab name
-            $("#enquiryattach").css("display", "contents");    //tab name
-            $("#enquirytablehead").css("display", "none");  //table head
-            $("#enquirytablebody").css("display", "none");//table body
-            $("#attachmenttable").css("display", "contents");//attachment table
-            $("#attachmenttablebody").css("display", "contents");// attachment table body
-            var htmltab = '';
-            for (var i = 0; i < response.length; i++) {
-                htmltab += '<tr>';
-                htmltab += '<td>' + (i + 1) + '</td>';
-                htmltab += '<td style="display:none">' + response[i].ic_id + '</td>';
+            tab: tab,
+            ic_year: year,
+            ic_from: email
+        };
 
-                htmltab += '<td >' + response[i].ic_from + '</td>';
-                htmltab += '<td >' + response[i].ic_subject + '</td>';
-                htmltab += '<td >' + response[i].ic_attachment + '</td>';
-                htmltab += '<td >' + response[i].ic_receiveddate + '</td>';
-                var filePath = response[i].icc_attachment.replace(/\\/g, '\\\\'); // Escape backslashes
-                htmltab += '<td><i class="fas fa-download text-primary" onclick="downloadFile(\'' + filePath + '\')"></i></td>';
-                htmltab += '</tr>';
+        $.ajax({
+            url: '/InboxClient/FetchAttachments', // Controller action URL
+            type: 'POST',             // HTTP method
+            data: data,
+            // Data to send (query parameter)
+            success: function (response) {
+                // Handle success - update the page dynamically
+                console.log('Response:', response);
+                $("#enquiry").css("display", "contents");           //tab name
+                $("#enquiryattach").css("display", "contents");    //tab name
+                $("#enquirytablehead").css("display", "none");  //table head
+                $("#enquirytablebody").css("display", "none");//table body
+                $("#attachmenttable").css("display", "contents");//attachment table
+                $("#attachmenttablebody").css("display", "contents");// attachment table body
+                var htmltab = '';
+                for (var i = 0; i < response.length; i++) {
+                    htmltab += '<tr>';
+                    htmltab += '<td>' + (i + 1) + '</td>';
+                    htmltab += '<td style="display:none">' + response[i].ic_id + '</td>';
+
+                    htmltab += '<td >' + response[i].ic_from + '</td>';
+                    htmltab += '<td >' + response[i].ic_subject + '</td>';
+                    htmltab += '<td >' + response[i].ic_attachment + '</td>';
+                    htmltab += '<td >' + response[i].ic_receiveddate + '</td>';
+                    var filePath = response[i].icc_attachment.replace(/\\/g, '\\\\'); // Escape backslashes
+                    htmltab += '<td><i class="fas fa-download text-primary" onclick="downloadFile(\'' + filePath + '\')"></i></td>';
+                    htmltab += '</tr>';
 
 
+                }
+                $('#attachmenttablebody').html(htmltab);
+
+                // Example: Update a specific section with the response data
+                $('#content-area').html(response);
+
+
+
+            },
+            error: function (xhr, status, error) {
+                // Handle errors
+                console.error('Error:', error);
             }
-            $('#attachmenttablebody').html(htmltab);
+        });
+    }
+    else {
+        var data = {
 
-            // Example: Update a specific section with the response data
-            $('#content-area').html(response);
+            tab: tab,
+            ic_year: year,
+            ic_from: email,
+            enquirydropvalue: enquirydropvalue
+        };
+
+        $.ajax({
+            url: '/InboxClient/FetchAttachmentsDropDown', // Controller action URL
+            type: 'POST',             // HTTP method
+            data: data,
+            // Data to send (query parameter)
+            success: function (response) {
+                // Handle success - update the page dynamically
+                console.log('Response:', response);
+                $("#enquiry").css("display", "contents");           //tab name
+                $("#enquiryattach").css("display", "contents");    //tab name
+                $("#enquirytablehead").css("display", "none");  //table head
+                $("#enquirytablebody").css("display", "none");//table body
+                $("#attachmenttable").css("display", "contents");//attachment table
+                $("#attachmenttablebody").css("display", "contents");// attachment table body
+                var htmltab = '';
+                for (var i = 0; i < response.length; i++) {
+                    htmltab += '<tr>';
+                    htmltab += '<td>' + (i + 1) + '</td>';
+                    htmltab += '<td style="display:none">' + response[i].ic_id + '</td>';
+
+                    htmltab += '<td >' + response[i].ic_from + '</td>';
+                    htmltab += '<td >' + response[i].ic_subject + '</td>';
+                    htmltab += '<td >' + response[i].ic_attachment + '</td>';
+                    htmltab += '<td >' + response[i].ic_receiveddate + '</td>';
+                    var filePath = response[i].icc_attachment.replace(/\\/g, '\\\\'); // Escape backslashes
+                    htmltab += '<td><i class="fas fa-download text-primary" onclick="downloadFile(\'' + filePath + '\')"></i></td>';
+                    htmltab += '</tr>';
+
+
+                }
+                $('#attachmenttablebody').html(htmltab);
+
+                // Example: Update a specific section with the response data
+                $('#content-area').html(response);
 
 
 
-        },
-        error: function (xhr, status, error) {
-            // Handle errors
-            console.error('Error:', error);
-        }
-    });
+            },
+            error: function (xhr, status, error) {
+                // Handle errors
+                console.error('Error:', error);
+            }
+        });
+    }
 }
 
 function claimmail() {
@@ -163,13 +222,17 @@ function claimmail() {
     $('#enquiry-atttab').attr('class', 'nav-link');
 
     var urlParams = new URLSearchParams(window.location.search);
-    var email = urlParams.get('email');
+    //var email = urlParams.get('email');
+    var email = $('#clientDropdown1 option:selected').val();
     var year = $('#yearDropdown option:selected').text();
+
+    var claimdropvalue = $("#claimdropdown").val();
 
     var data = {
         ic_from: email,
         tab: tab,
         ic_year: year,
+        dropvalue: claimdropvalue
     };
 
     $.ajax({
@@ -217,19 +280,19 @@ function claimmail() {
 
 
 
-                const claimDropdown = document.getElementById('claimdropdown');
+                //const claimDropdown = document.getElementById('claimdropdown');
 
-                $('#claimdropdown').html('<option>--Select--</option>');
+                //$('#claimdropdown').html('<option>--Select--</option>');
 
 
-                // Loop through the claimno array and add each as an option to the dropdown
-                response.claimno.forEach(claim => {
-                    const option = document.createElement('option');
+                //// Loop through the claimno array and add each as an option to the dropdown
+                //response.claimno.forEach(claim => {
+                //    const option = document.createElement('option');
 
-                    option.value = claim.id;  // Set the id as the value of the option
-                    option.text = claim.value;  // Set the value as the display text
-                    claimDropdown.appendChild(option);
-                });
+                //    option.value = claim.id;  // Set the id as the value of the option
+                //    option.text = claim.value;  // Set the value as the display text
+                //    claimDropdown.appendChild(option);
+                //});
 
 
             }
@@ -257,61 +320,122 @@ function claimattachment() {
 
     // var email = $('#clientDropdown1 option:selected').text();
     var urlParams = new URLSearchParams(window.location.search);
-    var email = urlParams.get('email');
+    //var email = urlParams.get('email');
+    var email = $('#clientDropdown1 option:selected').val();
     var year = $('#yearDropdown option:selected').text();
 
-    var data = {
+    var claimdropvalue = $("#claimdropdown").val();
 
-        tab: tab,
-        ic_year: year,
-        ic_from: email
-    };
+    if (claimdropvalue == "") {
+        var data = {
 
-    $.ajax({
-        url: '/InboxClient/FetchAttachments', // Controller action URL
-        type: 'POST',             // HTTP method
-        data: data,
-        // Data to send (query parameter)
-        success: function (response) {
-            // Handle success - update the page dynamically
-            console.log('Response:', response);
-            $("#enquirynodiv").css("display", "none");
-            $("#claimnodiv").css("display", "contents");           //dropdown
-            $("#claim").css("display", "contents");           //tab name
-            $("#claimattach").css("display", "contents");    //tab name
-            $("#claimtablehead").css("display", "none");  //table head
-            $("#claimtablebody").css("display", "none");//table body
-            $("#attachmenttable").css("display", "contents");//attachment table
-            $("#attachmenttablebody").css("display", "contents");// attachment table body
-            var htmltab = '';
-            for (var i = 0; i < response.length; i++) {
-                htmltab += '<tr>';
-                htmltab += '<td>' + (i + 1) + '</td>';
-                htmltab += '<td style="display:none">' + response[i].ic_id + '</td>';
+            tab: tab,
+            ic_year: year,
+            ic_from: email
+        };
 
-                htmltab += '<td >' + response[i].ic_from + '</td>';
-                htmltab += '<td >' + response[i].ic_subject + '</td>';
-                htmltab += '<td >' + response[i].ic_attachment + '</td>';
-                htmltab += '<td >' + response[i].ic_receiveddate + '</td>';
-                var filePath = response[i].icc_attachment.replace(/\\/g, '\\\\'); // Escape backslashes
-                htmltab += '<td><i class="fas fa-download text-primary" onclick="downloadFile(\'' + filePath + '\')"></i></td>';
-                htmltab += '</tr>';
+        $.ajax({
+            url: '/InboxClient/FetchAttachments', // Controller action URL
+            type: 'POST',             // HTTP method
+            data: data,
+            // Data to send (query parameter)
+            success: function (response) {
+                // Handle success - update the page dynamically
+                console.log('Response:', response);
+                $("#enquirynodiv").css("display", "none");
+                $("#claimnodiv").css("display", "contents");           //dropdown
+                $("#claim").css("display", "contents");           //tab name
+                $("#claimattach").css("display", "contents");    //tab name
+                $("#claimtablehead").css("display", "none");  //table head
+                $("#claimtablebody").css("display", "none");//table body
+                $("#attachmenttable").css("display", "contents");//attachment table
+                $("#attachmenttablebody").css("display", "contents");// attachment table body
+                var htmltab = '';
+                for (var i = 0; i < response.length; i++) {
+                    htmltab += '<tr>';
+                    htmltab += '<td>' + (i + 1) + '</td>';
+                    htmltab += '<td style="display:none">' + response[i].ic_id + '</td>';
+
+                    htmltab += '<td >' + response[i].ic_from + '</td>';
+                    htmltab += '<td >' + response[i].ic_subject + '</td>';
+                    htmltab += '<td >' + response[i].ic_attachment + '</td>';
+                    htmltab += '<td >' + response[i].ic_receiveddate + '</td>';
+                    var filePath = response[i].icc_attachment.replace(/\\/g, '\\\\'); // Escape backslashes
+                    htmltab += '<td><i class="fas fa-download text-primary" onclick="downloadFile(\'' + filePath + '\')"></i></td>';
+                    htmltab += '</tr>';
 
 
+                }
+                $('#attachmenttablebody').html(htmltab);
+
+                // Example: Update a specific section with the response data
+                $('#content-area').html(response);
+
+
+
+            },
+            error: function (xhr, status, error) {
+                // Handle errors
+                console.error('Error:', error);
             }
-            $('#attachmenttablebody').html(htmltab);
+        });
+    }
+    else {
+        var data = {
 
-            // Example: Update a specific section with the response data
-            $('#content-area').html(response);
+            tab: tab,
+            ic_year: year,
+            ic_from: email,
+            enquirydropvalue: claimdropvalue
+        };
+
+        $.ajax({
+            url: '/InboxClient/FetchAttachmentsDropDown', // Controller action URL
+            type: 'POST',             // HTTP method
+            data: data,
+            // Data to send (query parameter)
+            success: function (response) {
+                // Handle success - update the page dynamically
+                console.log('Response:', response);
+                $("#enquirynodiv").css("display", "none");
+                $("#claimnodiv").css("display", "contents");           //dropdown
+                $("#claim").css("display", "contents");           //tab name
+                $("#claimattach").css("display", "contents");    //tab name
+                $("#claimtablehead").css("display", "none");  //table head
+                $("#claimtablebody").css("display", "none");//table body
+                $("#attachmenttable").css("display", "contents");//attachment table
+                $("#attachmenttablebody").css("display", "contents");// attachment table body
+                var htmltab = '';
+                for (var i = 0; i < response.length; i++) {
+                    htmltab += '<tr>';
+                    htmltab += '<td>' + (i + 1) + '</td>';
+                    htmltab += '<td style="display:none">' + response[i].ic_id + '</td>';
+
+                    htmltab += '<td >' + response[i].ic_from + '</td>';
+                    htmltab += '<td >' + response[i].ic_subject + '</td>';
+                    htmltab += '<td >' + response[i].ic_attachment + '</td>';
+                    htmltab += '<td >' + response[i].ic_receiveddate + '</td>';
+                    var filePath = response[i].icc_attachment.replace(/\\/g, '\\\\'); // Escape backslashes
+                    htmltab += '<td><i class="fas fa-download text-primary" onclick="downloadFile(\'' + filePath + '\')"></i></td>';
+                    htmltab += '</tr>';
+
+
+                }
+                $('#attachmenttablebody').html(htmltab);
+
+                // Example: Update a specific section with the response data
+                $('#content-area').html(response);
 
 
 
-        },
-        error: function (xhr, status, error) {
-            // Handle errors
-            console.error('Error:', error);
-        }
-    });
+            },
+            error: function (xhr, status, error) {
+                // Handle errors
+                console.error('Error:', error);
+            }
+        });
+    }
+
 }
 
 function claimdropdown() {
@@ -351,6 +475,9 @@ function claimdropdown() {
             $("#claimtablebody").css("display", "contents");
             $("#attachmenttable").css("display", "none");//attachment table
             $("#attachmenttablebody").css("display", "none");// attachment table body
+
+            $('#claim-tab').attr('class', 'nav-link active');
+            $('#claim-atttab').attr('class', 'nav-link');
 
             $('#claimtablebody').html('');  // Clear previous table content
 
@@ -431,13 +558,16 @@ function enquirydropdown() {
             $("#attachmenttable").css("display", "none");//attachment table
             $("#attachmenttablebody").css("display", "none");// attachment table body
 
+            $('#enquiry-tab').attr('class', 'nav-link active');
+            $('#enquiry-atttab').attr('class', 'nav-link ');
+
             $('#enquirytablebody').html('');  // Clear previous table content
 
             var htmltab = '';
             for (var i = 0; i < response.length; i++) {
                 htmltab += '<tr>';
                 htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + (i + 1) + '</td>';
-/*                htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + response[i].ic_claimno + '</td>';*/
+                /*                htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + response[i].ic_claimno + '</td>';*/
                 htmltab += '<td style="display:none">' + response[i].ic_id + '</td>';
                 htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + response[i].ic_from + '</td>';
                 htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + response[i].ic_to + '</td>';
@@ -499,8 +629,9 @@ function clientchange1() {
 
         $('#claim-tab').attr('class', 'nav-link');
         $('#claim-atttab').attr('class', 'nav-link');
-        $('#enquiry-tab').attr('class', 'nav-link active');
+
         $('#enquiry-atttab').attr('class', 'nav-link');
+        $('#enquiry-tab').attr('class', 'nav-link active show');
 
         $.ajax({
             url: '/InboxClient/Clientchange1', // Controller action URL
@@ -535,7 +666,7 @@ function clientchange1() {
                 for (var i = 0; i < response.sentclientList.length; i++) {
                     htmltab += '<tr>';
                     htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].ic_id + ')">' + (i + 1) + '</td>';
-                 htmltab += '<td style="display:none">' + response.sentclientList[i].ic_id + '</td>';
+                    htmltab += '<td style="display:none">' + response.sentclientList[i].ic_id + '</td>';
                     htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].ic_id + ')">' + response.sentclientList[i].ic_from + '</td>';
                     htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].ic_id + ')">' + response.sentclientList[i].ic_to + '</td>';
                     htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].ic_id + ')">' + response.sentclientList[i].ic_subject + '</td>';
@@ -552,11 +683,12 @@ function clientchange1() {
                     htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response.sentclientList[i].ic_id + ')"></i></td>';
                     htmltab += '</tr>';
 
-                    const enquiryDropdown = document.getElementById('enquirydropdown');
+                }
+                const enquiryDropdown = document.getElementById('enquirydropdown');
 
-                    $('#enquirydropdown').html('<option>--Select--</option>');
-
-
+                $('#enquirydropdown').html('<option>--Select--</option>');
+                if (response.claimno && response.claimno.length > 0)
+                {
                     // Loop through the claimno array and add each as an option to the dropdown
                     response.enquiryno.forEach(enquiry => {
                         const option = document.createElement('option');
@@ -620,7 +752,7 @@ function clientchange1() {
                     htmltab += '<tr>';
                     htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].ic_id + ')">' + (i + 1) + '</td>';
                     htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].ic_id + ')">' + response.sentclientList[i].ic_claimno + '</td>';
-                 htmltab += '<td style="display:none">' + response.sentclientList[i].ic_id + '</td>';
+                    htmltab += '<td style="display:none">' + response.sentclientList[i].ic_id + '</td>';
                     htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].ic_id + ')">' + response.sentclientList[i].ic_from + '</td>';
                     htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].ic_id + ')">' + response.sentclientList[i].ic_to + '</td>';
                     htmltab += '<td onclick="inboxmsg(' + response.sentclientList[i].ic_id + ')">' + response.sentclientList[i].ic_subject + '</td>';
@@ -638,17 +770,27 @@ function clientchange1() {
                     htmltab += '</tr>';
 
 
-                    const claimDropdown = document.getElementById('claimdropdown');
 
-                    $('#claimdropdown').html('<option>--Select--</option>');
+                }
+                const claimDropdown = document.getElementById('claimdropdown');
+
+                $('#claimdropdown').html('<option>--Select--</option>');
 
 
-                    // Loop through the claimno array and add each as an option to the dropdown
+                //// Loop through the claimno array and add each as an option to the dropdown
+                //response.claimno.forEach(claim => {
+                //    const option = document.createElement('option');
+
+                //    option.value = claim.id;  // Set the id as the value of the option
+                //    option.text = claim.value;  // Set the value as the display text
+                //    claimDropdown.appendChild(option);
+                //});
+
+                if (response.claimno && response.claimno.length > 0) {
                     response.claimno.forEach(claim => {
                         const option = document.createElement('option');
-
-                        option.value = claim.id;  // Set the id as the value of the option
-                        option.text = claim.value;  // Set the value as the display text
+                        option.value = claim.id;
+                        option.text = claim.value;
                         claimDropdown.appendChild(option);
                     });
                 }
@@ -708,7 +850,7 @@ function submitfilter1() {
 
     };
 
-   
+
     if (tab == "Enquiry") {
         $('#enquiry-tab').attr('class', 'nav-link active');
 
@@ -780,18 +922,19 @@ function submitfilter1() {
                     htmltab += '<tr>';
                     htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + (i + 1) + '</td>';
                     htmltab += '<td style="display:none">' + response[i].ic_id + '</td>';
+                    htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + response[i].ic_claimno + '</td>';
                     htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + response[i].ic_from + '</td>';
                     htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + response[i].ic_to + '</td>';
                     htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + response[i].ic_subject + '</td>';
                     htmltab += '<td onclick="inboxmsg(' + response[i].ic_id + ')">' + response[i].ic_receiveddate + '</td>';
 
-                    if (response[i].ic_attachment != "No attachments available." && response[i].i_attachment !== "null" && response[i].ic_attachment != null) {
+                    if (response[i].ic_attachment != "No attachments available." && response[i].ic_attachment !== "null" && response[i].ic_attachment != null) {
                         htmltab += '<td style="width:4%" ><i class="fa fa-paperclip" aria-hidden="true"></i></td>';
                     }
                     else {
                         htmltab += '<td style="width:4%"></td>';
                     }
-                    htmltab += '<td<i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].ic_id + ')"></i></td>';
+                    htmltab += '<td><i class="fas fa-eye text-primary" onclick="inboxmsg(' + response[i].ic_id + ')"></i></td>';
 
                     htmltab += '</tr>';
                 }

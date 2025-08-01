@@ -23,18 +23,42 @@ namespace Master.Controllers
         }
 
         [HttpGet("GetAll")]
-        public async Task<IActionResult> GetAll(Guid UserId, string type)
+        public async Task<IActionResult> GetAll(Guid UserId, string type,string? clientno)
         {
             try
             {
                 InboxEmailModel user = new InboxEmailModel();
                 user.UserId = UserId;
                 user.i_type = type;
+                user.i_claimno = clientno;
                 if (user.BaseModel == null)
                 {
                     user.BaseModel = new BaseModel();
                 }
                 user.BaseModel.OperationType = "GetAll";
+                var createduser = await _sentemail.InboxEmail(user);
+                var data = ((Microsoft.AspNetCore.Mvc.ObjectResult)createduser).Value;
+                return Ok(data);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [HttpGet("dropdownclientno")]
+        public async Task<IActionResult> dropdownclientno(Guid UserId ,string i_type)
+        {
+            try
+            {
+                InboxEmailModel user = new InboxEmailModel();
+                user.UserId = UserId;
+                user.i_type = i_type;
+                if (user.BaseModel == null)
+                {
+                    user.BaseModel = new BaseModel();
+                }
+                user.BaseModel.OperationType = "dropdownclientNo";
                 var createduser = await _sentemail.InboxEmail(user);
                 var data = ((Microsoft.AspNetCore.Mvc.ObjectResult)createduser).Value;
                 return Ok(data);

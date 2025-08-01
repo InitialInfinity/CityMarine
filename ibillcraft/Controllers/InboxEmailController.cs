@@ -78,10 +78,15 @@ namespace ibillcraft.Controllers
             }
 
             ViewBag.Format = CUtility.format;
-
             Guid? UserId = new Guid(CUtility.userid);
             var inboxemailDataList = new List<InboxEmailModel>();
             var inboxemailList = new List<InboxEmailModel>();
+
+            string clientnourl = $"{_httpClient.BaseAddress}/InboxEmail/dropdownclientno?UserId={UserId}&i_type={tab}";
+            HttpResponseMessage clientnoresponseView = _httpClient.GetAsync(clientnourl).Result;
+            dynamic clientnodata = clientnoresponseView.Content.ReadAsStringAsync().Result;
+            var clientResponse = JsonConvert.DeserializeObject<InboxClientModel>(clientnodata);
+            ViewBag.clientno = clientResponse.Data;          
 
 
             string inboxemailurl = $"{_httpClient.BaseAddress}/InboxEmail/GetAll?UserId={UserId}&type={tab}";
@@ -107,7 +112,7 @@ namespace ibillcraft.Controllers
         }
 
 
-        public JsonResult ClientGenaral(string tab)
+        public JsonResult ClientGenaral(string tab,string? dropdownvalue)
         {
             if (tab == null)
             {
@@ -124,7 +129,7 @@ namespace ibillcraft.Controllers
             var inboxemailList = new List<InboxEmailModel>();
 
 
-            string inboxemailurl = $"{_httpClient.BaseAddress}/InboxEmail/GetAll?UserId={UserId}&type={tab}";
+            string inboxemailurl = $"{_httpClient.BaseAddress}/InboxEmail/GetAll?UserId={UserId}&type={tab}&clientno={dropdownvalue}";
             HttpResponseMessage response = _httpClient.GetAsync(inboxemailurl).Result;
             if (response.IsSuccessStatusCode)
             {
