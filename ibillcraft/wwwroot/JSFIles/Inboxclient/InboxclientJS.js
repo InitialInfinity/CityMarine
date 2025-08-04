@@ -687,7 +687,7 @@ function clientchange1() {
                 const enquiryDropdown = document.getElementById('enquirydropdown');
 
                 $('#enquirydropdown').html('<option>--Select--</option>');
-                if (response.claimno && response.claimno.length > 0)
+                if (response.enquiryno && response.enquiryno.length > 0)
                 {
                     // Loop through the claimno array and add each as an option to the dropdown
                     response.enquiryno.forEach(enquiry => {
