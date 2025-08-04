@@ -46,7 +46,7 @@
                 </div>
                 <div class="col-lg-2 col-md-2">
                     <select id="clientDropdown1" class="form-select" placeholder="select type" asp-items="@(new SelectList(ViewBag.customer,"Id","Value"))" onchange="return clientchange1()">
-                        <option value="">--Select--</option>
+                        @* <option value="">--Select--</option> *@
                     </select>
                 </div>
                 <div style="display:none">
