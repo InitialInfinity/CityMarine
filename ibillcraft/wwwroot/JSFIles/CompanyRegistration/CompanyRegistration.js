@@ -226,7 +226,8 @@ function ValidateDetails() {
                     window.location.href = url;
                 }
                 else {
-                    var url = '/Dashboard'; // Redirect to dashboard
+                    //var url = '/Dashboard'; // Redirect to dashboard
+                    var url = '/InboxEmail'; // Redirect to dashboard
                     window.location.href = url;
                 }
             }
