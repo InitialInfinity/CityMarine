@@ -86,7 +86,7 @@ namespace ibillcraft.Controllers
             HttpResponseMessage clientnoresponseView = _httpClient.GetAsync(clientnourl).Result;
             dynamic clientnodata = clientnoresponseView.Content.ReadAsStringAsync().Result;
             var clientResponse = JsonConvert.DeserializeObject<InboxClientModel>(clientnodata);
-            ViewBag.clientno = clientResponse.Data;          
+            ViewBag.clientno = clientResponse.Data;
 
 
             string inboxemailurl = $"{_httpClient.BaseAddress}/InboxEmail/GetAll?UserId={UserId}&type={tab}";
@@ -112,7 +112,7 @@ namespace ibillcraft.Controllers
         }
 
 
-        public JsonResult ClientGenaral(string tab,string? dropdownvalue)
+        public JsonResult ClientGenaral(string tab, string? dropdownvalue)
         {
             if (tab == null)
             {
@@ -745,7 +745,7 @@ namespace ibillcraft.Controllers
             };
         }
 
-   
+
 
         [HttpGet]
         public IActionResult DownloadFile(string filePath)
@@ -817,10 +817,10 @@ namespace ibillcraft.Controllers
             }
         }
 
-      
 
 
-        
+
+
 
         private void OnElapsedTime(object source, ElapsedEventArgs e)
         {
@@ -932,538 +932,549 @@ WHERE ',' + em.e_employee + ',' LIKE @searchPattern AND EXISTS ( SELECT 1 FROM t
                             {
 
                                 userId = reader["E_Key"].ToString();
+                                //            }
+                                //        }
+
+                                //    }
+                                //}
+                                // string vemail = "EMS@Citymarinebrokers.com";
+                                using (var httpClient = new HttpClient())
+                                {
+                                    // Set the Authorization header
+                                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                                    httpClient.Timeout = TimeSpan.FromMinutes(5);
+
+                                    // Fetch all folders to dynamically locate the Sent Items folder
+                                    string folderUrl = $"https://graph.microsoft.com/v1.0/users/{userId}/mailFolders";
+                                    var folderResponse = await httpClient.GetAsync(folderUrl);
+
+                                    if (!folderResponse.IsSuccessStatusCode)
+                                    {
+                                        Console.WriteLine($"Error fetching folders: {folderResponse.StatusCode}");
+                                        var folderErrorDetails = await folderResponse.Content.ReadAsStringAsync();
+                                        Console.WriteLine($"Folder error details: {folderErrorDetails}");
+                                        //return Ok;
+                                    }
+
+                                    var folderContent = await folderResponse.Content.ReadAsStringAsync();
+                                    var folders = JsonConvert.DeserializeObject<GraphApiFolderResponse>(folderContent);
+
+                                    // Get the Sent Items folder ID
+                                    var sentFolder = folders.Value.FirstOrDefault(f => f.DisplayName.Equals("Sent Items", StringComparison.OrdinalIgnoreCase));
+                                    if (sentFolder == null)
+                                    {
+                                        Console.WriteLine("Sent Items folder not found.");
+                                        // return;
+                                    }
+                                    var inboxFolder = folders.Value.FirstOrDefault(f => f.DisplayName.Equals("Inbox", StringComparison.OrdinalIgnoreCase));
+                                    if (inboxFolder == null)
+                                    {
+                                        Console.WriteLine("Sent Items folder not found.");
+                                        //return;
+                                    }
+                                    string inboxfolderid = inboxFolder.Id;
+                                    string sentFolderId = sentFolder.Id;
+
+                                    string number = "";
+                                    string connstring = sql;
+                                    using (SqlConnection con = new SqlConnection(connectionString))
+                                    {
+                                        con.Open();
+
+                                        // Query to fetch email rule configuration data
+                                        string query12 = @"SELECT number from dbo.tbl_fetchemailno";
+
+                                        using (SqlCommand cmd2 = new SqlCommand(query12, con))
+                                        {
+                                            using (SqlDataReader reader2 = cmd2.ExecuteReader())
+                                            {
+                                                while (reader2.Read())
+                                                {
+
+                                                    number = reader2["number"].ToString();
+                                                }
+                                            }
+
+                                        }
+                                    }
+
+                                    string inboxUrl = $"https://graph.microsoft.com/v1.0/users/{userId}/mailFolders/{inboxfolderid}/messages?$expand=attachments&$top={number}";
+                                    string sentUrl = $"https://graph.microsoft.com/v1.0/users/{userId}/mailFolders/{sentFolderId}/messages?$expand=attachments&$top={number}";
+
+                                    httpClient.DefaultRequestHeaders.Add("Prefer", "outlook.timezone=\"Asia/Kolkata\"");
+
+                                    //INBOX
+                                    // Fetch and process emails from Inbox
+                                    var inboxResponse = await httpClient.GetAsync(inboxUrl);
+                                    if (inboxResponse.IsSuccessStatusCode)
+                                    {
+                                        try
+                                        {
+                                            // Read the response content
+                                            var inboxContent = await inboxResponse.Content.ReadAsStringAsync();
+                                            Console.WriteLine("Raw Inbox Response: " + inboxContent);
+
+                                            // Deserialize the JSON content into GraphApiEmailResponse
+                                            var inboxEmails = JsonConvert.DeserializeObject<GraphApiEmailResponse>(inboxContent);
+                                            string time = "";
+
+                                            // Check if emails exist
+                                            if (inboxEmails?.Value?.Any() == true)
+                                            {
+                                                // Filter for unread emails
+                                                //var unreadInboxEmails = inboxEmails.Value.Where(email => !email.IsRead).ToList();
+
+                                                //latest email
+                                                //var Emails = inboxEmails.Value.OrderByDescending(email => email.ReceivedDateTime).GroupBy(email => email.ReceivedDateTime).FirstOrDefault();
+
+                                                //string connectionString2 = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+                                                //string connectionString2 = "Server=EMS\\MSSQLSERVER1;Database=dbCityMarine_UAT;User Id=sa;Password=sql@2025;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+                                                string connectionString2 = sql;
+
+                                                using (SqlConnection conn1 = new SqlConnection(connectionString2))
+                                                {
+                                                    conn1.Open();
+                                                    string query2 = @"SELECT top 1 e_time from tbl_eventlog order by e_time desc";
+                                                    using (SqlCommand cmd1 = new SqlCommand(query2, conn1))
+                                                    {
+                                                        using (SqlDataReader reader1 = cmd1.ExecuteReader())
+                                                        {
+                                                            // Loop through each row in the result
+                                                            while (reader1.Read())
+                                                            {
+                                                                time = reader1["e_time"].ToString();
+                                                            }
+                                                        }
+                                                    }
+
+                                                }
+
+
+
+
+                                                //today's all emails
+                                                //var today = DateTime.UtcNow.Date; // Get today's date in UTC
+                                                //var Emails = inboxEmails.Value
+                                                //    .Where(email => email.ReceivedDateTime.HasValue && email.ReceivedDateTime.Value.Date == today) // Ensure the value is not null
+                                                //    .OrderByDescending(email => email.ReceivedDateTime); // Order by ReceivedDateTime descending
+
+                                                //DateTime startDateTime = DateTime.ParseExact(time, "MM/dd/yy hh:mm:ss tt", CultureInfo.InvariantCulture); // Parse the string to DateTime
+                                                //DateTime currentDateTime = DateTime.UtcNow; // Get the current UTC time
+
+                                                //var Emails = inboxEmails.Value
+                                                //    .Where(email => email.ReceivedDateTime.HasValue &&
+                                                //                    email.ReceivedDateTime.Value >= startDateTime &&
+                                                //                    email.ReceivedDateTime.Value <= currentDateTime) // Ensure email ReceivedDateTime is within the range
+                                                //    .OrderByDescending(email => email.ReceivedDateTime);
+
+
+
+
+
+
+                                                //for local
+                                                DateTime startDateTime = DateTime.ParseExact(time, "MM/dd/yy h:mm:ss tt", CultureInfo.InvariantCulture);
+
+
+                                                //for server
+                                                //DateTime startDateTime = DateTime.ParseExact(time, "M/d/yyyy h:mm:ss tt", CultureInfo.InvariantCulture);
+
+                                                //DateTime currentDateTime = DateTime.UtcNow.AddHours(-5).AddMinutes(-30);// Get the current UTC time
+
+
+                                                // Get the current UTC time
+                                                DateTime currentUtcTime = DateTime.UtcNow;
+
+                                                // Convert the UTC time to UTC+04:00 (Indian Standard Time)
+                                                 TimeZoneInfo istTimeZone1 = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+                                                //TimeZoneInfo istTimeZone1 = TimeZoneInfo.FindSystemTimeZoneById("Arabian Standard Time");
+
+
+                                                DateTime currentDateTimeInIst = TimeZoneInfo.ConvertTimeFromUtc(currentUtcTime, istTimeZone1);
+
+                                                // Format the converted time to the desired format: "yyyy-MM-dd HH:mm:ss.fff"
+                                                string formattedDateTime = currentDateTimeInIst.ToString("yyyy-MM-dd HH:mm:ss.fff");
+
+                                                // Convert the formatted string back to DateTime
+                                                DateTime currentDateTime = DateTime.ParseExact(formattedDateTime, "yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
+
+                                                //DateTime adjustedDateTime = startDateTime.AddHours(-5).AddMinutes(-30);
+                                                DateTime adjustedDateTime = startDateTime.AddHours(-4);
+                                                //DateTime adjustedDateTime = startDateTime;
+
+
+                                                //var Emails = inboxEmails.Value
+                                                //    .Where(email => email.ReceivedDateTime.HasValue &&
+                                                //                    email.ReceivedDateTime.Value >= adjustedDateTime &&
+                                                //                    email.ReceivedDateTime.Value <= currentDateTime) // Ensure email ReceivedDateTime is within the range
+                                                //    .OrderByDescending(email => email.ReceivedDateTime);
+
+
+                                                var Emails = inboxEmails.Value;
+
+                                                //foreach (var email1 in Emails)
+                                                //{
+                                                //    // Assuming ReceivedDateTime is in UTC
+                                                //    if (email1.ReceivedDateTime.HasValue)
+                                                //    {
+                                                //        DateTime receivedDateTimeUtc = email1.ReceivedDateTime.Value;
+
+                                                //        // Convert the UTC time to UTC+05:30 (Indian Standard Time)
+                                                //        TimeZoneInfo istTimeZone = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"); // UTC+05:30
+                                                //        DateTime receivedDateTimeInIst = TimeZoneInfo.ConvertTimeFromUtc(receivedDateTimeUtc, istTimeZone);
+
+                                                //        // Compare if the email's ReceivedDateTime in IST is within the specified range
+                                                //        if (receivedDateTimeInIst >= adjustedDateTime && receivedDateTimeInIst <= currentDateTime)
+                                                //        {
+                                                if (Emails.Any())
+                                                {
+                                                    foreach (var email in Emails)
+                                                    {
+                                                        try
+                                                        {
+                                                            DateTime receivedDateTimeUtc1 = email.ReceivedDateTime.Value;
+
+                                                            // Convert the UTC time to UTC+05:30 (Indian Standard Time)
+                                                            //TimeZoneInfo istTimeZone1 = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"); // UTC+05:30
+                                                            DateTime receivedDateTimeInIst1 = TimeZoneInfo.ConvertTimeFromUtc(receivedDateTimeUtc1, istTimeZone1);
+                                                            email.ReceivedDateTime = receivedDateTimeInIst1;
+
+                                                            if (receivedDateTimeInIst1 >= adjustedDateTime && receivedDateTimeInIst1 <= currentDateTime)
+                                                            {
+                                                                InboxEmail(email, userId);
+                                                            }
+
+
+
+                                                            // Mark email as read after processing
+                                                            // await MarkEmailAsRead(httpClient, userId, email.Id);
+
+                                                        }
+                                                        catch (Exception ex)
+                                                        {
+                                                            Console.WriteLine($"Error processing email with ID {email.Id}: {ex.Message}");
+                                                        }
+                                                    }
+
+                                                }
+                                                else
+                                                {
+                                                    Console.WriteLine("No unread emails found in Inbox.");
+                                                }
+                                                //        }
+                                                //    }
+                                                //}
+
+
+
+
+
+
+
+                                                // var Emails = inboxEmails.Value;
+
+
+                                                //foreach (var email1 in Emails)
+                                                //{
+                                                //    // Assuming ReceivedDateTime is in UTC
+                                                //    if (email1.ReceivedDateTime.HasValue)
+                                                //    {
+                                                //        DateTime receivedDateTimeUtc = email1.ReceivedDateTime.Value;
+
+                                                //        // Convert the UTC time to UTC+05:30 (Indian Standard Time)
+                                                //        TimeZoneInfo istTimeZone = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"); // UTC+05:30
+                                                //        DateTime receivedDateTimeInIst = TimeZoneInfo.ConvertTimeFromUtc(receivedDateTimeUtc, istTimeZone);
+
+                                                //        // Compare if the email's ReceivedDateTime in IST is within the specified range
+                                                //        if (receivedDateTimeInIst >= adjustedDateTime && receivedDateTimeInIst <= currentDateTime)
+                                                //        {
+                                                //            if (Emails.Any())
+                                                //            {
+                                                //                foreach (var email in Emails)
+                                                //                {
+                                                //                    try
+                                                //                    {
+                                                //                        DateTime receivedDateTimeUtc1 = email.ReceivedDateTime.Value;
+
+                                                //                        // Convert the UTC time to UTC+05:30 (Indian Standard Time)
+                                                //                        //TimeZoneInfo istTimeZone1 = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"); // UTC+05:30
+                                                //                        DateTime receivedDateTimeInIst1 = TimeZoneInfo.ConvertTimeFromUtc(receivedDateTimeUtc1, istTimeZone1);
+                                                //                        email.ReceivedDateTime = receivedDateTimeInIst1;
+                                                //                        // Process unread Inbox email
+                                                //                        InboxEmail(email, userId);
+
+                                                //                        // Mark email as read after processing
+                                                //                        // await MarkEmailAsRead(httpClient, userId, email.Id);
+
+                                                //                    }
+                                                //                    catch (Exception ex)
+                                                //                    {
+                                                //                        WriteToFile("catch");
+                                                //                        Console.WriteLine($"Error processing email with ID {email.Id}: {ex.Message}");
+                                                //                    }
+                                                //                }
+
+                                                //            }
+                                                //            else
+                                                //            {
+                                                //                WriteToFile("noemail");
+                                                //                Console.WriteLine("No unread emails found in Inbox.");
+                                                //            }
+                                                //        }
+                                                //    }
+                                                //}
+
+
+
+
+
+
+                                                using (SqlConnection conn1 = new SqlConnection(connectionString2))
+                                                {
+                                                    conn1.Open();
+
+                                                    string query = @"INSERT INTO dbo.tbl_time (startdate, enddate, emaildate)
+                                                        VALUES (@startdate, @enddate, @emaildate)";
+
+                                                    using (SqlCommand cmd1 = new SqlCommand(query, conn1))
+                                                    {
+                                                        // Add parameters to the insert query
+                                                        cmd1.Parameters.AddWithValue("@startdate", startDateTime);
+                                                        cmd1.Parameters.AddWithValue("@enddate", currentDateTime);
+                                                        cmd1.Parameters.AddWithValue("@emaildate", "Success");
+
+
+                                                        // Execute the query to insert the email into the database
+                                                        cmd1.ExecuteNonQuery();
+                                                    }
+                                                    conn1.Close();
+                                                }
+
+
+
+
+
+                                                //       if (Emails.Any())
+                                                //       {
+                                                //           foreach (var email in Emails)
+                                                //           {
+                                                //               try
+                                                //               {
+                                                //                   // Process unread Inbox email
+                                                //                   InboxEmail(email, userId);
+
+                                                //                   // Mark email as read after processing
+                                                //                   // await MarkEmailAsRead(httpClient, userId, email.Id);
+
+
+
+                                                //               }
+                                                //               catch (Exception ex)
+                                                //               {
+                                                //                   Console.WriteLine($"Error processing email with ID {email.Id}: {ex.Message}");
+                                                //               }
+                                                //           }
+                                                ////           string connectionString1 = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+
+                                                ////           using (SqlConnection conn = new SqlConnection(connectionString1))
+                                                ////           {
+                                                ////               conn.Open();
+
+                                                ////               string query = @"INSERT INTO dbo.tbl_eventlog (e_time, e_source, e_status)
+                                                ////VALUES (@e_time, @e_source, @e_status)";
+
+                                                ////               using (SqlCommand cmd1 = new SqlCommand(query, conn))
+                                                ////               {
+                                                ////                   // Add parameters to the insert query
+                                                ////                   cmd1.Parameters.AddWithValue("@e_time", System.DateTime.Now);
+                                                ////                   cmd1.Parameters.AddWithValue("@e_source", "Log");
+                                                ////                   cmd1.Parameters.AddWithValue("@e_status", "Success");
+
+
+                                                ////                   // Execute the query to insert the email into the database
+                                                ////                   cmd1.ExecuteNonQuery();
+                                                ////               }
+                                                ////               conn.Close();
+                                                ////           }
+                                                //       }
+                                                //       else
+                                                //       {
+                                                //           Console.WriteLine("No unread emails found in Inbox.");
+                                                //       }
+                                            }
+                                            else
+                                            {
+                                                Console.WriteLine("No emails found in Inbox.");
+                                            }
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            Console.WriteLine($"Error processing inbox response: {ex.Message}");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine($"Failed to retrieve inbox emails. Status Code: {inboxResponse.StatusCode}");
+                                    }
+
+                                    //SENT
+                                    // Fetch and process emails from Sent Items
+                                    var sentResponse = await httpClient.GetAsync(sentUrl);
+                                    if (sentResponse.IsSuccessStatusCode)
+                                    {
+                                        try
+                                        {
+                                            var sentContent = await sentResponse.Content.ReadAsStringAsync();
+                                            var sentEmails = JsonConvert.DeserializeObject<GraphApiEmailResponse>(sentContent);
+
+                                            string time = "";
+
+                                            if (sentEmails?.Value?.Any() == true)
+                                            {
+                                                // Filter for unread emails
+                                                //var unreadEmails = sentEmails.Value.Where(email => email.IsRead == false).ToList();
+                                                //var unreadEmails = sentEmails.Value.ToList(); // Simply take all emails
+
+
+                                                //latest email
+                                                //var Emails = sentEmails.Value.OrderByDescending(email => email.ReceivedDateTime).GroupBy(email => email.ReceivedDateTime).FirstOrDefault();
+
+                                                //today's all emails
+                                                //var today = DateTime.UtcNow.Date; // Get today's date in UTC
+                                                //var Emails = sentEmails.Value
+                                                //    .Where(email => email.ReceivedDateTime.HasValue && email.ReceivedDateTime.Value.Date == today) // Ensure the value is not null
+                                                //    .OrderByDescending(email => email.ReceivedDateTime); // Order by ReceivedDateTime descending
+                                                // string connectionString2 = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+                                                //string connectionString2 = "Server=EMS\\MSSQLSERVER1;Database=dbCityMarine_UAT;User Id=sa;Password=sql@2025;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
+                                                string connectionString2 = sql;
+
+                                                using (SqlConnection conn1 = new SqlConnection(connectionString2))
+                                                {
+                                                    conn1.Open();
+                                                    string query2 = @"SELECT top 1 e_time from tbl_eventlog order by e_time desc";
+                                                    using (SqlCommand cmd1 = new SqlCommand(query2, conn1))
+                                                    {
+                                                        using (SqlDataReader reader1 = cmd1.ExecuteReader())
+                                                        {
+                                                            // Loop through each row in the result
+                                                            while (reader1.Read())
+                                                            {
+                                                                time = reader1["e_time"].ToString();
+                                                            }
+                                                        }
+                                                    }
+
+                                                }
+                                                //for server
+                                               // DateTime startDateTime = DateTime.ParseExact(time, "M/d/yyyy h:mm:ss tt", CultureInfo.InvariantCulture);
+
+
+                                                //for local
+                                                DateTime startDateTime = DateTime.ParseExact(time, "MM/dd/yy h:mm:ss tt", CultureInfo.InvariantCulture);
+
+                                                //DateTime currentDateTime = DateTime.UtcNow.AddHours(-5).AddMinutes(-30);// Get the current UTC time
+
+
+                                                // Get the current UTC time
+                                                DateTime currentUtcTime = DateTime.UtcNow;
+
+                                                // Convert the UTC time to UTC+05:30 (Indian Standard Time)
+                                                 TimeZoneInfo istTimeZone1 = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+                                                //TimeZoneInfo istTimeZone1 = TimeZoneInfo.FindSystemTimeZoneById("Arabian Standard Time");
+                                                DateTime currentDateTimeInIst = TimeZoneInfo.ConvertTimeFromUtc(currentUtcTime, istTimeZone1);
+
+                                                // Format the converted time to the desired format: "yyyy-MM-dd HH:mm:ss.fff"
+                                                string formattedDateTime = currentDateTimeInIst.ToString("yyyy-MM-dd HH:mm:ss.fff");
+
+                                                // Convert the formatted string back to DateTime
+                                                DateTime currentDateTime = DateTime.ParseExact(formattedDateTime, "yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
+
+                                                //DateTime adjustedDateTime = startDateTime.AddHours(-5).AddMinutes(-30);
+                                                DateTime adjustedDateTime = startDateTime.AddHours(-4);
+                                                // DateTime adjustedDateTime = startDateTime;
+
+
+                                                //var Emails = inboxEmails.Value
+                                                //    .Where(email => email.ReceivedDateTime.HasValue &&
+                                                //                    email.ReceivedDateTime.Value >= adjustedDateTime &&
+                                                //                    email.ReceivedDateTime.Value <= currentDateTime) // Ensure email ReceivedDateTime is within the range
+                                                //    .OrderByDescending(email => email.ReceivedDateTime);
+
+
+                                                var Emails = sentEmails.Value;
+
+
+                                                if (Emails.Any())
+                                                {
+                                                    foreach (var email in Emails)
+                                                    {
+                                                        try
+                                                        {
+                                                            DateTime receivedDateTimeUtc1 = email.ReceivedDateTime.Value;
+
+                                                            // Convert the UTC time to UTC+05:30 (Indian Standard Time)
+                                                            //TimeZoneInfo istTimeZone1 = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"); // UTC+05:30
+                                                            DateTime receivedDateTimeInIst1 = TimeZoneInfo.ConvertTimeFromUtc(receivedDateTimeUtc1, istTimeZone1);
+                                                            email.ReceivedDateTime = receivedDateTimeInIst1;
+
+                                                            if (receivedDateTimeInIst1 >= adjustedDateTime && receivedDateTimeInIst1 <= currentDateTime)
+                                                            {
+                                                                SentEmail(email, userId);
+                                                            }
+
+
+
+                                                            // Mark email as read after processing
+                                                            // await MarkEmailAsRead(httpClient, userId, email.Id);
+
+                                                        }
+                                                        catch (Exception ex)
+                                                        {
+                                                            Console.WriteLine($"Error processing email with ID {email.Id}: {ex.Message}");
+                                                        }
+
+
+                                                    }
+
+
+                                                }
+                                                else
+                                                {
+                                                    Console.WriteLine("No unread emails found in Sent Items.");
+                                                }
+                                            }
+                                            else
+                                            {
+                                                Console.WriteLine("No emails found in Sent Items.");
+                                            }
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            Console.WriteLine($"Error processing inbox response: {ex.Message}");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine($"Failed to retrieve inbox emails. Status Code: {sentResponse.StatusCode}");
+                                    }
+                                }
+
+                                //SEPTEMBER 01 2025 START
+
+
                             }
                         }
 
                     }
                 }
-                // string vemail = "EMS@Citymarinebrokers.com";
-                using (var httpClient = new HttpClient())
-                {
-                    // Set the Authorization header
-                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                    httpClient.Timeout = TimeSpan.FromMinutes(5);
-
-                    // Fetch all folders to dynamically locate the Sent Items folder
-                    string folderUrl = $"https://graph.microsoft.com/v1.0/users/{userId}/mailFolders";
-                    var folderResponse = await httpClient.GetAsync(folderUrl);
-
-                    if (!folderResponse.IsSuccessStatusCode)
-                    {
-                        Console.WriteLine($"Error fetching folders: {folderResponse.StatusCode}");
-                        var folderErrorDetails = await folderResponse.Content.ReadAsStringAsync();
-                        Console.WriteLine($"Folder error details: {folderErrorDetails}");
-                        //return Ok;
-                    }
-
-                    var folderContent = await folderResponse.Content.ReadAsStringAsync();
-                    var folders = JsonConvert.DeserializeObject<GraphApiFolderResponse>(folderContent);
-
-                    // Get the Sent Items folder ID
-                    var sentFolder = folders.Value.FirstOrDefault(f => f.DisplayName.Equals("Sent Items", StringComparison.OrdinalIgnoreCase));
-                    if (sentFolder == null)
-                    {
-                        Console.WriteLine("Sent Items folder not found.");
-                        // return;
-                    }
-                    var inboxFolder = folders.Value.FirstOrDefault(f => f.DisplayName.Equals("Inbox", StringComparison.OrdinalIgnoreCase));
-                    if (inboxFolder == null)
-                    {
-                        Console.WriteLine("Sent Items folder not found.");
-                        //return;
-                    }
-                    string inboxfolderid = inboxFolder.Id;
-                    string sentFolderId = sentFolder.Id;
-
-                    string number = "";
-                    string connstring = sql;
-                    using (SqlConnection conn = new SqlConnection(connectionString))
-                    {
-                        conn.Open();
-
-                        // Query to fetch email rule configuration data
-                        string query1 = @"SELECT number from dbo.tbl_fetchemailno";
-
-                        using (SqlCommand cmd = new SqlCommand(query1, conn))
-                        {
-                            using (SqlDataReader reader = cmd.ExecuteReader())
-                            {
-                                while (reader.Read())
-                                {
-
-                                    number = reader["number"].ToString();
-                                }
-                            }
-
-                        }
-                    }
-
-                    string inboxUrl = $"https://graph.microsoft.com/v1.0/users/{userId}/mailFolders/{inboxfolderid}/messages?$expand=attachments&$top={number}";
-                    string sentUrl = $"https://graph.microsoft.com/v1.0/users/{userId}/mailFolders/{sentFolderId}/messages?$expand=attachments&$top={number}";
-
-                    httpClient.DefaultRequestHeaders.Add("Prefer", "outlook.timezone=\"Asia/Kolkata\"");
-
-                    //INBOX
-                    // Fetch and process emails from Inbox
-                    var inboxResponse = await httpClient.GetAsync(inboxUrl);
-                    if (inboxResponse.IsSuccessStatusCode)
-                    {
-                        try
-                        {
-                            // Read the response content
-                            var inboxContent = await inboxResponse.Content.ReadAsStringAsync();
-                            Console.WriteLine("Raw Inbox Response: " + inboxContent);
-
-                            // Deserialize the JSON content into GraphApiEmailResponse
-                            var inboxEmails = JsonConvert.DeserializeObject<GraphApiEmailResponse>(inboxContent);
-                            string time = "";
-
-                            // Check if emails exist
-                            if (inboxEmails?.Value?.Any() == true)
-                            {
-                                // Filter for unread emails
-                                //var unreadInboxEmails = inboxEmails.Value.Where(email => !email.IsRead).ToList();
-
-                                //latest email
-                                //var Emails = inboxEmails.Value.OrderByDescending(email => email.ReceivedDateTime).GroupBy(email => email.ReceivedDateTime).FirstOrDefault();
-
-                                //string connectionString2 = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
-                                //string connectionString2 = "Server=EMS\\MSSQLSERVER1;Database=dbCityMarine_UAT;User Id=sa;Password=sql@2025;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
-                                string connectionString2 = sql;
-
-                                using (SqlConnection conn = new SqlConnection(connectionString2))
-                                {
-                                    conn.Open();
-                                    string query2 = @"SELECT top 1 e_time from tbl_eventlog order by e_time desc";
-                                    using (SqlCommand cmd = new SqlCommand(query2, conn))
-                                    {
-                                        using (SqlDataReader reader = cmd.ExecuteReader())
-                                        {
-                                            // Loop through each row in the result
-                                            while (reader.Read())
-                                            {
-                                                time = reader["e_time"].ToString();
-                                            }
-                                        }
-                                    }
-
-                                }
-
-
-
-
-                                //today's all emails
-                                //var today = DateTime.UtcNow.Date; // Get today's date in UTC
-                                //var Emails = inboxEmails.Value
-                                //    .Where(email => email.ReceivedDateTime.HasValue && email.ReceivedDateTime.Value.Date == today) // Ensure the value is not null
-                                //    .OrderByDescending(email => email.ReceivedDateTime); // Order by ReceivedDateTime descending
-
-                                //DateTime startDateTime = DateTime.ParseExact(time, "MM/dd/yy hh:mm:ss tt", CultureInfo.InvariantCulture); // Parse the string to DateTime
-                                //DateTime currentDateTime = DateTime.UtcNow; // Get the current UTC time
-
-                                //var Emails = inboxEmails.Value
-                                //    .Where(email => email.ReceivedDateTime.HasValue &&
-                                //                    email.ReceivedDateTime.Value >= startDateTime &&
-                                //                    email.ReceivedDateTime.Value <= currentDateTime) // Ensure email ReceivedDateTime is within the range
-                                //    .OrderByDescending(email => email.ReceivedDateTime);
-
-
-
-
-
-
-                                //for local
-                              //  DateTime startDateTime = DateTime.ParseExact(time, "MM/dd/yy h:mm:ss tt", CultureInfo.InvariantCulture);
-
-
-                                //for server
-                                DateTime startDateTime = DateTime.ParseExact(time, "M/d/yyyy h:mm:ss tt", CultureInfo.InvariantCulture);
-
-                                //DateTime currentDateTime = DateTime.UtcNow.AddHours(-5).AddMinutes(-30);// Get the current UTC time
-
-
-                                // Get the current UTC time
-                                DateTime currentUtcTime = DateTime.UtcNow;
-
-                                // Convert the UTC time to UTC+04:00 (Indian Standard Time)
-                                TimeZoneInfo istTimeZone1 = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
-                                //TimeZoneInfo istTimeZone1 = TimeZoneInfo.FindSystemTimeZoneById("Arabian Standard Time");
-
-                                DateTime currentDateTimeInIst = TimeZoneInfo.ConvertTimeFromUtc(currentUtcTime, istTimeZone1);
-
-                                // Format the converted time to the desired format: "yyyy-MM-dd HH:mm:ss.fff"
-                                string formattedDateTime = currentDateTimeInIst.ToString("yyyy-MM-dd HH:mm:ss.fff");
-
-                                // Convert the formatted string back to DateTime
-                                DateTime currentDateTime = DateTime.ParseExact(formattedDateTime, "yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
-
-                                //DateTime adjustedDateTime = startDateTime.AddHours(-5).AddMinutes(-30);
-                                DateTime adjustedDateTime = startDateTime.AddHours(-4);
-                                //DateTime adjustedDateTime = startDateTime;
-
-
-                                //var Emails = inboxEmails.Value
-                                //    .Where(email => email.ReceivedDateTime.HasValue &&
-                                //                    email.ReceivedDateTime.Value >= adjustedDateTime &&
-                                //                    email.ReceivedDateTime.Value <= currentDateTime) // Ensure email ReceivedDateTime is within the range
-                                //    .OrderByDescending(email => email.ReceivedDateTime);
-
-
-                                var Emails = inboxEmails.Value;
-
-                                //foreach (var email1 in Emails)
-                                //{
-                                //    // Assuming ReceivedDateTime is in UTC
-                                //    if (email1.ReceivedDateTime.HasValue)
-                                //    {
-                                //        DateTime receivedDateTimeUtc = email1.ReceivedDateTime.Value;
-
-                                //        // Convert the UTC time to UTC+05:30 (Indian Standard Time)
-                                //        TimeZoneInfo istTimeZone = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"); // UTC+05:30
-                                //        DateTime receivedDateTimeInIst = TimeZoneInfo.ConvertTimeFromUtc(receivedDateTimeUtc, istTimeZone);
-
-                                //        // Compare if the email's ReceivedDateTime in IST is within the specified range
-                                //        if (receivedDateTimeInIst >= adjustedDateTime && receivedDateTimeInIst <= currentDateTime)
-                                //        {
-                                if (Emails.Any())
-                                {
-                                    foreach (var email in Emails)
-                                    {
-                                        try
-                                        {
-                                            DateTime receivedDateTimeUtc1 = email.ReceivedDateTime.Value;
-
-                                            // Convert the UTC time to UTC+05:30 (Indian Standard Time)
-                                            //TimeZoneInfo istTimeZone1 = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"); // UTC+05:30
-                                            DateTime receivedDateTimeInIst1 = TimeZoneInfo.ConvertTimeFromUtc(receivedDateTimeUtc1, istTimeZone1);
-                                            email.ReceivedDateTime = receivedDateTimeInIst1;
-
-                                            if (receivedDateTimeInIst1 >= adjustedDateTime && receivedDateTimeInIst1 <= currentDateTime)
-                                            {
-                                                InboxEmail(email, userId);
-                                            }
-
-
-
-                                            // Mark email as read after processing
-                                            // await MarkEmailAsRead(httpClient, userId, email.Id);
-
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            Console.WriteLine($"Error processing email with ID {email.Id}: {ex.Message}");
-                                        }
-                                    }
-
-                                }
-                                else
-                                {
-                                    Console.WriteLine("No unread emails found in Inbox.");
-                                }
-                                //        }
-                                //    }
-                                //}
-
-
-
-
-
-
-
-                                // var Emails = inboxEmails.Value;
-
-
-                                //foreach (var email1 in Emails)
-                                //{
-                                //    // Assuming ReceivedDateTime is in UTC
-                                //    if (email1.ReceivedDateTime.HasValue)
-                                //    {
-                                //        DateTime receivedDateTimeUtc = email1.ReceivedDateTime.Value;
-
-                                //        // Convert the UTC time to UTC+05:30 (Indian Standard Time)
-                                //        TimeZoneInfo istTimeZone = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"); // UTC+05:30
-                                //        DateTime receivedDateTimeInIst = TimeZoneInfo.ConvertTimeFromUtc(receivedDateTimeUtc, istTimeZone);
-
-                                //        // Compare if the email's ReceivedDateTime in IST is within the specified range
-                                //        if (receivedDateTimeInIst >= adjustedDateTime && receivedDateTimeInIst <= currentDateTime)
-                                //        {
-                                //            if (Emails.Any())
-                                //            {
-                                //                foreach (var email in Emails)
-                                //                {
-                                //                    try
-                                //                    {
-                                //                        DateTime receivedDateTimeUtc1 = email.ReceivedDateTime.Value;
-
-                                //                        // Convert the UTC time to UTC+05:30 (Indian Standard Time)
-                                //                        //TimeZoneInfo istTimeZone1 = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"); // UTC+05:30
-                                //                        DateTime receivedDateTimeInIst1 = TimeZoneInfo.ConvertTimeFromUtc(receivedDateTimeUtc1, istTimeZone1);
-                                //                        email.ReceivedDateTime = receivedDateTimeInIst1;
-                                //                        // Process unread Inbox email
-                                //                        InboxEmail(email, userId);
-
-                                //                        // Mark email as read after processing
-                                //                        // await MarkEmailAsRead(httpClient, userId, email.Id);
-
-                                //                    }
-                                //                    catch (Exception ex)
-                                //                    {
-                                //                        WriteToFile("catch");
-                                //                        Console.WriteLine($"Error processing email with ID {email.Id}: {ex.Message}");
-                                //                    }
-                                //                }
-
-                                //            }
-                                //            else
-                                //            {
-                                //                WriteToFile("noemail");
-                                //                Console.WriteLine("No unread emails found in Inbox.");
-                                //            }
-                                //        }
-                                //    }
-                                //}
-
-
-
-
-
-
-                                using (SqlConnection conn = new SqlConnection(connectionString2))
-                                {
-                                    conn.Open();
-
-                                    string query = @"INSERT INTO dbo.tbl_time (startdate, enddate, emaildate)
-                         VALUES (@startdate, @enddate, @emaildate)";
-
-                                    using (SqlCommand cmd1 = new SqlCommand(query, conn))
-                                    {
-                                        // Add parameters to the insert query
-                                        cmd1.Parameters.AddWithValue("@startdate", startDateTime);
-                                        cmd1.Parameters.AddWithValue("@enddate", currentDateTime);
-                                        cmd1.Parameters.AddWithValue("@emaildate", "Success");
-
-
-                                        // Execute the query to insert the email into the database
-                                        cmd1.ExecuteNonQuery();
-                                    }
-                                    conn.Close();
-                                }
-
-
-
-
-
-                                //       if (Emails.Any())
-                                //       {
-                                //           foreach (var email in Emails)
-                                //           {
-                                //               try
-                                //               {
-                                //                   // Process unread Inbox email
-                                //                   InboxEmail(email, userId);
-
-                                //                   // Mark email as read after processing
-                                //                   // await MarkEmailAsRead(httpClient, userId, email.Id);
-
-
-
-                                //               }
-                                //               catch (Exception ex)
-                                //               {
-                                //                   Console.WriteLine($"Error processing email with ID {email.Id}: {ex.Message}");
-                                //               }
-                                //           }
-                                ////           string connectionString1 = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
-
-                                ////           using (SqlConnection conn = new SqlConnection(connectionString1))
-                                ////           {
-                                ////               conn.Open();
-
-                                ////               string query = @"INSERT INTO dbo.tbl_eventlog (e_time, e_source, e_status)
-                                ////VALUES (@e_time, @e_source, @e_status)";
-
-                                ////               using (SqlCommand cmd1 = new SqlCommand(query, conn))
-                                ////               {
-                                ////                   // Add parameters to the insert query
-                                ////                   cmd1.Parameters.AddWithValue("@e_time", System.DateTime.Now);
-                                ////                   cmd1.Parameters.AddWithValue("@e_source", "Log");
-                                ////                   cmd1.Parameters.AddWithValue("@e_status", "Success");
-
-
-                                ////                   // Execute the query to insert the email into the database
-                                ////                   cmd1.ExecuteNonQuery();
-                                ////               }
-                                ////               conn.Close();
-                                ////           }
-                                //       }
-                                //       else
-                                //       {
-                                //           Console.WriteLine("No unread emails found in Inbox.");
-                                //       }
-                            }
-                            else
-                            {
-                                Console.WriteLine("No emails found in Inbox.");
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine($"Error processing inbox response: {ex.Message}");
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine($"Failed to retrieve inbox emails. Status Code: {inboxResponse.StatusCode}");
-                    }
-
-                    //SENT
-                    // Fetch and process emails from Sent Items
-                    var sentResponse = await httpClient.GetAsync(sentUrl);
-                    if (sentResponse.IsSuccessStatusCode)
-                    {
-                        try
-                        {
-                            var sentContent = await sentResponse.Content.ReadAsStringAsync();
-                            var sentEmails = JsonConvert.DeserializeObject<GraphApiEmailResponse>(sentContent);
-
-                            string time = "";
-
-                            if (sentEmails?.Value?.Any() == true)
-                            {
-                                // Filter for unread emails
-                                //var unreadEmails = sentEmails.Value.Where(email => email.IsRead == false).ToList();
-                                //var unreadEmails = sentEmails.Value.ToList(); // Simply take all emails
-
-
-                                //latest email
-                                //var Emails = sentEmails.Value.OrderByDescending(email => email.ReceivedDateTime).GroupBy(email => email.ReceivedDateTime).FirstOrDefault();
-
-                                //today's all emails
-                                //var today = DateTime.UtcNow.Date; // Get today's date in UTC
-                                //var Emails = sentEmails.Value
-                                //    .Where(email => email.ReceivedDateTime.HasValue && email.ReceivedDateTime.Value.Date == today) // Ensure the value is not null
-                                //    .OrderByDescending(email => email.ReceivedDateTime); // Order by ReceivedDateTime descending
-                                // string connectionString2 = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
-                                //string connectionString2 = "Server=EMS\\MSSQLSERVER1;Database=dbCityMarine_UAT;User Id=sa;Password=sql@2025;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
-                                string connectionString2 = sql;
-
-                                using (SqlConnection conn = new SqlConnection(connectionString2))
-                                {
-                                    conn.Open();
-                                    string query2 = @"SELECT top 1 e_time from tbl_eventlog order by e_time desc";
-                                    using (SqlCommand cmd = new SqlCommand(query2, conn))
-                                    {
-                                        using (SqlDataReader reader = cmd.ExecuteReader())
-                                        {
-                                            // Loop through each row in the result
-                                            while (reader.Read())
-                                            {
-                                                time = reader["e_time"].ToString();
-                                            }
-                                        }
-                                    }
-
-                                }
-                                //for server
-                                DateTime startDateTime = DateTime.ParseExact(time, "M/d/yyyy h:mm:ss tt", CultureInfo.InvariantCulture);
-
-
-                                //for local
-                                //DateTime startDateTime = DateTime.ParseExact(time, "MM/dd/yy h:mm:ss tt", CultureInfo.InvariantCulture);
-
-                                //DateTime currentDateTime = DateTime.UtcNow.AddHours(-5).AddMinutes(-30);// Get the current UTC time
-
-
-                                // Get the current UTC time
-                                DateTime currentUtcTime = DateTime.UtcNow;
-
-                                // Convert the UTC time to UTC+05:30 (Indian Standard Time)
-                                TimeZoneInfo istTimeZone1 = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
-                                DateTime currentDateTimeInIst = TimeZoneInfo.ConvertTimeFromUtc(currentUtcTime, istTimeZone1);
-
-                                // Format the converted time to the desired format: "yyyy-MM-dd HH:mm:ss.fff"
-                                string formattedDateTime = currentDateTimeInIst.ToString("yyyy-MM-dd HH:mm:ss.fff");
-
-                                // Convert the formatted string back to DateTime
-                                DateTime currentDateTime = DateTime.ParseExact(formattedDateTime, "yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
-
-                                //DateTime adjustedDateTime = startDateTime.AddHours(-5).AddMinutes(-30);
-                                DateTime adjustedDateTime = startDateTime.AddHours(-4);
-                                // DateTime adjustedDateTime = startDateTime;
-
-
-                                //var Emails = inboxEmails.Value
-                                //    .Where(email => email.ReceivedDateTime.HasValue &&
-                                //                    email.ReceivedDateTime.Value >= adjustedDateTime &&
-                                //                    email.ReceivedDateTime.Value <= currentDateTime) // Ensure email ReceivedDateTime is within the range
-                                //    .OrderByDescending(email => email.ReceivedDateTime);
-
-
-                                var Emails = sentEmails.Value;
-
-
-                                if (Emails.Any())
-                                {
-                                    foreach (var email in Emails)
-                                    {
-                                        try
-                                        {
-                                            DateTime receivedDateTimeUtc1 = email.ReceivedDateTime.Value;
-
-                                            // Convert the UTC time to UTC+05:30 (Indian Standard Time)
-                                            //TimeZoneInfo istTimeZone1 = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"); // UTC+05:30
-                                            DateTime receivedDateTimeInIst1 = TimeZoneInfo.ConvertTimeFromUtc(receivedDateTimeUtc1, istTimeZone1);
-                                            email.ReceivedDateTime = receivedDateTimeInIst1;
-
-                                            if (receivedDateTimeInIst1 >= adjustedDateTime && receivedDateTimeInIst1 <= currentDateTime)
-                                            {
-                                                SentEmail(email, userId);
-                                            }
-
-
-
-                                            // Mark email as read after processing
-                                            // await MarkEmailAsRead(httpClient, userId, email.Id);
-
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            Console.WriteLine($"Error processing email with ID {email.Id}: {ex.Message}");
-                                        }
-
-
-                                    }
-
-
-                                }
-                                else
-                                {
-                                    Console.WriteLine("No unread emails found in Sent Items.");
-                                }
-                            }
-                            else
-                            {
-                                Console.WriteLine("No emails found in Sent Items.");
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine($"Error processing inbox response: {ex.Message}");
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine($"Failed to retrieve inbox emails. Status Code: {sentResponse.StatusCode}");
-                    }
-                }
-
+                //SEPTEMBER 01 2025 END
                 //string connectionString1 = "Server=103.182.153.94,1433;Database=dbCityMarine_UAT;User Id=dbCityMarine_UAT;Password=dbCityMarine_UAT@2024;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
                 //string connectionString1 = "Server=EMS\\MSSQLSERVER1;Database=dbCityMarine_UAT;User Id=sa;Password=sql@2025;Trusted_Connection=False;MultipleActiveResultSets=true;Encrypt=False;";
                 string connectionString1 = sql;
 
-                using (SqlConnection conn = new SqlConnection(connectionString1))
+                using (SqlConnection conn1 = new SqlConnection(connectionString1))
                 {
-                    conn.Open();
+                    conn1.Open();
 
                     string query = @"INSERT INTO dbo.tbl_eventlog (e_actualtime,e_time, e_source, e_status)
                          VALUES (@e_actualtime,@e_time, @e_source, @e_status)";
@@ -1471,8 +1482,8 @@ WHERE ',' + em.e_employee + ',' LIKE @searchPattern AND EXISTS ( SELECT 1 FROM t
 
 
                     DateTime startUtcTime = DateTime.UtcNow;
-
                     TimeZoneInfo istTimeZone1 = TimeZoneInfo.FindSystemTimeZoneById("India Standard Time");
+                    //TimeZoneInfo istTimeZone1 = TimeZoneInfo.FindSystemTimeZoneById("Arabian Standard Time");
                     DateTime startDateTimeInIst = TimeZoneInfo.ConvertTimeFromUtc(startUtcTime, istTimeZone1);
 
                     // Format the converted time to the desired format: "yyyy-MM-dd HH:mm:ss.fff"
@@ -1486,7 +1497,7 @@ WHERE ',' + em.e_employee + ',' LIKE @searchPattern AND EXISTS ( SELECT 1 FROM t
 
 
 
-                    using (SqlCommand cmd1 = new SqlCommand(query, conn))
+                    using (SqlCommand cmd1 = new SqlCommand(query, conn1))
                     {
                         // Add parameters to the insert query
                         cmd1.Parameters.AddWithValue("@e_actualtime", System.DateTime.Now);
@@ -1499,8 +1510,12 @@ WHERE ',' + em.e_employee + ',' LIKE @searchPattern AND EXISTS ( SELECT 1 FROM t
                         // Execute the query to insert the email into the database
                         cmd1.ExecuteNonQuery();
                     }
-                    conn.Close();
+                    conn1.Close();
                 }
+
+
+
+
 
             }
             catch (Exception ex)
